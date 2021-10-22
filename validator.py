@@ -2,6 +2,7 @@ import os
 import subprocess
 import glob
 import json
+import shutil
 
 from compare_snps import analyse
 
@@ -71,15 +72,21 @@ def btb_seq(pipeline_directory, reads_directory, base_directory):
 
 def main():
     pipeline_path = '/home/aaronfishman/repos/btb-seq/'
-    results_path = '/home/aaronfishman/validation-results/btb-seq-3/'
+    results_path = '/home/aaronfishman/ebs/pipeline-results/btb-seq-6/'
 
-    # Housekeeping
+    # # Housekeeping
     if os.path.isdir(results_path):
         raise Exception("Output results path already exists")
     os.makedirs(results_path)
 
     if not os.path.isdir(pipeline_path):
         raise Exception("Pipeline code repository not found")  
+
+    # Copy over the repo
+    repo_backup_path=results_path+"btb-seq/"
+    # os.makedirs(repo_backup_path, exist_ok=True)
+    run(["cp", "-r", pipeline_path, repo_backup_path])
+    # shutil.copytree(pipeline_path, repo_backup_path)
 
     # simuG - simulate the genome
     simulate_genome(results_path)
