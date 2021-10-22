@@ -71,27 +71,26 @@ def btb_seq(pipeline_directory, reads_directory, base_directory):
 
 def main():
     pipeline_path = '/home/aaronfishman/repos/btb-seq/'
-    results_path = '/home/aaronfishman/validation-results/btb-seq/'
+    results_path = '/home/aaronfishman/validation-results/btb-seq-3/'
 
     # Housekeeping
-    # make 
-    # if os.path.isdir(results_path):
-    #     raise Exception("Output results path already exists")
-    # os.makedirs(results_path)
+    if os.path.isdir(results_path):
+        raise Exception("Output results path already exists")
+    os.makedirs(results_path)
 
     if not os.path.isdir(pipeline_path):
         raise Exception("Pipeline code repository not found")  
 
     # simuG - simulate the genome
-    # simulate_genome(results_path)
+    simulate_genome(results_path)
 
     # read simulation -- chop up that genome
     fasta_path = results_path + 'simulated-genome/simulated.simseq.genome.fa'
-    # simulate_reads(fasta_path, results_path)
+    simulate_reads(fasta_path, results_path)
 
     # btb-seq
     reads_path = results_path+'simulated_reads/'
-    # btb_seq(pipeline_path, reads_path, results_path)
+    btb_seq(pipeline_path, reads_path, results_path)
 
     # performance analysis
     # /home/aaronfishman/validation-results/btb-seq/pipeline/Results_simulated_reads_22Oct21/snpTables/simulated.tab
