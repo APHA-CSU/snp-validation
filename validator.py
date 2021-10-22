@@ -3,7 +3,18 @@ import subprocess
 
 
 reference_path = './Mycobacterium_bovis_AF212297_LT78304.fa'
-#
+
+def run(cmd):
+    # TODO: store stdout to a file
+    returncode = subprocess.run(cmd).returncode
+
+    if returncode:        
+        raise Exception("""*****
+            %s
+            cmd failed with exit code %i
+          *****""" % cmd, returncode)
+
+
 def simulate_genome(output_prefix, num_snps=16000):
     # TODO: make sure output path does not exist
 
@@ -11,15 +22,12 @@ def simulate_genome(output_prefix, num_snps=16000):
     os.makedirs(output_path, exist_ok=True)
 
     # TODO: store stdout to a file
-    returncode = subprocess.run([
+    run([
         "simuG.pl",
         "-refseq", reference_path,
         "-snp_count", str(num_snps),
         "-prefix", output_path+"simulated"
-    ]).returncode
-
-    if returncode:
-        raise Exception("simuG failed with exit code ", returncode)
+    ])
 
 def simulate_reads(
     genome_fasta, 
@@ -34,7 +42,7 @@ def simulate_reads(
     read_2 = output_path+"simulated_S1_R2_X.fastq"
 
     # TODO: store stdout to a file
-    returncode = subprocess.run([
+    run([
         "wgsim",
         "-1", str(read_length),
         "-2", str(read_length),
@@ -46,17 +54,10 @@ def simulate_reads(
         genome_fasta,
         read_1,
         read_2
-    ]).returncode
-
-    if returncode:
-        raise Exception("wgsim failed with exit code ", returncode)
+    ])
 
     # TODO: use python library instead?
-    subprocess.run(["gzip", read_1, read_2])
-
-    if returncode:
-        raise Exception("wgsim failed with exit code ", returncode)
-
+    run(["gzip", read_1, read_2])
 
 def main():
     pipeline_path = '/home/aaronfishman/repos/btb-seq/'
