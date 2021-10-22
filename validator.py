@@ -4,9 +4,9 @@ import subprocess
 
 reference_path = './Mycobacterium_bovis_AF212297_LT78304.fa'
 
-def run(cmd):
+def run(cmd, cwd=None):
     # TODO: store stdout to a file
-    returncode = subprocess.run(cmd).returncode
+    returncode = subprocess.run(cmd, cwd=cwd).returncode
 
     if returncode:        
         raise Exception("""*****
@@ -59,6 +59,13 @@ def simulate_reads(
     # TODO: use python library instead?
     run(["gzip", read_1, read_2])
 
+
+def btb_seq(pipeline_directory, reads_directory, base_directory):
+    results_directory = base_directory + 'pipeline/'
+    os.makedirs(results_directory, exist_ok=True)
+
+    run(["bash", "./btb-seq", reads_directory, results_directory], cwd=pipeline_directory)
+
 def main():
     pipeline_path = '/home/aaronfishman/repos/btb-seq/'
     results_path = '/home/aaronfishman/validation-results/btb-seq/'
@@ -77,9 +84,11 @@ def main():
 
     # read simulation -- chop up that genome
     fasta_path = results_path + 'simulated-genome/simulated.simseq.genome.fa'
-    simulate_reads(fasta_path, results_path)
+    # simulate_reads(fasta_path, results_path)
 
     # btb-seq
+    reads_path = results_path+'simulated_reads/'
+    btb_seq(pipeline_path, reads_path, results_path)
 
     # performance analysis
 
