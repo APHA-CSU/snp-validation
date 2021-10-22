@@ -40,16 +40,17 @@ def analyse(simulated_snps, pipeline_snps):
 
 
     ### Output
+    stats = {
+        "tp": tp,
+        "fp": fp,
+        "fn": fn,
+        "precision": precision,
+        "sensitivity": sensitivity,
+        "miss_rate": miss_rate,
+        "total_errors": total_errors
+    }
 
-    print("tp", tp)
-    print("fp", fp)
-    print("fn", fn)
-
-
-    print("precision", precision)
-    print("sensitivity", sensitivity)
-    print("miss_rate", miss_rate)
-    print("total_errors", total_errors)
+    return stats
 
     a = 1
 

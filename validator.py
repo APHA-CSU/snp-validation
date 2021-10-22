@@ -1,6 +1,7 @@
 import os
 import subprocess
 import glob
+import json
 
 from compare_snps import analyse
 
@@ -99,7 +100,10 @@ def main():
     # HACK: this could easily break if additioanl files are present
     pipeline_directory = glob.glob(results_path + 'pipeline/*')[0] + '/'
     pipeline_snps = pipeline_directory + 'snpTables/simulated.tab'
-    analyse(simulated_snps, pipeline_snps)
+    stats = analyse(simulated_snps, pipeline_snps)
+
+    with open(results_path+"stats.json", "w") as file:
+        file.write(json.dumps(stats, indent=4))
 
     return
 
