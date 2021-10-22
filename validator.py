@@ -1,6 +1,8 @@
 import os
 import subprocess
+import glob
 
+from compare_snps import analyse
 
 reference_path = './Mycobacterium_bovis_AF212297_LT78304.fa'
 
@@ -88,9 +90,16 @@ def main():
 
     # btb-seq
     reads_path = results_path+'simulated_reads/'
-    btb_seq(pipeline_path, reads_path, results_path)
+    # btb_seq(pipeline_path, reads_path, results_path)
 
     # performance analysis
+    # /home/aaronfishman/validation-results/btb-seq/pipeline/Results_simulated_reads_22Oct21/snpTables/simulated.tab
+    simulated_snps = results_path + "simulated-genome/simulated.refseq2simseq.map.txt"
+    
+    # HACK: this could easily break if additioanl files are present
+    pipeline_directory = glob.glob(results_path + 'pipeline/*')[0] + '/'
+    pipeline_snps = pipeline_directory + 'snpTables/simulated.tab'
+    analyse(simulated_snps, pipeline_snps)
 
     return
 
