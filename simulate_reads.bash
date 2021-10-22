@@ -1,9 +1,11 @@
 
 READS_DIRECTORY=~/simulated-reads/
-RESULTS_DIRECTORY=~/simulated-results/
+RESULTS_DIRECTORY=~/simulated-results/16000/
 
 # Read Simulation
-REFERENCE=~/repos/btb-seq/references/Mycbovis-2122-97_LT708304.fas
+# REFERENCE=~/repos/btb-seq/references/Mycbovis-2122-97_LT708304.fas
+REFERENCE=/home/aaronfishman/testing-simuG/AF2122.simseq.genome.fa
+
 READ_1=$READS_DIRECTORY/blah_S1_R1_X.fastq
 READ_2=$READS_DIRECTORY/blah_S1_R2_X.fastq
 READ_LEN=150
@@ -15,5 +17,5 @@ gzip $READS_DIRECTORY/*.fastq
 
 # Run the pipeline
 cd ~/repos/btb-seq/
-./btb-seq $READS_DIRECTORY $RESULTS_DIRECTORY
+sudo ./btb-seq $READS_DIRECTORY $RESULTS_DIRECTORY
 
