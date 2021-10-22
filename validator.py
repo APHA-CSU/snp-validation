@@ -51,6 +51,12 @@ def simulate_reads(
     if returncode:
         raise Exception("wgsim failed with exit code ", returncode)
 
+    # TODO: use python library instead?
+    subprocess.run(["gzip", read_1, read_2])
+
+    if returncode:
+        raise Exception("wgsim failed with exit code ", returncode)
+
 
 def main():
     pipeline_path = '/home/aaronfishman/repos/btb-seq/'
