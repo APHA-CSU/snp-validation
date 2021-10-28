@@ -9,6 +9,8 @@ from compare_snps import analyse
 reference_path = './Mycobacterium_bovis_AF212297_LT78304.fa'
 
 def run(cmd, cwd=None):
+    """ Run a command and assert it exits with a non-zero exit code
+    """
     # TODO: store stdout to a file
     returncode = subprocess.run(cmd, cwd=cwd).returncode
 
@@ -23,7 +25,7 @@ def simulate_genome(output_prefix, num_snps=16000):
     # TODO: make sure output path does not exist
 
     output_path = output_prefix+"simulated-genome/"
-    os.makedirs(output_path, exist_ok=True)
+    os.makedirs(output_path, exist_ok=False)
 
     # TODO: store stdout to a file
     run([
@@ -40,7 +42,7 @@ def simulate_reads(
     seed=1
 ):
     output_path = base_directory + 'simulated_reads/'
-    os.makedirs(output_path, exist_ok=True)
+    os.makedirs(output_path, exist_ok=False)
 
     read_1 = output_path+"simulated_S1_R1_X.fastq"
     read_2 = output_path+"simulated_S1_R2_X.fastq"
@@ -70,48 +72,55 @@ def btb_seq(pipeline_directory, reads_directory, base_directory):
 
     run(["bash", "./btb-seq", reads_directory, results_directory], cwd=pipeline_directory)
 
-def main():
-    pipeline_path = '/home/aaronfishman/repos/btb-seq/'
-    results_path = '/home/aaronfishman/ebs/pipeline-results/btb-seq-6/'
+def performance_test_btb_seq(btb_seq_path, results_path):
+    """ Runs a performance test against the pipeline
 
-    # # Housekeeping
+        Parameters:
+            btb_seq_path (str): Path to where btb-seq code is stored
+            results_path (str): Path to where performance test results are stored
+
+        Returns:
+            None
+    """
+
+    # Validate Input
     if os.path.isdir(results_path):
         raise Exception("Output results path already exists")
     os.makedirs(results_path)
 
-    if not os.path.isdir(pipeline_path):
+    if not os.path.isdir(btb_seq_path):
         raise Exception("Pipeline code repository not found")  
+
+    # Set results directories
+    fasta_path = results_path + 'simulated-genome/simulated.simseq.genome.fa'
+    reads_path = results_path + 'simulated_reads/'
+    simulated_snps = results_path + "simulated-genome/simulated.refseq2simseq.map.txt"
+    pipeline_snps = btb_seq_path + 'snpTables/simulated.tab'
 
     # Copy over the repo
     repo_backup_path=results_path+"btb-seq/"
-    # os.makedirs(repo_backup_path, exist_ok=True)
-    run(["cp", "-r", pipeline_path, repo_backup_path])
-    # shutil.copytree(pipeline_path, repo_backup_path)
+    run(["cp", "-r", btb_seq_path, repo_backup_path])
 
-    # simuG - simulate the genome
+    # Run Simulation
     simulate_genome(results_path)
+    simulate_reads(fasta_path, results_path)    
+    btb_seq(btb_seq_path, reads_path, results_path)
 
-    # read simulation -- chop up that genome
-    fasta_path = results_path + 'simulated-genome/simulated.simseq.genome.fa'
-    simulate_reads(fasta_path, results_path)
-
-    # btb-seq
-    reads_path = results_path+'simulated_reads/'
-    btb_seq(pipeline_path, reads_path, results_path)
-
-    # performance analysis
-    # /home/aaronfishman/validation-results/btb-seq/pipeline/Results_simulated_reads_22Oct21/snpTables/simulated.tab
-    simulated_snps = results_path + "simulated-genome/simulated.refseq2simseq.map.txt"
-    
+    # Analyse Results
     # HACK: this could easily break if additioanl files are present
     pipeline_directory = glob.glob(results_path + 'pipeline/*')[0] + '/'
-    pipeline_snps = pipeline_directory + 'snpTables/simulated.tab'
+    
     stats = analyse(simulated_snps, pipeline_snps)
 
+    # Write output
     with open(results_path+"stats.json", "w") as file:
         file.write(json.dumps(stats, indent=4))
 
-    return
+def main():
+    pipeline_path = '/home/aaronfishman/repos/btb-seq/'
+    results_path = '/home/aaronfishman/ebs/pipeline-results/btb-seq-6/'
+
+    # TODO: argparse
 
 if __name__ == '__main__':
     main()
