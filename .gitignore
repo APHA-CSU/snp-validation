@@ -1,2 +1,3 @@
 *.gz
 *.fastq
+*__pycache__/

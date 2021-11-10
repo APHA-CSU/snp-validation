@@ -125,6 +125,7 @@ def performance_test(results_path, btb_seq_path, reference_path, exist_ok=False,
     # Paths to simulated reference genome and simulated SNPs file
     fasta_path = simulated_genome_path + 'simulated.simseq.genome.fa'
     simulated_snps = simulated_genome_path + "simulated.refseq2simseq.map.txt"
+    mask_filepath = btb_seq_backup_path + "references/Mycbovis-2122-97_LT708304.fas.rpt.regions"
 
     # TODO: handle dwgsim vcf files. Make sure we are taking into account variants it might generate
 
@@ -153,7 +154,7 @@ def performance_test(results_path, btb_seq_path, reference_path, exist_ok=False,
     # HACK: this could easily break if additioanl files are present
     pipeline_directory = glob.glob(btb_seq_results_path + 'Results_simulated-reads_*')[0] + '/'
     pipeline_snps = pipeline_directory + 'snpTables/simulated_snps.tab'
-    stats = analyse(simulated_snps, pipeline_snps)
+    stats = analyse(simulated_snps, pipeline_snps, mask_filepath)
 
     # Write output
     with open(results_path + "stats.json", "w") as file:
