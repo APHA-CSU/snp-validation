@@ -6,8 +6,6 @@ from Bio import SeqIO
 Calculate performance stats from simulated data
 """
 
-"""../references/Mycbovis-2122-97_LT708304.fas.rpt.regions"""
-
 def masked_positions(mask_filepath):
     mask = pd.read_csv(mask_filepath,
         delimiter='\t',
