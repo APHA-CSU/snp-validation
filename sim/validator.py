@@ -7,28 +7,9 @@ import argparse
 import shutil
 
 from compare_snps import analyse
+from utils import run
 
 DEFAULT_REFERENCE_PATH = './Mycobacterium_bovis_AF212297_LT78304.fa'
-
-def run(cmd, *args, **kwargs):
-    """ Run a command and assert that the process exits with a non-zero exit code.
-        See python's subprocess.run command for args/kwargs
-
-        Parameters:
-            cmd (list): List of strings defining the command, see (subprocess.run in python docs)
-            cwd (str): Set surr
-
-        Returns:
-            None
-    """
-    # TODO: store stdout to a file
-    returncode = subprocess.run(cmd, *args, **kwargs).returncode
-
-    if returncode:
-        raise Exception("""*****
-            %s
-            cmd failed with exit code %i
-          *****""" % (cmd, returncode))
 
 def simulate_genome(reference_path, output_path, num_snps=16000):
     run([
@@ -90,7 +71,6 @@ def btb_seq(btb_seq_directory, reads_directory, results_directory):
     run(["bash", "./btb-seq", reads_directory,
          results_directory], cwd=btb_seq_directory)
 
-
 def performance_test(results_path, btb_seq_path, reference_path, exist_ok=False, branch=None):
     """ Runs a performance test against the pipeline
 
@@ -117,8 +97,8 @@ def performance_test(results_path, btb_seq_path, reference_path, exist_ok=False,
         raise Exception("Pipeline code repository not found")
 
     # Output Directories
-    simulated_genome_path = results_path + 'simulated-genome/'
-    simulated_reads_path = results_path + 'simulated-reads/'
+    simulated_genome_path = results_path + 'simug/'
+    simulated_reads_path = results_path + 'dwgsim/'
     btb_seq_backup_path = results_path + 'btb-seq/'
     btb_seq_results_path = results_path + 'btb-seq-results/'
 
@@ -145,7 +125,11 @@ def performance_test(results_path, btb_seq_path, reference_path, exist_ok=False,
         checkout(btb_seq_backup_path, branch)
 
     # Run Simulation
+    
     simulate_genome(reference_path, simulated_genome_path)
+    simulate_genome(reference_path, simulated_genome_path)
+
+    return
     simulate_reads(fasta_path, simulated_reads_path)
     btb_seq(btb_seq_backup_path, simulated_reads_path, btb_seq_results_path)
 
