@@ -123,9 +123,9 @@ def performance_test(results_path, btb_seq_path, reference_path, exist_ok=False,
     btb_seq_results_path = results_path + 'btb-seq-results/'
 
     # Paths to simulated reference genome and simulated SNPs file
-    fasta_path = simulated_genome_path + 'simulated.simseq.genome.fa'
-    simulated_snps = simulated_genome_path + "simulated.refseq2simseq.map.txt"
-    mask_filepath = btb_seq_backup_path + "references/Mycbovis-2122-97_LT708304.fas.rpt.regions"
+    # fasta_path = simulated_genome_path + 'simulated.simseq.genome.fa'
+    # simulated_snps = simulated_genome_path + "simulated.refseq2simseq.map.txt"
+    # mask_filepath = btb_seq_backup_path + "references/Mycbovis-2122-97_LT708304.fas.rpt.regions"
 
     # TODO: handle dwgsim vcf files. Make sure we are taking into account variants it might generate
 
@@ -152,9 +152,9 @@ def performance_test(results_path, btb_seq_path, reference_path, exist_ok=False,
     simulate_genome(reference_path, simulated_genome_path + 'sample2.', seed=666)
 
     # Simulate Reads
-
-
-    simulate_reads(fasta_path, simulated_reads_path)
+    for sample in samples:
+        fasta_path = simulated_genome_path + sample + '.simulated.simseq.genome.fa'
+        simulate_reads(fasta_path, simulated_reads_path)
 
     # Analyse
     btb_seq(btb_seq_backup_path, simulated_reads_path, btb_seq_results_path)
