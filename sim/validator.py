@@ -150,8 +150,6 @@ def performance_test(results_path, btb_seq_path, reference_path, exist_ok=False,
     # Prepare Genomes
     samples = ["sample1", "sample2"]
     
-    simulate_genome(reference_path, simulated_genome_path + 'sample2.')
-
     # Simulate Reads
     for sample in samples:
         simulate_genome(reference_path, simulated_genome_path + sample + '.')
@@ -179,26 +177,6 @@ def performance_test(results_path, btb_seq_path, reference_path, exist_ok=False,
     stats_table = pd.DataFrame(stats)
     stats_table.to_csv(results_path + "stats.csv")
 
-def temp():
-    results_path = '/home/aaronfishman/temp-results/simulated-6/'
-    samples = ["sample1", "sample2"]
-    simulated_genome_path = results_path + 'simulated-genome/'
-    pipeline_directory = '/home/aaronfishman/temp-results/simulated-6/btb-seq-results/Results_simulated-reads_11Nov21/'
-    simulated_reads_path = results_path + 'simulated-reads/'
-    btb_seq_backup_path = results_path + 'btb-seq/'
-    btb_seq_results_path = results_path + 'btb-seq-results/'
-    mask_filepath = btb_seq_backup_path + "references/Mycbovis-2122-97_LT708304.fas.rpt.regions"
-
-
-    # Analyse
-    stats = []
-    for sample in samples:
-        simulated_snps = simulated_genome_path + sample + ".simulated.refseq2simseq.map.txt"
-        pipeline_snps = pipeline_directory + f'snpTables/{sample}_snps.tab'
-        stats.append(analyse(simulated_snps, pipeline_snps, mask_filepath))
-
-    stats = pd.DataFrame(stats)
-
 def checkout(repo_path, branch):
     run(["git", "checkout", str(branch)], cwd=repo_path)
 
@@ -217,9 +195,4 @@ def main():
     performance_test(args.results, args.btb_seq, args.ref, args.branch)
 
 if __name__ == '__main__':
-    results = '/home/aaronfishman/temp-results/simulated-6/'
-    btb_seq_path = '/home/aaronfishman/repos/btb-seq/'
-    ref = DEFAULT_REFERENCE_PATH
-    run(["sudo", "rm", "-r", results])
-    performance_test(results, btb_seq_path, ref)
-    # main()
+     main()
