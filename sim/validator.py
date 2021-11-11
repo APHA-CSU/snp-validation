@@ -31,11 +31,31 @@ def run(cmd, *args, **kwargs):
           *****""" % (cmd, returncode))
 
 def simulate_genome_random_snps(cmd, num_snps=16000, seed=1):
+    """ Simulated a genome with random SNPs
+
+        Parameters:
+            cmd (list): List of strings defining the command, see (subprocess.run in python docs)
+            num_snps (int): Number of random SNPs
+            seed (int): Seed value for simulation
+
+        Returns:
+            None
+    """
     cmd.extend(["-snp_count", str(num_snps),
                 "-seed", str(seed)])
     run(cmd)
 
 def simulate_genome_from_vcf(cmd, predef_snp_path, seed=1):
+    """ Simulated a genome with random SNPs
+
+        Parameters:
+            cmd (list): List of strings defining the command, see (subprocess.run in python docs)
+            predef_snps_path (str): Path to snippy generated VCF file.
+            seed (int): Seed value for simulation
+
+        Returns:
+            None
+    """
     cmd.extend(["-snp_vcf", predef_snp_path,
                #"-indel_vcf", predef_snp_path, # tells simuG to also simulate predefined indels.
                 "-seed", str(seed)])
