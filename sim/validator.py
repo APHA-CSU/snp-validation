@@ -6,6 +6,8 @@ import sys
 import argparse
 import shutil
 
+import pandas as pd
+
 from compare_snps import analyse
 
 DEFAULT_REFERENCE_PATH = './Mycobacterium_bovis_AF212297_LT78304.fa'
@@ -72,7 +74,8 @@ def simulate_genome(reference_path, simulated_genome_path, params):
 
 def simulate_reads(
     genome_fasta,
-    output_path,
+    output_directory,
+    sample_name="simulated",
     num_read_pairs=150000,
     read_length=150,
     seed=1,
@@ -82,10 +85,10 @@ def simulate_reads(
     indel_mutation_fraction=0,
     indel_extension_probability=0,
     per_base_error_rate="0" # TODO: default to Ele's reccomendation? 0.001-0.01
-):
-    output_prefix = output_path + "simulated"
+):   
     
     # How dwgsim chooses to name it's output fastq files
+    output_prefix = output_directory + sample_name
     dwgsim_read_1 = output_prefix + ".bwa.read1.fastq.gz"
     dwgsim_read_2 = output_prefix + ".bwa.read2.fastq.gz"
 
@@ -126,8 +129,6 @@ def performance_test(results_path, btb_seq_path, reference_path, exist_ok=False,
     """ Runs a performance test against the pipeline
 
         Parameters:
-            predef_snp_path (str): Path to gzipped VCF (vcf.gz) file containing predefined SNPs from snippy
-            num_snps (int): Number of manually introduced SNPs, not used if predef_snp_path parameter is set
             btb_seq_path (str): Path to btb-seq code is stored
             results_path (str): Output path to performance test results
             reference_path (str): Path to reference fasta
@@ -157,8 +158,6 @@ def performance_test(results_path, btb_seq_path, reference_path, exist_ok=False,
     btb_seq_results_path = results_path + 'btb-seq-results/'
 
     # Paths to simulated reference genome and simulated SNPs file
-    fasta_path = simulated_genome_path + 'simulated.simseq.genome.fa'
-    simulated_snps = simulated_genome_path + "simulated.refseq2simseq.map.txt"
     mask_filepath = btb_seq_backup_path + "references/Mycbovis-2122-97_LT708304.fas.rpt.regions"
 
     # TODO: handle dwgsim vcf files. Make sure we are taking into account variants it might generate
@@ -179,26 +178,33 @@ def performance_test(results_path, btb_seq_path, reference_path, exist_ok=False,
     if branch:
         checkout(btb_seq_backup_path, branch)
 
-    # Run Simulation 
-    # random snps
-    # simulate_genome_random_snps(reference_path, simulated_genome_path)
-    # from VCF
-    # TODO: remove hardcoding of snippy VCF file path
-    predef_snp_path = '/home/nickpestell/cameron/snps.vcf.gz'
-    simulate_genome_from_vcf(reference_path, simulated_genome_path, predef_snp_path)
+    # Prepare Genomes
+    samples = ["sample1", "sample2"]
+    
+    # Simulate Reads
+    for sample in samples:
+        simulate_genome_random_snps(reference_path, simulated_genome_path + sample + '.')
 
-    simulate_reads(fasta_path, simulated_reads_path)
+        # TODO: explicitly path fasta path to simulate
+        fasta_path = simulated_genome_path + sample + '.simulated.simseq.genome.fa'
+
+        simulate_reads(fasta_path, simulated_reads_path, sample_name=sample)
+
+    # Run the pipeline
     btb_seq(btb_seq_backup_path, simulated_reads_path, btb_seq_results_path)
 
     # Analyse Results
-    # HACK: this could easily break if additioanl files are present
+    # HACK: this could easily break if additional files are present
     pipeline_directory = glob.glob(btb_seq_results_path + 'Results_simulated-reads_*')[0] + '/'
-    pipeline_snps = pipeline_directory + 'snpTables/simulated_snps.tab'
-    stats = analyse(simulated_snps, pipeline_snps, mask_filepath)
 
-    # Write output
-    with open(results_path + "stats.json", "w") as file:
-        file.write(json.dumps(stats, indent=4))
+    stats = []
+    for sample in samples:
+        simulated_snps = simulated_genome_path + sample + ".simulated.refseq2simseq.map.txt"
+        pipeline_snps = pipeline_directory + f'snpTables/{sample}_snps.tab'
+        stats.append(analyse(simulated_snps, pipeline_snps, mask_filepath))
+
+    stats_table = pd.DataFrame(stats)
+    stats_table.to_csv(results_path + "stats.csv")
 
 def checkout(repo_path, branch):
     run(["git", "checkout", str(branch)], cwd=repo_path)
@@ -218,4 +224,4 @@ def main():
     performance_test(args.results, args.btb_seq, args.ref, branch=args.branch)
 
 if __name__ == '__main__':
-    main()
+     main()
