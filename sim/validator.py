@@ -30,14 +30,45 @@ def run(cmd, *args, **kwargs):
             cmd failed with exit code %i
           *****""" % (cmd, returncode))
 
-def simulate_genome(reference_path, output_path, num_snps=16000):
-    run([
-        "simuG.pl",
-        "-refseq", reference_path,
-        "-snp_count", str(num_snps),
-        "-prefix", output_path + "simulated"
-    ])
+def simulate_genome_random_snps(reference_path, simulated_genome_path, num_snps=16000, seed=1):
+    """ Simulated a genome with random SNPs
 
+        Parameters:
+            reference_path (str): Path to reference genome
+            simulated_genome_path (str): Path to simlated genome
+            num_snps (int): Number of random SNPs
+            seed (int): Seed value for simulation
+
+        Returns:
+            None
+    """
+    params = ["-snp_count", str(num_snps),
+                "-seed", str(seed)]
+    simulate_genome(reference_path, simulated_genome_path, params)
+
+def simulate_genome_from_vcf(reference_path, simulated_genome_path, predef_snp_path, seed=1):
+    """ Simulated a genome with random SNPs
+
+        Parameters:
+            reference_path (str): Path to reference genome
+            simulated_genome_path (str): Path to simlated genome
+            predef_snps_path (str): Path to snippy generated VCF file.
+            seed (int): Seed value for simulation
+
+        Returns:
+            None
+    """
+    params = ["-snp_vcf", predef_snp_path, 
+              #"-indel_vcf", predef_snp_path # tells simuG to also simulate predefined indels.
+              "-seed", str(seed)]
+    simulate_genome(reference_path, simulated_genome_path, params)
+
+def simulate_genome(reference_path, simulated_genome_path, params):
+    cmd = ["simuG.pl",
+           "-refseq", reference_path,
+           "-prefix", simulated_genome_path + "simulated"]
+    cmd.extend(params)
+    run(cmd)
 
 def simulate_reads(
     genome_fasta,
@@ -95,6 +126,8 @@ def performance_test(results_path, btb_seq_path, reference_path, exist_ok=False,
     """ Runs a performance test against the pipeline
 
         Parameters:
+            predef_snp_path (str): Path to gzipped VCF (vcf.gz) file containing predefined SNPs from snippy
+            num_snps (int): Number of manually introduced SNPs, not used if predef_snp_path parameter is set
             btb_seq_path (str): Path to btb-seq code is stored
             results_path (str): Output path to performance test results
             reference_path (str): Path to reference fasta
@@ -104,6 +137,7 @@ def performance_test(results_path, btb_seq_path, reference_path, exist_ok=False,
         Returns:
             None
     """
+
     # Add trailing slash
     btb_seq_path = os.path.join(btb_seq_path, '')
     results_path = os.path.join(results_path, '')
@@ -125,35 +159,42 @@ def performance_test(results_path, btb_seq_path, reference_path, exist_ok=False,
     # Paths to simulated reference genome and simulated SNPs file
     fasta_path = simulated_genome_path + 'simulated.simseq.genome.fa'
     simulated_snps = simulated_genome_path + "simulated.refseq2simseq.map.txt"
+    mask_filepath = btb_seq_backup_path + "references/Mycbovis-2122-97_LT708304.fas.rpt.regions"
 
     # TODO: handle dwgsim vcf files. Make sure we are taking into account variants it might generate
 
     # Create Output Directories
     os.makedirs(simulated_genome_path, exist_ok=exist_ok)
     os.makedirs(simulated_reads_path, exist_ok=exist_ok)
-    os.makedirs(btb_seq_results_path, exist_ok=exist_ok)    
+    os.makedirs(btb_seq_results_path, exist_ok=exist_ok)
 
     # Backup btb-seq code
     # TODO: exclude the work/ subdirectory from this operation.
     #   This could potentially copy large amounts of data
     #   from the work/ directory nextflow generates
-    shutil.copytree(btb_seq_path, btb_seq_backup_path)
+    shutil.copytree(btb_seq_path, btb_seq_backup_path, symlinks=True)
 
     # TODO: Use nextflow's method of choosing github branches
     #    the method handles automatic pulling of github branches.
     if branch:
         checkout(btb_seq_backup_path, branch)
 
-    # Run Simulation
-    simulate_genome(reference_path, simulated_genome_path)
+    # Run Simulation 
+    # random snps
+    # simulate_genome_random_snps(reference_path, simulated_genome_path)
+    # from VCF
+    # TODO: remove hardcoding of snippy VCF file path
+    predef_snp_path = '/home/nickpestell/cameron/snps.vcf.gz'
+    simulate_genome_from_vcf(reference_path, simulated_genome_path, predef_snp_path)
+
     simulate_reads(fasta_path, simulated_reads_path)
     btb_seq(btb_seq_backup_path, simulated_reads_path, btb_seq_results_path)
 
     # Analyse Results
     # HACK: this could easily break if additioanl files are present
     pipeline_directory = glob.glob(btb_seq_results_path + 'Results_simulated-reads_*')[0] + '/'
-    pipeline_snps = pipeline_directory + 'snpTables/simulated.tab'
-    stats = analyse(simulated_snps, pipeline_snps)
+    pipeline_snps = pipeline_directory + 'snpTables/simulated_snps.tab'
+    stats = analyse(simulated_snps, pipeline_snps, mask_filepath)
 
     # Write output
     with open(results_path + "stats.json", "w") as file:
@@ -166,15 +207,15 @@ def main():
     # Parse
     parser = argparse.ArgumentParser(
         description="Performance test btb-seq code")
+    parser.add_argument("btb_seq", help="path to btb-seq code")
     parser.add_argument("results", help="path to performance test results")
-    parser.add_argument("--btb_seq", default="../", help="path to btb-seq code")
-    parser.add_argument("--ref", "-r", help="path to reference fasta", default=DEFAULT_REFERENCE_PATH)
-    parser.add_argument("--branch", help="path to reference fasta", default=None)
+    parser.add_argument("--branch", help="name of btb-seq branch to use", default=None)
+    parser.add_argument("--ref", "-r", help="optional path to reference fasta", default=DEFAULT_REFERENCE_PATH)
 
     args = parser.parse_args(sys.argv[1:])
 
     # Run
-    performance_test(args.results, args.btb_seq, args.ref, args.branch)
+    performance_test(args.results, args.btb_seq, args.ref, branch=args.branch)
 
 if __name__ == '__main__':
     main()
