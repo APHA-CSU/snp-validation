@@ -9,68 +9,11 @@ import shutil
 import pandas as pd
 
 from compare_snps import analyse
+from sample import *
+from utils import run
 
 DEFAULT_REFERENCE_PATH = './Mycobacterium_bovis_AF212297_LT78304.fa'
 
-def run(cmd, *args, **kwargs):
-    """ Run a command and assert that the process exits with a non-zero exit code.
-        See python's subprocess.run command for args/kwargs
-
-        Parameters:
-            cmd (list): List of strings defining the command, see (subprocess.run in python docs)
-            cwd (str): Set surr
-
-        Returns:
-            None
-    """
-    # TODO: store stdout to a file
-    returncode = subprocess.run(cmd, *args, **kwargs).returncode
-
-    if returncode:
-        raise Exception("""*****
-            %s
-            cmd failed with exit code %i
-          *****""" % (cmd, returncode))
-
-def simulate_genome_random_snps(reference_path, simulated_genome_path, num_snps=16000, seed=1):
-    """ Simulated a genome with random SNPs
-
-        Parameters:
-            reference_path (str): Path to reference genome
-            simulated_genome_path (str): Path to simlated genome
-            num_snps (int): Number of random SNPs
-            seed (int): Seed value for simulation
-
-        Returns:
-            None
-    """
-    params = ["-snp_count", str(num_snps),
-                "-seed", str(seed)]
-    simulate_genome(reference_path, simulated_genome_path, params)
-
-def simulate_genome_from_vcf(reference_path, simulated_genome_path, predef_snp_path, seed=1):
-    """ Simulated a genome with random SNPs
-
-        Parameters:
-            reference_path (str): Path to reference genome
-            simulated_genome_path (str): Path to simlated genome
-            predef_snps_path (str): Path to snippy generated VCF file.
-            seed (int): Seed value for simulation
-
-        Returns:
-            None
-    """
-    params = ["-snp_vcf", predef_snp_path, 
-              #"-indel_vcf", predef_snp_path # tells simuG to also simulate predefined indels.
-              "-seed", str(seed)]
-    simulate_genome(reference_path, simulated_genome_path, params)
-
-def simulate_genome(reference_path, simulated_genome_path, params):
-    cmd = ["simuG.pl",
-           "-refseq", reference_path,
-           "-prefix", simulated_genome_path + "simulated"]
-    cmd.extend(params)
-    run(cmd)
 
 def simulate_reads(
     genome_fasta,
@@ -125,7 +68,7 @@ def btb_seq(btb_seq_directory, reads_directory, results_directory):
          results_directory], cwd=btb_seq_directory)
 
 
-def performance_test(results_path, btb_seq_path, reference_path, exist_ok=False, branch=None):
+def performance_test(results_path, btb_seq_path, reference_path, exist_ok=True, branch=None):
     """ Runs a performance test against the pipeline
 
         Parameters:
@@ -143,13 +86,13 @@ def performance_test(results_path, btb_seq_path, reference_path, exist_ok=False,
     btb_seq_path = os.path.join(btb_seq_path, '')
     results_path = os.path.join(results_path, '')
 
-    # Validate Input
-    if os.path.isdir(results_path):
-        raise Exception("Output results path already exists")
-    os.makedirs(results_path)
+    # # Validate Input
+    # if os.path.isdir(results_path):
+    #     raise Exception("Output results path already exists")
+    # os.makedirs(results_path)
 
-    if not os.path.isdir(btb_seq_path):
-        raise Exception("Pipeline code repository not found")
+    # if not os.path.isdir(btb_seq_path):
+    #     raise Exception("Pipeline code repository not found")
 
     # Output Directories
     simulated_genome_path = results_path + 'simulated-genome/'
@@ -180,15 +123,23 @@ def performance_test(results_path, btb_seq_path, reference_path, exist_ok=False,
 
     # Prepare Genomes
     samples = ["sample1", "sample2"]
+    samples = [RandomSample(16000, 1)]
     
     # Simulate Reads
     for sample in samples:
-        simulate_genome_random_snps(reference_path, simulated_genome_path + sample + '.')
+        # TODO: this is ugly, make this human-readable
+        sample_name = str(id(sample))
 
-        # TODO: explicitly path fasta path to simulate
-        fasta_path = simulated_genome_path + sample + '.simulated.simseq.genome.fa'
+        sample.simulate(reference_path, simulated_genome_path + sample_name + '.')
 
-        simulate_reads(fasta_path, simulated_reads_path, sample_name=sample)
+        # simulate_genome_random_snps(reference_path, simulated_genome_path + sample + '.')
+
+        # # TODO: explicitly path fasta path to simulate
+        fasta_path = simulated_genome_path + sample_name + '.simulated.simseq.genome.fa'
+
+        simulate_reads(fasta_path, simulated_reads_path, sample_name=sample_name)
+
+    quit()
 
     # Run the pipeline
     btb_seq(btb_seq_backup_path, simulated_reads_path, btb_seq_results_path)
@@ -202,6 +153,8 @@ def performance_test(results_path, btb_seq_path, reference_path, exist_ok=False,
         simulated_snps = simulated_genome_path + sample + ".simulated.refseq2simseq.map.txt"
         pipeline_snps = pipeline_directory + f'snpTables/{sample}_snps.tab'
         stats.append(analyse(simulated_snps, pipeline_snps, mask_filepath))
+
+    # TODO: add sample name to output
 
     stats_table = pd.DataFrame(stats)
     stats_table.to_csv(results_path + "stats.csv")
@@ -224,4 +177,4 @@ def main():
     performance_test(args.results, args.btb_seq, args.ref, branch=args.branch)
 
 if __name__ == '__main__':
-     main()
+    main()
