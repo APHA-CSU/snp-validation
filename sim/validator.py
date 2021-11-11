@@ -126,7 +126,6 @@ def performance_test(results_path, btb_seq_path, reference_path, exist_ok=False,
     btb_seq_results_path = results_path + 'btb-seq-results/'
 
     # Paths to simulated reference genome and simulated SNPs file
-    # simulated_snps = simulated_genome_path + "simulated.refseq2simseq.map.txt"
     mask_filepath = btb_seq_backup_path + "references/Mycbovis-2122-97_LT708304.fas.rpt.regions"
 
     # TODO: handle dwgsim vcf files. Make sure we are taking into account variants it might generate
