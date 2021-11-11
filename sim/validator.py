@@ -30,25 +30,35 @@ def run(cmd, *args, **kwargs):
             cmd failed with exit code %i
           *****""" % (cmd, returncode))
 
-def simulate_genome(predef_snp_path, reference_path, output_path, num_snps=16000, seed=1):
+def simulate_genome_random_snps(reference_path, output_path, seed=1):
+    run([
+        "simuG.pl",
+        "-refseq", reference_path,
+        "-snp_count 16000",
+        "-prefix", output_path + "simulated",
+        "-seed", str(seed)
+    ])
+
+def simulate_genome_from_vcf(predef_snp_path, reference_path, output_path, seed=1):
+    run([
+        "simuG.pl",
+        "-refseq", reference_path,
+        "-snp_vcf", predef_snp_path,
+        # below line tells simuG to also simulate predefined indels.
+        #"-indel_vcf", predef_snp_path, 
+        "-prefix", output_path + "simulated",
+        "-seed", str(seed)
+    ])
+
+def simulate_genome(reference_path, output_path, predef_snp_path=False, num_snps=16000, seed=1):
+    cmd = ["simuG.pl",
+            "-refseq", reference_path,
+            "-prefix", output_path + "simulated",
+            "-seed", str(seed)]
     if predef_snp_path:
-        run([
-            "simuG.pl",
-            "-refseq", reference_path,
-            "-snp_vcf", predef_snp_path,
-            # below line tells simuG to also simulate predefined indels.
-            #"-indel_vcf", predef_snp_path, 
-            "-prefix", output_path + "simulated",
-            "-seed", str(seed)
-        ])
+        run(cmd.extend(["-snp_vcf", predef_snp_path]))
     else:
-        run([
-            "simuG.pl",
-            "-refseq", reference_path,
-            "-snp_count", str(num_snps),
-            "-prefix", output_path + "simulated",
-            "-seed", str(seed)
-        ])
+        run(cmd.extend(["-snp_count", str(num_snps)]))
 
 def simulate_reads(
     genome_fasta,
@@ -102,7 +112,7 @@ def btb_seq(btb_seq_directory, reads_directory, results_directory):
          results_directory], cwd=btb_seq_directory)
 
 
-def performance_test(predef_snp_path, num_snps, results_path, btb_seq_path, reference_path, exist_ok=False, branch=None):
+def performance_test(results_path, btb_seq_path, reference_path, num_snps = 16000, exist_ok=False, branch=None):
     """ Runs a performance test against the pipeline
 
         Parameters:
@@ -129,9 +139,6 @@ def performance_test(predef_snp_path, num_snps, results_path, btb_seq_path, refe
 
     if not os.path.isdir(btb_seq_path):
         raise Exception("Pipeline code repository not found")
-
-    if predef_snp_path and not os.path.isfile(predef_snp_path):
-        raise Exception("predfined SNPs file not found")
 
     # Output Directories
     simulated_genome_path = results_path + 'simulated-genome/'
@@ -162,8 +169,16 @@ def performance_test(predef_snp_path, num_snps, results_path, btb_seq_path, refe
     if branch:
         checkout(btb_seq_backup_path, branch)
 
-    # Run Simulation
-    simulate_genome(predef_snp_path, reference_path, simulated_genome_path, num_snps)
+    # Run Simulation 
+
+    # random snps
+    # simulate_genome_random_snps(reference_path, simulated_genome_path)
+
+    # from VCF
+    # TODO: remove hardcoding of snippy VCF file
+    predef_snp_path = '/home/nickpestell/cameron/snps.vcf.gz'
+    simulate_genome_from_vcf(predef_snp_path, reference_path, simulated_genome_path)
+
     simulate_reads(fasta_path, simulated_reads_path)
     btb_seq(btb_seq_backup_path, simulated_reads_path, btb_seq_results_path)
 
@@ -187,14 +202,12 @@ def main():
     parser.add_argument("btb_seq", help="path to btb-seq code")
     parser.add_argument("results", help="path to performance test results")
     parser.add_argument("--branch", help="name of btb-seq branch to use", default=None)
-    parser.add_argument("--predef_snps", help="optional path to VCF file with predefined SNPs", default=None)
-    parser.add_argument("--num_snps", help="number of simulated snps, overridden by predef_snps", default=16000)
     parser.add_argument("--ref", "-r", help="optional path to reference fasta", default=DEFAULT_REFERENCE_PATH)
 
     args = parser.parse_args(sys.argv[1:])
 
     # Run
-    performance_test(args.predef_snps, args.num_snps, args.results, args.btb_seq, args.ref, args.branch)
+    performance_test(args.results, args.btb_seq, args.ref, branch=args.branch)
 
 if __name__ == '__main__':
     main()
