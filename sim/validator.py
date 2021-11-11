@@ -6,6 +6,8 @@ import sys
 import argparse
 import shutil
 
+import pandas as pd
+
 from compare_snps import analyse
 
 DEFAULT_REFERENCE_PATH = './Mycobacterium_bovis_AF212297_LT78304.fa'
@@ -124,9 +126,8 @@ def performance_test(results_path, btb_seq_path, reference_path, exist_ok=False,
     btb_seq_results_path = results_path + 'btb-seq-results/'
 
     # Paths to simulated reference genome and simulated SNPs file
-    # fasta_path = simulated_genome_path + 'simulated.simseq.genome.fa'
     # simulated_snps = simulated_genome_path + "simulated.refseq2simseq.map.txt"
-    # mask_filepath = btb_seq_backup_path + "references/Mycbovis-2122-97_LT708304.fas.rpt.regions"
+    mask_filepath = btb_seq_backup_path + "references/Mycbovis-2122-97_LT708304.fas.rpt.regions"
 
     # TODO: handle dwgsim vcf files. Make sure we are taking into account variants it might generate
 
@@ -167,11 +168,36 @@ def performance_test(results_path, btb_seq_path, reference_path, exist_ok=False,
     # HACK: this could easily break if additioanl files are present
     pipeline_directory = glob.glob(btb_seq_results_path + 'Results_simulated-reads_*')[0] + '/'
     pipeline_snps = pipeline_directory + 'snpTables/simulated_snps.tab'
-    stats = analyse(simulated_snps, pipeline_snps, mask_filepath)
 
-    # Write output
-    with open(results_path + "stats.json", "w") as file:
-        file.write(json.dumps(stats, indent=4))
+    # Analyse
+    stats = []
+    for sample in samples:
+        simulated_snps = simulated_genome_path + sample + ".simulated.refseq2simseq.map.txt"
+        pipeline_snps = pipeline_directory + f'snpTables/{sample}_snps.tab'
+        stats.append(analyse(simulated_snps, pipeline_snps, mask_filepath))
+
+    stats_table = pd.DataFrame(stats)
+    stats_table.to_csv(results_path + "stats.csv")
+
+def temp():
+    results_path = '/home/aaronfishman/temp-results/simulated-6/'
+    samples = ["sample1", "sample2"]
+    simulated_genome_path = results_path + 'simulated-genome/'
+    pipeline_directory = '/home/aaronfishman/temp-results/simulated-6/btb-seq-results/Results_simulated-reads_11Nov21/'
+    simulated_reads_path = results_path + 'simulated-reads/'
+    btb_seq_backup_path = results_path + 'btb-seq/'
+    btb_seq_results_path = results_path + 'btb-seq-results/'
+    mask_filepath = btb_seq_backup_path + "references/Mycbovis-2122-97_LT708304.fas.rpt.regions"
+
+
+    # Analyse
+    stats = []
+    for sample in samples:
+        simulated_snps = simulated_genome_path + sample + ".simulated.refseq2simseq.map.txt"
+        pipeline_snps = pipeline_directory + f'snpTables/{sample}_snps.tab'
+        stats.append(analyse(simulated_snps, pipeline_snps, mask_filepath))
+
+    stats = pd.DataFrame(stats)
 
 def checkout(repo_path, branch):
     run(["git", "checkout", str(branch)], cwd=repo_path)
