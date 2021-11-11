@@ -6,7 +6,7 @@ from Bio import SeqIO
 Calculate performance stats from simulated data
 """
 
-def masked_positions(mask_filepath='../references/Mycbovis-2122-97_LT708304.fas.rpt.regions'):
+def masked_positions(mask_filepath):
     mask = pd.read_csv(mask_filepath,
         delimiter='\t',
         skiprows=[0,1],
@@ -22,7 +22,7 @@ def masked_positions(mask_filepath='../references/Mycbovis-2122-97_LT708304.fas.
 
     return masked_pos
 
-def analyse(simulated_snps, pipeline_snps):
+def analyse(simulated_snps, pipeline_snps, mask_filepath):
     """ Compare simulated SNPs data from simuG against btb-seq's snpTable.tab
         If adjust == True: applies the mask to simulated SNPs and pipeline SNPs
         Returns a dictionary of performance stats
@@ -35,7 +35,7 @@ def analyse(simulated_snps, pipeline_snps):
     # Extract SNP positions
     simulated_pos = set(simulated['ref_start'].values)
     pipeline_pos = set(pipeline['POS'].values)
-    masked_pos = set(masked_positions())
+    masked_pos = set(masked_positions(mask_filepath))
 
     simulated_pos_adjusted = simulated_pos - masked_pos
     pipeline_pos_adjusted = pipeline_pos - masked_pos
