@@ -41,7 +41,8 @@ def simulate_genome(reference_path, output_path, num_snps=16000):
 
 def simulate_reads(
     genome_fasta,
-    output_path,
+    output_directory,
+    sample_name="simulated",
     num_read_pairs=150000,
     read_length=150,
     seed=1,
@@ -51,10 +52,10 @@ def simulate_reads(
     indel_mutation_fraction=0,
     indel_extension_probability=0,
     per_base_error_rate="0" # TODO: default to Ele's reccomendation? 0.001-0.01
-):
-    output_prefix = output_path + "simulated"
+):   
     
     # How dwgsim chooses to name it's output fastq files
+    output_prefix = output_directory + sample_name
     dwgsim_read_1 = output_prefix + ".bwa.read1.fastq.gz"
     dwgsim_read_2 = output_prefix + ".bwa.read2.fastq.gz"
 
@@ -147,7 +148,6 @@ def performance_test(results_path, btb_seq_path, reference_path, exist_ok=False,
 
     # Prepare Genomes
     samples = ["sample1", "sample2"]
-
     
     simulate_genome(reference_path, simulated_genome_path + 'sample2.')
 
@@ -158,7 +158,7 @@ def performance_test(results_path, btb_seq_path, reference_path, exist_ok=False,
         # TODO: explicitly path fasta path to simulate
         fasta_path = simulated_genome_path + sample + '.simulated.simseq.genome.fa'
 
-        simulate_reads(fasta_path, simulated_reads_path)
+        simulate_reads(fasta_path, simulated_reads_path, sample_name=sample)
 
     # Analyse
     btb_seq(btb_seq_backup_path, simulated_reads_path, btb_seq_results_path)
