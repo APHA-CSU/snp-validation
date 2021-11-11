@@ -138,7 +138,7 @@ def performance_test(results_path, btb_seq_path, reference_path, exist_ok=False,
     # TODO: exclude the work/ subdirectory from this operation.
     #   This could potentially copy large amounts of data
     #   from the work/ directory nextflow generates
-    shutil.copytree(btb_seq_path, btb_seq_backup_path)
+    shutil.copytree(btb_seq_path, btb_seq_backup_path, symlinks=True)
 
     # TODO: Use nextflow's method of choosing github branches
     #    the method handles automatic pulling of github branches.
