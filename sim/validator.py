@@ -129,8 +129,6 @@ def performance_test(results_path, btb_seq_path, reference_path, exist_ok=False,
     """ Runs a performance test against the pipeline
 
         Parameters:
-            predef_snp_path (str): Path to gzipped VCF (vcf.gz) file containing predefined SNPs from snippy
-            num_snps (int): Number of manually introduced SNPs, not used if predef_snp_path parameter is set
             btb_seq_path (str): Path to btb-seq code is stored
             results_path (str): Output path to performance test results
             reference_path (str): Path to reference fasta
@@ -185,7 +183,7 @@ def performance_test(results_path, btb_seq_path, reference_path, exist_ok=False,
     
     # Simulate Reads
     for sample in samples:
-        simulate_genome(reference_path, simulated_genome_path + sample + '.')
+        simulate_genome_random_snps(reference_path, simulated_genome_path + sample + '.')
 
         # TODO: explicitly path fasta path to simulate
         fasta_path = simulated_genome_path + sample + '.simulated.simseq.genome.fa'
