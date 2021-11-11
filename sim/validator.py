@@ -142,6 +142,7 @@ def performance_test(predef_snp_path, num_snps, results_path, btb_seq_path, refe
     # Paths to simulated reference genome and simulated SNPs file
     fasta_path = simulated_genome_path + 'simulated.simseq.genome.fa'
     simulated_snps = simulated_genome_path + "simulated.refseq2simseq.map.txt"
+    mask_filepath = btb_seq_backup_path + "references/Mycbovis-2122-97_LT708304.fas.rpt.regions"
 
     # TODO: handle dwgsim vcf files. Make sure we are taking into account variants it might generate
 
@@ -154,7 +155,7 @@ def performance_test(predef_snp_path, num_snps, results_path, btb_seq_path, refe
     # TODO: exclude the work/ subdirectory from this operation.
     #   This could potentially copy large amounts of data
     #   from the work/ directory nextflow generates
-    shutil.copytree(btb_seq_path, btb_seq_backup_path)
+    shutil.copytree(btb_seq_path, btb_seq_backup_path, symlinks=True)
 
     # TODO: Use nextflow's method of choosing github branches
     #    the method handles automatic pulling of github branches.
@@ -169,8 +170,8 @@ def performance_test(predef_snp_path, num_snps, results_path, btb_seq_path, refe
     # Analyse Results
     # HACK: this could easily break if additioanl files are present
     pipeline_directory = glob.glob(btb_seq_results_path + 'Results_simulated-reads_*')[0] + '/'
-    pipeline_snps = pipeline_directory + 'snpTables/simulated.tab'
-    stats = analyse(simulated_snps, pipeline_snps)
+    pipeline_snps = pipeline_directory + 'snpTables/simulated_snps.tab'
+    stats = analyse(simulated_snps, pipeline_snps, mask_filepath)
 
     # Write output
     with open(results_path + "stats.json", "w") as file:
@@ -183,8 +184,8 @@ def main():
     # Parse
     parser = argparse.ArgumentParser(
         description="Performance test btb-seq code")
+    parser.add_argument("btb_seq", help="path to btb-seq code")
     parser.add_argument("results", help="path to performance test results")
-    parser.add_argument("--btb_seq", default="../", help="path to btb-seq code")
     parser.add_argument("--branch", help="name of btb-seq branch to use", default=None)
     parser.add_argument("--predef_snps", help="optional path to VCF file with predefined SNPs", default=None)
     parser.add_argument("--num_snps", help="number of simulated snps, overridden by predef_snps", default=16000)
