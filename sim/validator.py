@@ -145,9 +145,18 @@ def performance_test(results_path, btb_seq_path, reference_path, exist_ok=False,
     if branch:
         checkout(btb_seq_backup_path, branch)
 
-    # Run Simulation
-    simulate_genome(reference_path, simulated_genome_path)
+    # Prepare Genomes
+    samples = ["sample1", "sample2"]
+
+    simulate_genome(reference_path, simulated_genome_path + 'sample1.', seed=1)
+    simulate_genome(reference_path, simulated_genome_path + 'sample2.', seed=666)
+
+    # Simulate Reads
+
+
     simulate_reads(fasta_path, simulated_reads_path)
+
+    # Analyse
     btb_seq(btb_seq_backup_path, simulated_reads_path, btb_seq_results_path)
 
     # Analyse Results
@@ -178,4 +187,9 @@ def main():
     performance_test(args.results, args.btb_seq, args.ref, args.branch)
 
 if __name__ == '__main__':
-    main()
+    results = '/home/aaronfishman/temp-results/simulated-6/'
+    btb_seq = '/home/aaronfishman/repos/btb-seq/'
+    ref = DEFAULT_REFERENCE_PATH
+    run(["sudo", "rm", "-r", results])
+    performance_test(results, btb_seq, ref)
+    # main()
