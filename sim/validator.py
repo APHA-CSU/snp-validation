@@ -30,35 +30,16 @@ def run(cmd, *args, **kwargs):
             cmd failed with exit code %i
           *****""" % (cmd, returncode))
 
-def simulate_genome_random_snps(reference_path, output_path, seed=1):
-    run([
-        "simuG.pl",
-        "-refseq", reference_path,
-        "-snp_count 16000",
-        "-prefix", output_path + "simulated",
-        "-seed", str(seed)
-    ])
+def simulate_genome_random_snps(cmd, num_snps=16000, seed=1):
+    cmd.extend(["-snp_count", str(num_snps),
+                "-seed", str(seed)])
+    run(cmd)
 
-def simulate_genome_from_vcf(predef_snp_path, reference_path, output_path, seed=1):
-    run([
-        "simuG.pl",
-        "-refseq", reference_path,
-        "-snp_vcf", predef_snp_path,
-        # below line tells simuG to also simulate predefined indels.
-        #"-indel_vcf", predef_snp_path, 
-        "-prefix", output_path + "simulated",
-        "-seed", str(seed)
-    ])
-
-def simulate_genome(reference_path, output_path, predef_snp_path=False, num_snps=16000, seed=1):
-    cmd = ["simuG.pl",
-            "-refseq", reference_path,
-            "-prefix", output_path + "simulated",
-            "-seed", str(seed)]
-    if predef_snp_path:
-        run(cmd.extend(["-snp_vcf", predef_snp_path]))
-    else:
-        run(cmd.extend(["-snp_count", str(num_snps)]))
+def simulate_genome_from_vcf(cmd, predef_snp_path, seed=1):
+    cmd.extend(["-snp_vcf", predef_snp_path,
+               #"-indel_vcf", predef_snp_path, # tells simuG to also simulate predefined indels.
+                "-seed", str(seed)])
+    run(cmd)
 
 def simulate_reads(
     genome_fasta,
@@ -112,7 +93,7 @@ def btb_seq(btb_seq_directory, reads_directory, results_directory):
          results_directory], cwd=btb_seq_directory)
 
 
-def performance_test(results_path, btb_seq_path, reference_path, num_snps = 16000, exist_ok=False, branch=None):
+def performance_test(results_path, btb_seq_path, reference_path, exist_ok=False, branch=None):
     """ Runs a performance test against the pipeline
 
         Parameters:
@@ -170,14 +151,15 @@ def performance_test(results_path, btb_seq_path, reference_path, num_snps = 1600
         checkout(btb_seq_backup_path, branch)
 
     # Run Simulation 
-
+    cmd = ["simuG.pl",
+           "-refseq", reference_path,
+           "-prefix", simulated_genome_path + "simulated"]
     # random snps
-    # simulate_genome_random_snps(reference_path, simulated_genome_path)
-
+    # simulate_genome_random_snps(cmd)
     # from VCF
-    # TODO: remove hardcoding of snippy VCF file
+    # TODO: remove hardcoding of snippy VCF file path
     predef_snp_path = '/home/nickpestell/cameron/snps.vcf.gz'
-    simulate_genome_from_vcf(predef_snp_path, reference_path, simulated_genome_path)
+    simulate_genome_from_vcf(cmd, predef_snp_path)
 
     simulate_reads(fasta_path, simulated_reads_path)
     btb_seq(btb_seq_backup_path, simulated_reads_path, btb_seq_results_path)
