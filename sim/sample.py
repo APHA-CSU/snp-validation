@@ -19,7 +19,16 @@ class Sample:
 class VcfSample(Sample):
     def __init__(self, predef_snp_path, seed=1):
         self.seed = seed
+
+        # TODO: check predef_snp_path exists
         self.predef_snp_path = predef_snp_path
+
+    @property
+    def name(self):
+        # extract filename
+        #TODO: this will fail if the extension is not 3 charachters long
+        basename = os.path.basename(self.predef_snp_path)[:-4]
+        return f"{type(self).__name__}-{basename}-seed{self.seed}"
 
     def simulate_genome(self, reference_path, simulated_genome_path):
         simulate_genome_from_vcf(reference_path, simulated_genome_path, self.predef_snp_path, seed=1)
