@@ -104,9 +104,6 @@ def simulate_reads(
     indel_extension_probability=0,
     per_base_error_rate="0" # TODO: default to Ele's reccomendation? 0.001-0.01
 ):   
-    #TODO: delete me
-    num_read_pairs=1000
-
     # How dwgsim chooses to name it's output fastq files
     output_prefix = output_directory + sample_name
     dwgsim_read_1 = output_prefix + ".bwa.read1.fastq.gz"

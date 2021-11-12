@@ -64,12 +64,12 @@ def performance_test(
     results_path = os.path.join(results_path, '')
 
     # # Validate Input
-    # if os.path.isdir(results_path):
-    #     raise Exception("Output results path already exists")
-    # os.makedirs(results_path)
+    if os.path.isdir(results_path):
+        raise Exception("Output results path already exists")
+    os.makedirs(results_path)
 
-    # if not os.path.isdir(btb_seq_path):
-    #     raise Exception("Pipeline code repository not found")
+    if not os.path.isdir(btb_seq_path):
+        raise Exception("Pipeline code repository not found")
 
     # Output Directories
     simulated_genome_path = results_path + 'simulated-genome/'
@@ -82,30 +82,30 @@ def performance_test(
 
     # TODO: handle dwgsim vcf files. Make sure we are taking into account variants it might generate
 
-    # # Create Output Directories
-    # os.makedirs(simulated_genome_path, exist_ok=exist_ok)
-    # os.makedirs(simulated_reads_path, exist_ok=exist_ok)
-    # os.makedirs(btb_seq_results_path, exist_ok=exist_ok)
+    # Create Output Directories
+    os.makedirs(simulated_genome_path, exist_ok=exist_ok)
+    os.makedirs(simulated_reads_path, exist_ok=exist_ok)
+    os.makedirs(btb_seq_results_path, exist_ok=exist_ok)
 
     # Backup btb-seq code
     # TODO: exclude the work/ subdirectory from this operation.
     #   This could potentially copy large amounts of data
     #   from the work/ directory nextflow generates
-    # shutil.copytree(btb_seq_path, btb_seq_backup_path, symlinks=True)
+    shutil.copytree(btb_seq_path, btb_seq_backup_path, symlinks=True)
 
     # TODO: Use nextflow's method of choosing github branches
     #    the method handles automatic pulling of github branches.
     if branch:
         checkout(btb_seq_backup_path, branch)
 
-    # # Simulate Reads
-    # # TODO:could these function singatures be improved?
-    # for sample in samples:
-    #     sample.simulate_genome(reference_path, simulated_genome_path + sample.name)
-    #     sample.simulate_reads(simulated_genome_path, simulated_reads_path)
+    # Simulate Reads
+    # TODO:could these function singatures be improved?
+    for sample in samples:
+        sample.simulate_genome(reference_path, simulated_genome_path + sample.name)
+        sample.simulate_reads(simulated_genome_path, simulated_reads_path)
 
-    # # Run the pipeline
-    # btb_seq(btb_seq_backup_path, simulated_reads_path, btb_seq_results_path)
+    # Run the pipeline
+    btb_seq(btb_seq_backup_path, simulated_reads_path, btb_seq_results_path)
 
     # Analyse Results
     # HACK: this could easily break if additional files are present
@@ -142,7 +142,6 @@ def main():
     # Run
     samples = standard_samples()
 
-    # run(["sudo", "rm", "-r", args.results])
     performance_test(
         args.results, 
         args.btb_seq, 
