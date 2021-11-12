@@ -3,18 +3,17 @@ from utils import run
 import os
 
 class Sample:
-    def simulate(self):
+    def simulate_genome(self):
         raise NotImplementedError()
 
     @property
     def name(self):
         # TODO: this is ugly, make this human-readable
-        return str(id(self))
+        return f"unnamed-{str(id(self))}"
 
     def simulate_reads(self, simulated_genome_path, simulated_reads_path):
         # # TODO: explicitly path fasta path to simulate
         fasta_path = simulated_genome_path + self.name + '.simulated.simseq.genome.fa'
-
         simulate_reads(fasta_path, simulated_reads_path, sample_name=self.name)
 
 class VcfSample(Sample):
@@ -25,8 +24,12 @@ class RandomSample(Sample):
     def __init__(self, num_snps, seed=1):
         self.num_snps = num_snps
         self.seed = seed
+    
+    @property
+    def name(self):
+        return f"{type(self).__name__}-snps{self.num_snps}-seed{self.seed}"
 
-    def simulate(self, reference_path, simulated_genome_path):
+    def simulate_genome(self, reference_path, simulated_genome_path):
         simulate_genome_random_snps(reference_path, simulated_genome_path, num_snps=self.num_snps, seed=self.seed)
 
 # reference_path, simulated_genome_path, num_snps=16000, seed=1

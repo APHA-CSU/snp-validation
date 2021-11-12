@@ -79,7 +79,7 @@ def performance_test(results_path, btb_seq_path, reference_path, exist_ok=True, 
     
     # Simulate Reads
     for sample in samples:
-        sample.simulate(reference_path, simulated_genome_path + sample.name + '.')
+        sample.simulate_genome(reference_path, simulated_genome_path + sample.name + '.')
         sample.simulate_reads(simulated_genome_path, simulated_reads_path)
 
     quit()
