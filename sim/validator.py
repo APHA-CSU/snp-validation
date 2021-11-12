@@ -15,58 +15,9 @@ from utils import run
 DEFAULT_REFERENCE_PATH = './Mycobacterium_bovis_AF212297_LT78304.fa'
 
 
-def simulate_reads(
-    genome_fasta,
-    output_directory,
-    sample_name="simulated",
-    num_read_pairs=150000,
-    read_length=150,
-    seed=1,
-    outer_distance=330,
-    random_dna_probability=0.01,
-    rate_of_mutations=0,
-    indel_mutation_fraction=0,
-    indel_extension_probability=0,
-    per_base_error_rate="0" # TODO: default to Ele's reccomendation? 0.001-0.01
-):   
-    
-    # How dwgsim chooses to name it's output fastq files
-    output_prefix = output_directory + sample_name
-    dwgsim_read_1 = output_prefix + ".bwa.read1.fastq.gz"
-    dwgsim_read_2 = output_prefix + ".bwa.read2.fastq.gz"
-
-    # Output fastq filenames compatible with btb-seq
-    read_1 = output_prefix + "_S1_R1_X.fastq.gz"
-    read_2 = output_prefix + "_S1_R2_X.fastq.gz"
-
-    run([
-        "dwgsim",
-        "-e", str(per_base_error_rate),
-        "-E", str(per_base_error_rate),
-        "-i",
-        "-d", str(outer_distance),
-        "-N", str(num_read_pairs),
-        "-1", str(read_length),
-        "-2", str(read_length),
-        "-r", str(rate_of_mutations),
-        "-R", str(indel_mutation_fraction),
-        "-X", str(indel_extension_probability),
-        "-y", str(random_dna_probability),
-        "-H",
-        "-z", str(seed),
-        genome_fasta,
-        output_prefix
-    ])
-
-    # Rename output fastq files
-    os.rename(dwgsim_read_1, read_1)
-    os.rename(dwgsim_read_2, read_2)
-
-
 def btb_seq(btb_seq_directory, reads_directory, results_directory):
     run(["bash", "./btb-seq", reads_directory,
          results_directory], cwd=btb_seq_directory)
-
 
 def performance_test(results_path, btb_seq_path, reference_path, exist_ok=True, branch=None):
     """ Runs a performance test against the pipeline
@@ -122,22 +73,14 @@ def performance_test(results_path, btb_seq_path, reference_path, exist_ok=True, 
         checkout(btb_seq_backup_path, branch)
 
     # Prepare Genomes
-    samples = ["sample1", "sample2"]
+    # samples = ["sample1", "sample2"]
+    # glob
     samples = [RandomSample(16000, 1)]
     
     # Simulate Reads
     for sample in samples:
-        # TODO: this is ugly, make this human-readable
-        sample_name = str(id(sample))
-
-        sample.simulate(reference_path, simulated_genome_path + sample_name + '.')
-
-        # simulate_genome_random_snps(reference_path, simulated_genome_path + sample + '.')
-
-        # # TODO: explicitly path fasta path to simulate
-        fasta_path = simulated_genome_path + sample_name + '.simulated.simseq.genome.fa'
-
-        simulate_reads(fasta_path, simulated_reads_path, sample_name=sample_name)
+        sample.simulate(reference_path, simulated_genome_path + sample.name + '.')
+        sample.simulate_reads(simulated_genome_path, simulated_reads_path)
 
     quit()
 
@@ -174,6 +117,7 @@ def main():
     args = parser.parse_args(sys.argv[1:])
 
     # Run
+    run(["sudo", "rm", "-r", args.results])
     performance_test(args.results, args.btb_seq, args.ref, branch=args.branch)
 
 if __name__ == '__main__':
