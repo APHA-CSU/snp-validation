@@ -17,8 +17,12 @@ class Sample:
         simulate_reads(fasta_path, simulated_reads_path, sample_name=self.name)
 
 class VcfSample(Sample):
-    def __init__(self):
-        pass
+    def __init__(self, predef_snp_path, seed=1):
+        self.seed = seed
+        self.predef_snp_path = predef_snp_path
+
+    def simulate_genome(self, reference_path, simulated_genome_path):
+        simulate_genome_from_vcf(reference_path, simulated_genome_path, self.predef_snp_path, seed=1)
 
 class RandomSample(Sample):
     def __init__(self, num_snps, seed=1):

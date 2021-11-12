@@ -81,6 +81,10 @@ def performance_test(
 
     # Simulate Reads
     # TODO: 
+
+    predef_snp_path = '/home/aaronfishman/mnt/fsx-027/AF-12-00945-19.vcf'
+    samples = [VcfSample(predef_snp_path)]
+
     for sample in samples:
         sample.simulate_genome(reference_path, simulated_genome_path + sample.name)
         sample.simulate_reads(simulated_genome_path, simulated_reads_path)
