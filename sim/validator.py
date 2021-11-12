@@ -19,8 +19,10 @@ def btb_seq(btb_seq_directory, reads_directory, results_directory):
     run(["bash", "./btb-seq", reads_directory,
          results_directory], cwd=btb_seq_directory)
 
+# TODO: move these functions into samples
+
 def quick_samples(self):
-    return [RandomSample(16000, 1)]
+    return [RandomSample(1)]
 
 def standard_samples(vcf_dir='/home/aaronfishman/mnt/fsx-027/'):
     vcf_dir = os.path.join(vcf_dir, '')
@@ -29,13 +31,12 @@ def standard_samples(vcf_dir='/home/aaronfishman/mnt/fsx-027/'):
 
     samples = []
 
-    samples += [RandomSample(), RandomSample()]
+    samples += [RandomSample(seed=1), RandomSample(seed=666)]
 
     for filepath in vcf_filepaths:
         samples.append(VcfSample(filepath))    
 
     return samples
-
 
 def performance_test(
     results_path, 

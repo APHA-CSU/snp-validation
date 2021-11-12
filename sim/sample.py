@@ -36,7 +36,7 @@ class RandomSample(Sample):
     def simulate_genome(self, reference_path, simulated_genome_path):
         simulate_genome_random_snps(reference_path, simulated_genome_path, num_snps=self.num_snps, seed=self.seed)
 
-# reference_path, simulated_genome_path, num_snps=16000, seed=1
+# TODO: move these functions inside of the classes
 
 def simulate_genome_random_snps(reference_path, simulated_genome_path, num_snps=16000, seed=1):
     """ Simulated a genome with random SNPs
