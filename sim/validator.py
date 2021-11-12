@@ -19,6 +19,24 @@ def btb_seq(btb_seq_directory, reads_directory, results_directory):
     run(["bash", "./btb-seq", reads_directory,
          results_directory], cwd=btb_seq_directory)
 
+def quick_samples(self):
+    return [RandomSample(16000, 1)]
+
+def standard_samples(vcf_dir='/home/aaronfishman/mnt/fsx-027/'):
+    vcf_dir = os.path.join(vcf_dir, '')
+
+    vcf_filepaths = glob.glob(vcf_dir+'*.vcf')
+
+    samples = []
+
+    samples += [RandomSample(), RandomSample()]
+
+    for filepath in vcf_filepaths:
+        samples.append(VcfSample(filepath))    
+
+    return samples
+
+
 def performance_test(
     results_path, 
     btb_seq_path, 
@@ -80,11 +98,7 @@ def performance_test(
         checkout(btb_seq_backup_path, branch)
 
     # Simulate Reads
-    # TODO: 
-
-    predef_snp_path = '/home/aaronfishman/mnt/fsx-027/AF-12-00945-19.vcf'
-    samples = [VcfSample(predef_snp_path)]
-
+    # TODO:could these function singatures be improved?
     for sample in samples:
         sample.simulate_genome(reference_path, simulated_genome_path + sample.name)
         sample.simulate_reads(simulated_genome_path, simulated_reads_path)
@@ -124,8 +138,16 @@ def main():
     args = parser.parse_args(sys.argv[1:])
 
     # Run
+    samples = standard_samples()
+
     run(["sudo", "rm", "-r", args.results])
-    performance_test(args.results, args.btb_seq, args.ref, branch=args.branch)
+    performance_test(
+        args.results, 
+        args.btb_seq, 
+        args.ref,
+        samples=samples, 
+        branch=args.branch
+    )
 
 if __name__ == '__main__':
     main()

@@ -25,7 +25,7 @@ class VcfSample(Sample):
         simulate_genome_from_vcf(reference_path, simulated_genome_path, self.predef_snp_path, seed=1)
 
 class RandomSample(Sample):
-    def __init__(self, num_snps, seed=1):
+    def __init__(self, num_snps=16000, seed=1):
         self.num_snps = num_snps
         self.seed = seed
     
