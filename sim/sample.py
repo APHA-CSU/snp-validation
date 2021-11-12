@@ -73,7 +73,7 @@ def simulate_genome_from_vcf(reference_path, simulated_genome_path, predef_snp_p
 def simulate_genome(reference_path, simulated_genome_path, params):
     cmd = ["simuG.pl",
            "-refseq", reference_path,
-           "-prefix", simulated_genome_path + "simulated"]
+           "-prefix", simulated_genome_path + ".simulated"]
     cmd.extend(params)
     run(cmd)
 

@@ -19,7 +19,14 @@ def btb_seq(btb_seq_directory, reads_directory, results_directory):
     run(["bash", "./btb-seq", reads_directory,
          results_directory], cwd=btb_seq_directory)
 
-def performance_test(results_path, btb_seq_path, reference_path, exist_ok=True, branch=None):
+def performance_test(
+    results_path, 
+    btb_seq_path, 
+    reference_path,
+    samples=[RandomSample(16000, 1)],
+    exist_ok=True, 
+    branch=None
+):
     """ Runs a performance test against the pipeline
 
         Parameters:
@@ -72,14 +79,10 @@ def performance_test(results_path, btb_seq_path, reference_path, exist_ok=True, 
     if branch:
         checkout(btb_seq_backup_path, branch)
 
-    # Prepare Genomes
-    # samples = ["sample1", "sample2"]
-    # glob
-    samples = [RandomSample(16000, 1)]
-    
     # Simulate Reads
+    # TODO: 
     for sample in samples:
-        sample.simulate_genome(reference_path, simulated_genome_path + sample.name + '.')
+        sample.simulate_genome(reference_path, simulated_genome_path + sample.name)
         sample.simulate_reads(simulated_genome_path, simulated_reads_path)
 
     quit()
