@@ -46,6 +46,8 @@ def ofat(btb_seq_path, results_path, branches=DEFAULT_BRANCHES):
     # Prepare output directory
     os.makedirs(results_path, exist_ok=False)
 
+    samples = validator.standard_samples()
+
     # Benchmark the branches
     for branch in branches:
         branch_results_path = results_path + branch + '/'
@@ -53,7 +55,8 @@ def ofat(btb_seq_path, results_path, branches=DEFAULT_BRANCHES):
         try:
             validator.performance_test(
                 branch_results_path, 
-                btb_seq_path, 
+                btb_seq_path,
+                samples=samples, 
                 branch=branch
             )
         except Exception as e:
