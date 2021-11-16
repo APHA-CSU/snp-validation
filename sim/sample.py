@@ -16,6 +16,15 @@ class Sample:
         fasta_path = simulated_genome_path + self.name + '.simulated.simseq.genome.fa'
         simulate_reads(fasta_path, simulated_reads_path, sample_name=self.name)
 
+class NamedSample(Sample):
+    def __init__(self, name):
+        self._name = name
+
+    @property
+    def name(self):
+        return self._name
+
+
 class VcfSample(Sample):
     def __init__(self, predef_snp_path, seed=1):
         self.seed = seed
@@ -102,7 +111,7 @@ def simulate_reads(
     rate_of_mutations=0,
     indel_mutation_fraction=0,
     indel_extension_probability=0,
-    per_base_error_rate="0" # TODO: default to Ele's reccomendation? 0.001-0.01
+    per_base_error_rate="0.001-0.01" # TODO: default to Ele's reccomendation? 0.001-0.01
 ):   
     # How dwgsim chooses to name it's output fastq files
     output_prefix = output_directory + sample_name
