@@ -7,7 +7,7 @@ from io import StringIO
 Calculate performance stats from simulated data
 """
 
-def analyse(simulated_snps, pipeline_snps):
+def analyse(simulated_snps, pipeline_snps, results_directory, sample_name, mask_filepath):
     """ Compare simulated SNPs data from simuG against btb-seq's snpTable.tab
         If adjust == True: applies the mask to simulated SNPs and pipeline SNPs
         Returns a dictionary of performance stats
@@ -20,7 +20,7 @@ def analyse(simulated_snps, pipeline_snps):
     # Extract SNP positions
     simulated_pos = set(simulated['ref_start'].values)
     pipeline_pos = set(pipeline['POS'].values)
-    masked_pos = set(masked_positions())
+    masked_pos = set(masked_positions(mask_filepath))
 
     simulated_pos_adjusted = simulated_pos - masked_pos
     pipeline_pos_adjusted = pipeline_pos - masked_pos
@@ -51,20 +51,21 @@ def analyse(simulated_snps, pipeline_snps):
 
     # Compute Performance Stats
     # precision (positive predictive value) of each pipeline as TP/(TP + FP), 
-    precision = tp / (tp + fp) if (tp + fp) else float("inf")
+    precision = tp_rate / (tp_rate+ fp_rate) if (tp_rate + fp_rate) else float("inf")
 
     # recall (sensitivity) as TP/(TP + FN)
-    sensitivity = tp / (tp + fn) if (tp + fn) else float("inf")
+    sensitivity = tp_rate / (tp_rate + fn_rate) if (tp_rate + fn_rate) else float("inf")
 
     # miss rate as FN/(TP + FN)
-    miss_rate = fn / (tp + fn) if (tp + fn) else float("inf")
+    miss_rate = fn_rate/ (tp_rate+ fn_rate) if (tp_rate + fn_rate) else float("inf")
 
     #  total number of errors (FP + FN) per million sequenced bases
     total_errors = fp_rate + fn_rate
 
     # TO DO: better solution to arguments 0 & 1 - will involve changing path arguments to analys()
     # also maybe better to call from validator.py
-    make_details_file(simulated_snps[:-31],pipeline_snps[:-23], fn, prefix = 'FN')
+    make_details_file(results_directory, sample_name, fn, masked_pos, prefix = 'FN')
+    make_details_file(results_directory, sample_name, fp, masked_pos, prefix = 'FP')
 
     return {
         "TP": tp_rate,
@@ -79,12 +80,12 @@ def analyse(simulated_snps, pipeline_snps):
         "total_errors": total_errors
     }
 
-def make_details_file(sim_path, pl_path, sites, prefix = ''):
+def make_details_file(results_directory, sample_name, sites, masked_pos, prefix = ''):
     """ Makes a details.txt file for specified sites e.g. FNs.
 
         Parameters:
-            sim_path (str): Path to simulated genome
-            pl_path (str): Path to pipeline genome
+            results_directory (str): Path to the results directory 
+	    sample_name (str): Name of sample to produce details file on 
             sites (set): Genome positions on which to report details
             prefix (str): Filename prefix for details.txt file
 
@@ -92,19 +93,19 @@ def make_details_file(sim_path, pl_path, sites, prefix = ''):
             None
     """
     # load simulated genome
-    simulated_genome = load_consensus(sim_path+'/simulated.simseq.genome.fa')
+    simulated_genome = load_consensus(results_directory+'simulated-genome/'+sample_name+'.simulated.simseq.genome.fa')
     
     # load pipeline genome
-    pipeline_genome = load_consensus(pl_path+'/consensus/simulated.fas')
+    pipeline_genome = load_consensus(results_directory+'btb-seq-results/Results_simulated-reads_16Nov21/consensus/'+sample_name+'.fas')
     
     # load pipeline vcf
-    pipeline_vcf = load_vcf(pl_path+'/vcf/simulated.vcf.gz')
+    pipeline_vcf = load_vcf(results_directory+'btb-seq-results/Results_simulated-reads_16Nov21/vcf/'+sample_name+'.vcf.gz')
 
     # load mask
-    mask = set(masked_positions())
+    mask = masked_pos
 
     # make details file
-    with open(pl_path[:-48]+'/'+prefix+'_details.txt','w') as details_file: # TO DO: sort out the path for where details file is saved
+    with open(results_directory+prefix+'_details.txt','w') as details_file: # TO DO: sort out the path for where details file is saved
         pointer = ' '*50+'V'+' '*50
         for i in sites:              
             details_file.write("##POSITION: {}".format(i)+'\n')

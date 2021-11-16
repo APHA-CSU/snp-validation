@@ -123,7 +123,7 @@ def performance_test(
         if not os.path.exists(pipeline_snps):
             raise Exception("Cant Find the pipeline's snps table!!")
 
-        stat = analyse(simulated_snps, pipeline_snps, mask_filepath)
+        stat = analyse(simulated_snps, pipeline_snps, results_path, sample.name, mask_filepath)
         
         stats.append(stat)
 
