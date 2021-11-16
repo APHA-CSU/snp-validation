@@ -3,6 +3,8 @@ from utils import run
 import os
 
 class Sample:
+    per_base_error_rate = "0"
+
     def simulate_genome(self):
         raise NotImplementedError()
 
@@ -14,7 +16,7 @@ class Sample:
     def simulate_reads(self, simulated_genome_path, simulated_reads_path):
         # # TODO: explicitly path fasta path to simulate
         fasta_path = simulated_genome_path + self.name + '.simulated.simseq.genome.fa'
-        simulate_reads(fasta_path, simulated_reads_path, sample_name=self.name)
+        simulate_reads(fasta_path, simulated_reads_path, sample_name=self.name, per_base_error_rate=self.per_base_error_rate)
 
 class NamedSample(Sample):
     def __init__(self, name):
@@ -26,8 +28,9 @@ class NamedSample(Sample):
 
 
 class VcfSample(Sample):
-    def __init__(self, predef_snp_path, seed=1):
+    def __init__(self, predef_snp_path, seed=1, per_base_error_rate="0"):
         self.seed = seed
+        self.per_base_error_rate = per_base_error_rate
 
         # TODO: check predef_snp_path exists
         self.predef_snp_path = predef_snp_path
@@ -37,15 +40,16 @@ class VcfSample(Sample):
         # extract filename
         #TODO: this will fail if the extension is not 3 charachters long
         basename = os.path.basename(self.predef_snp_path)[:-4]
-        return f"{type(self).__name__}-{basename}-seed{self.seed}"
+        return f"{type(self).__name__}-{basename}-seed{self.seed}-error{self.per_base_error_rate}"
 
     def simulate_genome(self, reference_path, simulated_genome_path):
         simulate_genome_from_vcf(reference_path, simulated_genome_path, self.predef_snp_path, seed=1)
 
 class RandomSample(Sample):
-    def __init__(self, num_snps=16000, seed=1):
+    def __init__(self, num_snps=16000, seed=1, per_base_error_rate="0"):
         self.num_snps = num_snps
         self.seed = seed
+        self.per_base_error_rate = per_base_error_rate
     
     @property
     def name(self):
