@@ -37,25 +37,22 @@ def analyse(simulated_snps, pipeline_snps, mask_filepath):
     pipeline_pos = set(pipeline['POS'].values)
     masked_pos = set(masked_positions(mask_filepath))
 
-    simulated_pos_adjusted = simulated_pos - masked_pos
-    pipeline_pos_adjusted = pipeline_pos - masked_pos
-
     # TP - true positive -(the variant is in the simulated genome and correctly called by the pipeline)
-    tp = len(simulated_pos.intersection(pipeline_pos_adjusted))
+    tp = len(simulated_pos.intersection(pipeline_pos))
 
     # FP (the pipeline calls a variant that is not in the simulated genome),
-    fp = len(pipeline_pos_adjusted - simulated_pos_adjusted)
+    fp = len(pipeline_pos - simulated_pos)
 
     # FN SNP calls (the variant is in the simulated genome but the pipeline does not call it).
-    fn =  len(simulated_pos_adjusted - pipeline_pos_adjusted)
+    fn =  len(simulated_pos - pipeline_pos)
 
-    # TPs excluded 
+    # TPs in masked regions 
     masked_tp = len(masked_pos.intersection(simulated_pos.intersection(pipeline_pos)))
 
-    # FPs excluded
+    # FPs in masked regions
     masked_fp = len(masked_pos.intersection(pipeline_pos - simulated_pos))
 
-    # FNs excluded
+    # FNs in masked regions
     masked_fn = len(masked_pos.intersection(simulated_pos - pipeline_pos))
 
     # Compute Performance Stats
