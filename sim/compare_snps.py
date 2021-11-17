@@ -65,6 +65,9 @@ def analyse(simulated_snps, pipeline_snps, mask_filepath):
     # miss rate as FN/(TP + FN)
     miss_rate = fn / (tp + fn)
 
+    # F-score as 2*(precision*recall)/(precision-recall)
+    f_score = 2*(precision*sensitivity)/(precision+sensitivity)
+
     #  total number of errors (FP + FN) per million sequenced bases
     total_errors = fp + fn
 
@@ -78,7 +81,8 @@ def analyse(simulated_snps, pipeline_snps, mask_filepath):
         "precision": precision,
         "sensitivity": sensitivity,
         "miss_rate": miss_rate,
-        "total_errors": total_errors
+        "f_score": f_score,
+	"total_errors": total_errors
     }
 
 #TODO: This may not be required if we can get away with using bcftools/vcftools
