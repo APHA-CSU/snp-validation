@@ -37,26 +37,23 @@ def analyse(simulated_snps, pipeline_snps, mask_filepath):
     pipeline_pos = set(pipeline['POS'].values)
     masked_pos = set(masked_positions(mask_filepath))
 
-    simulated_pos_adjusted = simulated_pos - masked_pos
-    pipeline_pos_adjusted = pipeline_pos - masked_pos
-
     # TP - true positive -(the variant is in the simulated genome and correctly called by the pipeline)
-    tp = len(simulated_pos.intersection(pipeline_pos_adjusted))
+    tp = len(simulated_pos.intersection(pipeline_pos))
 
     # FP (the pipeline calls a variant that is not in the simulated genome),
-    fp = len(pipeline_pos_adjusted - simulated_pos_adjusted)
+    fp = len(pipeline_pos - simulated_pos)
 
     # FN SNP calls (the variant is in the simulated genome but the pipeline does not call it).
-    fn =  len(simulated_pos_adjusted - pipeline_pos_adjusted)
+    fn =  len(simulated_pos - pipeline_pos)
 
-    # TPs excluded 
-    masked_tp = len(masked_pos.intersection(simulated_pos.intersection(pipeline_pos)))
+    # TPs in masked regions 
+    tp_in_mask = len(masked_pos.intersection(simulated_pos.intersection(pipeline_pos)))
 
-    # FPs excluded
-    masked_fp = len(masked_pos.intersection(pipeline_pos - simulated_pos))
+    # FPs in masked regions
+    fp_in_mask = len(masked_pos.intersection(pipeline_pos - simulated_pos))
 
-    # FNs excluded
-    masked_fn = len(masked_pos.intersection(simulated_pos - pipeline_pos))
+    # FNs in masked regions
+    fn_in_mask = len(masked_pos.intersection(simulated_pos - pipeline_pos))
 
     # Compute Performance Stats
     # precision (positive predictive value) of each pipeline as TP/(TP + FP), 
@@ -68,6 +65,9 @@ def analyse(simulated_snps, pipeline_snps, mask_filepath):
     # miss rate as FN/(TP + FN)
     miss_rate = fn / (tp + fn)
 
+    # F-score as 2*(precision*recall)/(precision-recall)
+    f_score = 2*(precision*sensitivity)/(precision+sensitivity)
+
     #  total number of errors (FP + FN) per million sequenced bases
     total_errors = fp + fn
 
@@ -75,12 +75,13 @@ def analyse(simulated_snps, pipeline_snps, mask_filepath):
         "TP": tp,
         "FP": fp,
         "FN": fn,
-        "masked TPs": masked_tp,
-        "masked FPs": masked_fp,
-        "masked FNs": masked_fn,
+        "masked TPs": tp_in_mask,
+        "masked FPs": fp_in_mask, 
+        "masked FNs": fn_in_mask, 
         "precision": precision,
         "sensitivity": sensitivity,
         "miss_rate": miss_rate,
+        "f_score": f_score,
         "total_errors": total_errors
     }
 
