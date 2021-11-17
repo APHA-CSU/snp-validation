@@ -47,13 +47,13 @@ def analyse(simulated_snps, pipeline_snps, mask_filepath):
     fn =  len(simulated_pos - pipeline_pos)
 
     # TPs in masked regions 
-    masked_tp = len(masked_pos.intersection(simulated_pos.intersection(pipeline_pos)))
+    tp_in_mask = len(masked_pos.intersection(simulated_pos.intersection(pipeline_pos)))
 
     # FPs in masked regions
-    masked_fp = len(masked_pos.intersection(pipeline_pos - simulated_pos))
+    fp_in_mask = len(masked_pos.intersection(pipeline_pos - simulated_pos))
 
     # FNs in masked regions
-    masked_fn = len(masked_pos.intersection(simulated_pos - pipeline_pos))
+    fn_in_mask = len(masked_pos.intersection(simulated_pos - pipeline_pos))
 
     # Compute Performance Stats
     # precision (positive predictive value) of each pipeline as TP/(TP + FP), 
@@ -75,9 +75,9 @@ def analyse(simulated_snps, pipeline_snps, mask_filepath):
         "TP": tp,
         "FP": fp,
         "FN": fn,
-        "masked TPs": masked_tp,
-        "masked FPs": masked_fp,
-        "masked FNs": masked_fn,
+        "masked TPs": tp_in_mask,
+        "masked FPs": fp_in_mask, 
+        "masked FNs": fn_in_mask, 
         "precision": precision,
         "sensitivity": sensitivity,
         "miss_rate": miss_rate,
