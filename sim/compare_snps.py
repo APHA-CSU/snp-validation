@@ -22,32 +22,29 @@ def analyse(simulated_snps, pipeline_snps, results_directory, sample_name, mask_
     pipeline_pos = set(pipeline['POS'].values)
     masked_pos = set(masked_positions(mask_filepath))
 
-    simulated_pos_adjusted = simulated_pos - masked_pos
-    pipeline_pos_adjusted = pipeline_pos - masked_pos
-
     # TP - true positive -(the variant is in the simulated genome and correctly called by the pipeline)
-    tp = simulated_pos.intersection(pipeline_pos_adjusted)
+    tp = simulated_pos.intersection(pipeline_pos)
     tp_rate = len(tp)
 
     # FP (the pipeline calls a variant that is not in the simulated genome),
-    fp = pipeline_pos_adjusted - simulated_pos_adjusted
+    fp = pipeline_pos - simulated_pos
     fp_rate = len(fp)
 
     # FN SNP calls (the variant is in the simulated genome but the pipeline does not call it).
-    fn = simulated_pos_adjusted - pipeline_pos_adjusted
+    fn = simulated_pos - pipeline_pos
     fn_rate =  len(fn)
 
     # TPs excluded 
-    masked_tp = masked_pos.intersection(simulated_pos.intersection(pipeline_pos))
-    masked_tp_rate = len(masked_tp)
+    tp_in_mask = masked_pos.intersection(simulated_pos.intersection(pipeline_pos))
+    tp_in_mask_rate = len(tp_in_mask)
 
     # FPs excluded
-    masked_fp = masked_pos.intersection(simulated_pos - pipeline_pos)
-    masked_fp_rate = len(masked_fp)
+    fp_in_mask = masked_pos.intersection(simulated_pos - pipeline_pos)
+    fp_in_mask_rate = len(fp_in_mask)
 
     # FNs excluded
-    masked_fn = masked_pos.intersection(simulated_pos - pipeline_pos)
-    masked_fn_rate = len(masked_fn)
+    fn_in_mask = masked_pos.intersection(simulated_pos - pipeline_pos)
+    fn_in_mask_rate = len(fn_in_mask)
 
     # Compute Performance Stats
     # precision (positive predictive value) of each pipeline as TP/(TP + FP), 
@@ -58,6 +55,9 @@ def analyse(simulated_snps, pipeline_snps, results_directory, sample_name, mask_
 
     # miss rate as FN/(TP + FN)
     miss_rate = fn_rate/ (tp_rate+ fn_rate) if (tp_rate + fn_rate) else float("inf")
+
+    # F-score as 2*(precision*recall)/(precision-recall)
+    f_score = 2*(precision*sensitivity)/(precision+sensitivity)
 
     #  total number of errors (FP + FN) per million sequenced bases
     total_errors = fp_rate + fn_rate
@@ -71,12 +71,13 @@ def analyse(simulated_snps, pipeline_snps, results_directory, sample_name, mask_
         "TP": tp_rate,
         "FP": fp_rate,
         "FN": fn_rate,
-        "masked TPs": masked_tp_rate,
-        "masked FPs": masked_fp_rate,
-        "masked FNs": masked_fn_rate,
+        "masked TPs": tp_in_mask_rate,
+        "masked FPs": fp_in_mask_rate, 
+        "masked FNs": fn_in_mask_rate, 
         "precision": precision,
         "sensitivity": sensitivity,
         "miss_rate": miss_rate,
+        "f_score": f_score,
         "total_errors": total_errors
     }
 
