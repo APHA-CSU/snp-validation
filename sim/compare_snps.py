@@ -82,7 +82,7 @@ def analyse(simulated_snps, pipeline_snps, mask_filepath):
         "sensitivity": sensitivity,
         "miss_rate": miss_rate,
         "f_score": f_score,
-	"total_errors": total_errors
+        "total_errors": total_errors
     }
 
 #TODO: This may not be required if we can get away with using bcftools/vcftools
