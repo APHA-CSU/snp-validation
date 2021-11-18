@@ -1,9 +1,11 @@
 from utils import run
+import math 
 
 import os
 
 class Sample:
     per_base_error_rate = "0"
+    num_read_pairs = 150000
 
     def simulate_genome(self):
         raise NotImplementedError()
@@ -16,7 +18,13 @@ class Sample:
     def simulate_reads(self, simulated_genome_path, simulated_reads_path):
         # # TODO: explicitly path fasta path to simulate
         fasta_path = simulated_genome_path + self.name + '.simulated.simseq.genome.fa'
-        simulate_reads(fasta_path, simulated_reads_path, sample_name=self.name, per_base_error_rate=self.per_base_error_rate)
+        simulate_reads(
+            fasta_path, 
+            simulated_reads_path, 
+            sample_name=self.name, 
+            per_base_error_rate=self.per_base_error_rate,
+            num_read_pairs=self.num_read_pairs
+        )
 
 class NamedSample(Sample):
     def __init__(self, name):
@@ -28,9 +36,15 @@ class NamedSample(Sample):
 
 
 class VcfSample(Sample):
-    def __init__(self, predef_snp_path, seed=1, per_base_error_rate="0"):
+    def __init__(self, 
+        predef_snp_path, 
+        seed=1, 
+        per_base_error_rate="0",
+        num_read_pairs = 10,
+    ):
         self.seed = seed
         self.per_base_error_rate = per_base_error_rate
+        self.num_read_pairs = math.ceil(num_read_pairs)
 
         # TODO: check predef_snp_path exists
         self.predef_snp_path = predef_snp_path
@@ -40,7 +54,7 @@ class VcfSample(Sample):
         # extract filename
         #TODO: this will fail if the extension is not 3 charachters long
         basename = os.path.basename(self.predef_snp_path)[:-4]
-        return f"{type(self).__name__}-{basename}-seed{self.seed}-error{self.per_base_error_rate}"
+        return f"{type(self).__name__}-{basename}-seed{self.seed}-error{self.per_base_error_rate}-readpairs-{self.num_read_pairs}"
 
     def simulate_genome(self, reference_path, simulated_genome_path):
         simulate_genome_from_vcf(reference_path, simulated_genome_path, self.predef_snp_path, seed=1)
