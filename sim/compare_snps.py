@@ -46,6 +46,9 @@ def analyse(results_path, sample, mask_filepath):
     # Extract mask positions    
     masked_pos = set(masked_positions(mask_filepath))
 
+    # Extract N's positions
+    n_pos = [i+1 for i in range(len(pipeline_genome)) if pipeline_genome[i] == 'N']
+
     # TP - true positive -(the variant is in the simulated genome and correctly called by the pipeline)
     tp = len(simulated_pos.intersection(pipeline_pos))
 
@@ -54,12 +57,6 @@ def analyse(results_path, sample, mask_filepath):
 
     # FN SNP calls (the variant is in the simulated genome but the pipeline does not call it).
     fn =  len(simulated_pos - pipeline_pos)
-
-    # Count Ns
-    n = 0
-    for base in pipeline_genome: 
-        if base == 'N':
-            n+=1
 
     # TPs in masked regions 
     tp_in_mask = len(masked_pos.intersection(simulated_pos.intersection(pipeline_pos)))
