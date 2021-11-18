@@ -199,9 +199,7 @@ def performance_test(results_path, btb_seq_path, reference_path, exist_ok=False,
 
     stats = []
     for sample in samples:
-        simulated_snps = simulated_genome_path + sample + ".simulated.refseq2simseq.map.txt"
-        pipeline_snps = pipeline_directory + f'snpTables/{sample}_snps.tab'
-        stats.append(analyse(simulated_snps, pipeline_snps, mask_filepath))
+        stats.append(analyse(results_path, sample, mask_filepath))
 
     stats_table = pd.DataFrame(stats)
     stats_table.to_csv(results_path + "stats.csv")

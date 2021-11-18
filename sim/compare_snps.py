@@ -1,4 +1,5 @@
 import pandas as pd
+import glob 
 
 from Bio import SeqIO
 
@@ -22,19 +23,24 @@ def masked_positions(mask_filepath):
 
     return masked_pos
 
-def analyse(simulated_snps, pipeline_snps, mask_filepath):
+def analyse(results_path, sample, mask_filepath):
     """ Compare simulated SNPs data from simuG against btb-seq's snpTable.tab
         If adjust == True: applies the mask to simulated SNPs and pipeline SNPs
         Returns a dictionary of performance stats
     """
 
+    pipeline_directory = glob.glob(results_path + 'btb-seq-results/Results_simulated-reads_*')[0] + '/'
+    
     # Load
-    simulated = pd.read_csv(simulated_snps, delimiter='\t')
-    pipeline = pd.read_csv(pipeline_snps, delimiter='\t')
+    simulated_snps = pd.read_csv(results_path + f'simulated-genome/{sample}.simulated.refseq2simseq.map.txt', delimiter='\t')
+    pipeline_snps = pd.read_csv(pipeline_directory + f'snpTables/{sample}_snps.tab', delimiter='\t')
+    pipeline_genome = load_consensus(pipeline_directory + f'consensus/{sample}_consensus.fas')
 
     # Extract SNP positions
-    simulated_pos = set(simulated['ref_start'].values)
-    pipeline_pos = set(pipeline['POS'].values)
+    simulated_pos = set(simulated_snps['ref_start'].values)
+    pipeline_pos = set(pipeline_snps['POS'].values)
+    
+    # Extract mask positions    
     masked_pos = set(masked_positions(mask_filepath))
 
     # TP - true positive -(the variant is in the simulated genome and correctly called by the pipeline)
@@ -85,10 +91,8 @@ def analyse(simulated_snps, pipeline_snps, mask_filepath):
         "total_errors": total_errors
     }
 
-#TODO: This may not be required if we can get away with using bcftools/vcftools
-#      for comparisons. Leaving this here for convenience in case those tools aren't suitable 
 def load_consensus(path):
     """ Load a consensus file. Returns the first record in a fasta file a string """
 
     for seq_record in SeqIO.parse(path, "fasta"):
-        return str(seq_record)
+        return str(seq_record.seq)
