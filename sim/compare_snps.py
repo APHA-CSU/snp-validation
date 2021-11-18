@@ -19,7 +19,7 @@ def masked_positions(mask_filepath):
     #    why is that?
     masked_pos = []
     for i, row in mask.iterrows():
-        masked_pos.extend(list(range(row['START'], row['END']+1)))
+        masked_pos.extend(list(range(row['START']+1, row['END']+1)))
 
     return masked_pos
 
@@ -101,7 +101,7 @@ def analyse(results_path, sample, mask_filepath):
         "masked FPs": fp_in_mask, 
         "masked FNs": fn_in_mask, 
         "masked Ns": n_in_mask, 
-        "mask size": m, # masked Ns and mask size should be equal - could be how the mask positions are calculated.
+        "mask size": m, # masked Ns and mask size should be equal
         "precision": precision,
         "sensitivity": sensitivity,
         "miss_rate": miss_rate,
