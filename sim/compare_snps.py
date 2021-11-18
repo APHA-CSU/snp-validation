@@ -36,6 +36,9 @@ def analyse(results_path, sample, mask_filepath):
     pipeline_snps = pd.read_csv(pipeline_directory + f'snpTables/{sample}_snps.tab', delimiter='\t')
     pipeline_genome = load_consensus(pipeline_directory + f'consensus/{sample}_consensus.fas')
 
+    # Trim adapters sequences off pipeline genome
+    pipeline_genome = pipeline_genome[29:-31]
+
     # Extract SNP positions
     simulated_pos = set(simulated_snps['ref_start'].values)
     pipeline_pos = set(pipeline_snps['POS'].values)
@@ -51,6 +54,12 @@ def analyse(results_path, sample, mask_filepath):
 
     # FN SNP calls (the variant is in the simulated genome but the pipeline does not call it).
     fn =  len(simulated_pos - pipeline_pos)
+
+    # Count Ns
+    n = 0
+    for base in pipeline_genome: 
+        if base == 'N':
+            n+=1
 
     # TPs in masked regions 
     tp_in_mask = len(masked_pos.intersection(simulated_pos.intersection(pipeline_pos)))
@@ -81,6 +90,7 @@ def analyse(results_path, sample, mask_filepath):
         "TP": tp,
         "FP": fp,
         "FN": fn,
+        "Ns": n,
         "masked TPs": tp_in_mask,
         "masked FPs": fp_in_mask, 
         "masked FNs": fn_in_mask, 
@@ -88,7 +98,7 @@ def analyse(results_path, sample, mask_filepath):
         "sensitivity": sensitivity,
         "miss_rate": miss_rate,
         "f_score": f_score,
-        "total_errors": total_errors
+        "total_errors": total_errors,
     }
 
 def load_consensus(path):
