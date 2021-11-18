@@ -36,7 +36,7 @@ def analyse(results_path, sample, mask_filepath):
     pipeline_snps = pd.read_csv(pipeline_directory + f'snpTables/{sample}_snps.tab', delimiter='\t')
     pipeline_genome = load_consensus(pipeline_directory + f'consensus/{sample}_consensus.fas')
 
-    # Trim adapters sequences off pipeline genome
+    # Trim adapter sequences off pipeline genome
     pipeline_genome = pipeline_genome[29:-31]
 
     # Extract SNP positions
@@ -46,8 +46,8 @@ def analyse(results_path, sample, mask_filepath):
     # Extract mask positions    
     masked_pos = set(masked_positions(mask_filepath))
 
-    # Extract N's positions
-    n_pos = [i+1 for i in range(len(pipeline_genome)) if pipeline_genome[i] == 'N']
+    # Extract N's positions in pipeline genome
+    n_pos = set([i+30 for i in range(len(pipeline_genome)) if pipeline_genome[i] == 'N'])
 
     # TP - true positive -(the variant is in the simulated genome and correctly called by the pipeline)
     tp = len(simulated_pos.intersection(pipeline_pos))
@@ -58,6 +58,12 @@ def analyse(results_path, sample, mask_filepath):
     # FN SNP calls (the variant is in the simulated genome but the pipeline does not call it).
     fn =  len(simulated_pos - pipeline_pos)
 
+    # N - the number of missing sites in the pipeline genome
+    n = len(n_pos)
+
+    # The size of the mask
+    m = len(masked_pos)
+
     # TPs in masked regions 
     tp_in_mask = len(masked_pos.intersection(simulated_pos.intersection(pipeline_pos)))
 
@@ -66,6 +72,9 @@ def analyse(results_path, sample, mask_filepath):
 
     # FNs in masked regions
     fn_in_mask = len(masked_pos.intersection(simulated_pos - pipeline_pos))
+
+    # Ns in masked regions - should equal the size of the mask
+    n_in_mask = len(masked_pos.intersection(n_pos))
 
     # Compute Performance Stats
     # precision (positive predictive value) of each pipeline as TP/(TP + FP), 
@@ -91,6 +100,8 @@ def analyse(results_path, sample, mask_filepath):
         "masked TPs": tp_in_mask,
         "masked FPs": fp_in_mask, 
         "masked FNs": fn_in_mask, 
+        "masked Ns": n_in_mask, 
+        "mask size": m, # masked Ns and mask size should be equal - could be how the mask positions are calculated.
         "precision": precision,
         "sensitivity": sensitivity,
         "miss_rate": miss_rate,
