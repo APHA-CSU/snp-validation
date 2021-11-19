@@ -30,7 +30,7 @@ def analyse(results_path, sample, mask_filepath):
     """
 
     pipeline_directory = glob.glob(results_path + 'btb-seq-results/Results_simulated-reads_*')[0] + '/'
-    simulated_snp_path = results_path + f'simulated-genome/{sample}.simulated.refseq2simseq.map.txt')
+    simulated_snp_path = results_path + f'simulated-genome/{sample}.simulated.refseq2simseq.map.txt'
     pipeline_snp_path = pipeline_directory + f'snpTables/{sample}_snps.tab'
     pipeline_genome_path = pipeline_directory + f'consensus/{sample}_consensus.fas'
 
