@@ -19,7 +19,7 @@ def masked_positions(mask_filepath):
     #    why is that?
     masked_pos = []
     for i, row in mask.iterrows():
-        masked_pos.extend(list(range(row['START']+1, row['END']+1)))
+        masked_pos.extend(list(range(row['START'], row['END']+1)))# This is based off indexing in richards rpt.regions file - inconsisten with bedtools
 
     return masked_pos
 
@@ -77,9 +77,6 @@ def analyse(results_path, sample, mask_filepath):
     # FNs in masked regions
     fn_in_mask = len(masked_pos.intersection(simulated_pos - pipeline_pos))
 
-    # Ns in masked regions - should equal the size of the mask
-    n_in_mask = len(masked_pos.intersection(n_pos))
-
     # Compute Performance Stats
     # precision (positive predictive value) of each pipeline as TP/(TP + FP), 
     precision = tp / (tp + fp)
@@ -100,12 +97,10 @@ def analyse(results_path, sample, mask_filepath):
         "TP": tp,
         "FP": fp,
         "FN": fn,
-        "Ns": n,
-        "masked TPs": tp_in_mask,
-        "masked FPs": fp_in_mask, 
-        "masked FNs": fn_in_mask, 
-        "masked Ns": n_in_mask, 
-        "mask size": m, # masked Ns and mask size should be equal
+        "misssing sites": n,
+        "TPs in mask": tp_in_mask,
+        "FPs in mask": fp_in_mask, 
+        "FNs in mask": fn_in_mask, 
         "precision": precision,
         "sensitivity": sensitivity,
         "miss_rate": miss_rate,
