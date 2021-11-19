@@ -60,10 +60,16 @@ def simulate_genome_from_vcf(reference_path, simulated_genome_path, predef_snp_p
         Returns:
             None
     """
-    params = ["-snp_vcf", predef_snp_path, 
+    # TODO better solution for storing decomposed VCF
+    tmp_decomposed_vcf_path = simulated_genome_path + 'decomposed.vcf'
+    # Decompose complex SNPs
+    decompose_complex_snps(predef_snp_path, tmp_decomposed_vcf_path)
+    params = ["-snp_vcf", tmp_decomposed_vcf_path, 
               #"-indel_vcf", predef_snp_path # tells simuG to also simulate predefined indels.
               "-seed", str(seed)]
     simulate_genome(reference_path, simulated_genome_path, params)
+    # clean tmp decomposed VCF
+    run(['rm', tmp_decomposed_vcf_path])
 
 def simulate_genome(reference_path, simulated_genome_path, params):
     cmd = ["simuG.pl",
@@ -71,6 +77,12 @@ def simulate_genome(reference_path, simulated_genome_path, params):
            "-prefix", simulated_genome_path + "simulated"]
     cmd.extend(params)
     run(cmd)
+
+def decompose_complex_snps(predef_snp_path, output_file_path):
+    run(['vt', 
+         'decompose_blocksub',
+         predef_snp_path,
+         '-o', output_file_path])
 
 def simulate_reads(
     genome_fasta,
@@ -183,8 +195,8 @@ def performance_test(results_path, btb_seq_path, reference_path, exist_ok=False,
     
     # Simulate Reads
     for sample in samples:
-        simulate_genome_random_snps(reference_path, simulated_genome_path + sample + '.')
-
+        #simulate_genome_random_snps(reference_path, simulated_genome_path + sample + '.')
+        simulate_genome_from_vcf(reference_path, simulated_genome_path + sample + '.', '/mnt/fsx-027/snippy/AF-21-07713-19.vcf')
         # TODO: explicitly path fasta path to simulate
         fasta_path = simulated_genome_path + sample + '.simulated.simseq.genome.fa'
 
