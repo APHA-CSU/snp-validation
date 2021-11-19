@@ -30,11 +30,15 @@ def analyse(results_path, sample, mask_filepath):
     """
 
     pipeline_directory = glob.glob(results_path + 'btb-seq-results/Results_simulated-reads_*')[0] + '/'
-    
+    simulated_snp_path = results_path + f'simulated-genome/{sample}.simulated.refseq2simseq.map.txt')
+    pipeline_snp_path = pipeline_directory + f'snpTables/{sample}_snps.tab'
+    pipeline_genome_path = pipeline_directory + f'consensus/{sample}_consensus.fas'
+
+
     # Load
-    simulated_snps = pd.read_csv(results_path + f'simulated-genome/{sample}.simulated.refseq2simseq.map.txt', delimiter='\t')
-    pipeline_snps = pd.read_csv(pipeline_directory + f'snpTables/{sample}_snps.tab', delimiter='\t')
-    pipeline_genome = load_consensus(pipeline_directory + f'consensus/{sample}_consensus.fas')
+    simulated_snps = pd.read_csv(simulated_snp_path,  delimiter='\t')
+    pipeline_snps = pd.read_csv(pipeline_snp_path, delimiter='\t')
+    pipeline_genome = load_consensus(pipeline_genome_path)
 
     # Trim adapter sequences off pipeline genome
     pipeline_genome = pipeline_genome[29:-31]
