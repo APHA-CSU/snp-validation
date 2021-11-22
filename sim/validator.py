@@ -114,8 +114,6 @@ def performance_test(
 
     stats = []
     for sample in samples:
-        simulated_snps = simulated_genome_path + sample.name + ".simulated.refseq2simseq.map.txt"
-        
         pipeline_snps = pipeline_directory + f'snpTables/{sample.name}_snps.tab'
 
         if not os.path.exists(pipeline_snps):
