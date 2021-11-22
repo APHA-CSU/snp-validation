@@ -22,10 +22,12 @@ DEFAULT_BRANCHES = [
     "ForRevAltRead",
     "AltProportion",
     "SNPwindow",
-    "RepeatMask"
+    "RepeatMask",
+    "v1",
+    "v2"
 ]
 
-def ofat(btb_seq_path, results_path, reference_path, branches=DEFAULT_BRANCHES):
+def ofat(btb_seq_path, results_path, branches=DEFAULT_BRANCHES):
     """ Runs a performance test against the pipeline
 
         Parameters:
@@ -44,6 +46,8 @@ def ofat(btb_seq_path, results_path, reference_path, branches=DEFAULT_BRANCHES):
     # Prepare output directory
     os.makedirs(results_path, exist_ok=False)
 
+    samples = validator.standard_samples()
+
     # Benchmark the branches
     for branch in branches:
         branch_results_path = results_path + branch + '/'
@@ -51,8 +55,8 @@ def ofat(btb_seq_path, results_path, reference_path, branches=DEFAULT_BRANCHES):
         try:
             validator.performance_test(
                 branch_results_path, 
-                btb_seq_path, 
-                reference_path, 
+                btb_seq_path,
+                samples=samples, 
                 branch=branch
             )
         except Exception as e:
@@ -60,6 +64,7 @@ def ofat(btb_seq_path, results_path, reference_path, branches=DEFAULT_BRANCHES):
             print(f"***FAILED BRANCH: {branch}****", branch)
 
     # Analyse results
+    return None
     return analyse(results_path)
 
 def analyse(root_path):
@@ -111,18 +116,16 @@ def analyse(root_path):
         "tp": tps
     })
 
-
 if __name__ == '__main__':
     # Parse
     parser = argparse.ArgumentParser(description="Run the performance benchmarking tool against a number of git branches")
 
     parser.add_argument("btb_seq", help="path to btb-seq code")
     parser.add_argument("results", help="path to results directory")
-    parser.add_argument("reference", help="path to reference file")
 
     args = parser.parse_args(sys.argv[1:])
 
     # Run
-    df = ofat(args.btb_seq, args.results, args.reference)
+    df = ofat(args.btb_seq, args.results)
     print("OFAT run completed, results:")
     print(df)

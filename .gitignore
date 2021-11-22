@@ -1,3 +1,4 @@
 *.gz
 *.fastq
 *__pycache__/
+.vscode/

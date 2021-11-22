@@ -34,7 +34,6 @@ def analyse(results_path, sample, mask_filepath):
     pipeline_snp_path = pipeline_directory + f'snpTables/{sample}_snps.tab'
     pipeline_genome_path = pipeline_directory + f'consensus/{sample}_consensus.fas'
 
-
     # Load
     simulated_snps = pd.read_csv(simulated_snp_path,  delimiter='\t')
     pipeline_snps = pd.read_csv(pipeline_snp_path, delimiter='\t')
@@ -79,13 +78,13 @@ def analyse(results_path, sample, mask_filepath):
 
     # Compute Performance Stats
     # precision (positive predictive value) of each pipeline as TP/(TP + FP), 
-    precision = tp / (tp + fp)
+    precision = tp / (tp + fp) if (tp + fp) else float("inf")
 
     # recall (sensitivity) as TP/(TP + FN)
-    sensitivity = tp / (tp + fn)
+    sensitivity = tp / (tp + fn) if (tp + fn) else float("inf")
 
     # miss rate as FN/(TP + FN)
-    miss_rate = fn / (tp + fn)
+    miss_rate = fn / (tp + fn) if (tp + fn) else float("inf")
 
     # F-score as 2*(precision*recall)/(precision-recall)
     f_score = 2*(precision*sensitivity)/(precision+sensitivity)
