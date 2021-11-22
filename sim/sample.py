@@ -107,7 +107,6 @@ def simulate_genome_from_vcf(reference_path, simulated_genome_path, predef_snp_p
             None
     """
     if not os.path.isfile(predef_snp_path):
-        print("HHHHHEEEEERRRREE")
         raise(FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), predef_snp_path))
     # TODO better solution for storing decomposed VCF
     tmp_decomposed_vcf_path = simulated_genome_path + 'decomposed.vcf'
