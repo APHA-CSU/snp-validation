@@ -57,13 +57,13 @@ def analyse(simulated_snps, pipeline_snps, mask_filepath):
 
     # Compute Performance Stats
     # precision (positive predictive value) of each pipeline as TP/(TP + FP), 
-    precision = tp / (tp + fp)
+    precision = tp / (tp + fp) if (tp + fp) else float("inf")
 
     # recall (sensitivity) as TP/(TP + FN)
-    sensitivity = tp / (tp + fn)
+    sensitivity = tp / (tp + fn) if (tp + fn) else float("inf")
 
     # miss rate as FN/(TP + FN)
-    miss_rate = fn / (tp + fn)
+    miss_rate = fn / (tp + fn) if (tp + fn) else float("inf")
 
     # F-score as 2*(precision*recall)/(precision-recall)
     f_score = 2*(precision*sensitivity)/(precision+sensitivity)
