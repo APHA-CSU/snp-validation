@@ -86,7 +86,7 @@ def simulate_genome_random_snps(reference_path, simulated_genome_path, num_snps=
                 "-seed", str(seed)]
     simulate_genome(reference_path, simulated_genome_path, params)
 
-def decompose_complex_snps(self, predef_snp_path, output_file_path):
+def decompose_complex_snps(predef_snp_path, output_file_path):
     run(['vt', 
          'decompose_blocksub',
          predef_snp_path,
