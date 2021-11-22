@@ -44,10 +44,13 @@ class VcfSample(Sample):
     def name(self):
         # extract filename
         #TODO: this will fail if the extension is not 3 charachters long
+        #TODO: this pattern is getting somewhat unweildy.
+        #   etiher use something more general or save metadata separately
         basename = os.path.basename(self.predef_snp_path)[:-4]
         return f"{type(self).__name__}-{basename}-seed{self.seed}-error{self.per_base_error_rate}-readpairs-{self.num_read_pairs}"
 
     def simulate_genome(self, reference_path, simulated_genome_path):
+        """ Simulate a genome fasta using simuG."""
         simulate_genome_from_vcf(reference_path, simulated_genome_path, self.predef_snp_path, seed=1)
 
 class RandomSample(Sample):
