@@ -1,6 +1,6 @@
 from utils import run
+import errno
 import math 
-
 import os
 
 class Sample:
@@ -51,6 +51,7 @@ class VcfSample(Sample):
 
     def simulate_genome(self, reference_path, simulated_genome_path):
         """ Simulate a genome fasta using simuG."""
+        
         simulate_genome_from_vcf(reference_path, simulated_genome_path, self.predef_snp_path, seed=1)
 
 class RandomSample(Sample):
@@ -85,6 +86,12 @@ def simulate_genome_random_snps(reference_path, simulated_genome_path, num_snps=
                 "-seed", str(seed)]
     simulate_genome(reference_path, simulated_genome_path, params)
 
+def decompose_complex_snps(predef_snp_path, output_file_path):
+    run(['vt', 
+         'decompose_blocksub',
+         predef_snp_path,
+         '-o', output_file_path])
+
 def simulate_genome_from_vcf(reference_path, simulated_genome_path, predef_snp_path, seed=1):
     """ Simulated a genome with random SNPs
 
@@ -99,10 +106,18 @@ def simulate_genome_from_vcf(reference_path, simulated_genome_path, predef_snp_p
         Returns:
             None
     """
-    params = ["-snp_vcf", predef_snp_path, 
+    if not os.path.isfile(predef_snp_path):
+        raise(FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), predef_snp_path))
+    # TODO better solution for storing decomposed VCF
+    tmp_decomposed_vcf_path = simulated_genome_path + '.decomposed.vcf'
+    # Decompose complex SNPs
+    decompose_complex_snps(predef_snp_path, tmp_decomposed_vcf_path)
+    params = ["-snp_vcf", tmp_decomposed_vcf_path, 
               #"-indel_vcf", predef_snp_path # tells simuG to also simulate predefined indels.
               "-seed", str(seed)]
     simulate_genome(reference_path, simulated_genome_path, params)
+    # clean tmp decomposed VCF
+    run(['rm', tmp_decomposed_vcf_path])
 
 def simulate_genome(reference_path, simulated_genome_path, params):
     cmd = ["simuG.pl",

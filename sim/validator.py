@@ -1,7 +1,5 @@
 import os
-import subprocess
 import glob
-import json
 import sys
 import argparse
 import shutil
@@ -24,7 +22,10 @@ def btb_seq(btb_seq_directory, reads_directory, results_directory):
 def quick_samples(self):
     return [RandomSample(1)]
 
-def standard_samples(vcf_dir='/home/aaronfishman/mnt/fsx-027/'):
+def standard_samples(vcf_dir='/mnt/fsx-027/snippy'):
+    if not os.path.isdir(vcf_dir):
+        raise Exception("Predefined SNP directory not found") 
+    
     vcf_dir = os.path.join(vcf_dir, '')
 
     vcf_filepaths = glob.glob(vcf_dir+'*.vcf')
