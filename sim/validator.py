@@ -1,7 +1,5 @@
 import os
-import subprocess
 import glob
-import json
 import sys
 import argparse
 import shutil
@@ -38,8 +36,6 @@ def standard_samples(vcf_dir='/mnt/fsx-027/snippy'):
 
     for filepath in vcf_filepaths:
         samples.append(VcfSample(filepath))    
-
-    print(samples)
 
     return samples
 
