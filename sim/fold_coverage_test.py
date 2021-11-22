@@ -41,6 +41,7 @@ def run_fold_coverage_test():
 
 def plot_result(csv_path='/home/aaronfishman/temp-results/fold-coverage-test-5/stats.csv'):
     # TODO: save plots to output image
+    # TODO: remove hardcoded values
 
     df = pd.read_csv(csv_path)
     fold = [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 30, 40, 50]
