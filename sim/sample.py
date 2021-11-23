@@ -31,7 +31,7 @@ class VcfSample(Sample):
         predef_snp_path, 
         seed=1, 
         per_base_error_rate="0",
-        num_read_pairs = 10,
+        num_read_pairs = 144997,
     ):
         self.seed = seed
         self.per_base_error_rate = per_base_error_rate
