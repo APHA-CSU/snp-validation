@@ -59,6 +59,7 @@ def analyse(results_path, sample_name, mask_filepath):
     masked_pos = set(masked_positions(mask_filepath))
 
     # Extract N's positions in pipeline genome
+    # +30 to acheive common indexing with snptables
     n_pos = set([i+30 for i in range(len(pipeline_genome)) if pipeline_genome[i] == 'N'])
 
     # TP - true positive -(the variant is in the simulated genome and correctly called by the pipeline)
