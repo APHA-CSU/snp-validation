@@ -114,8 +114,6 @@ def performance_test(
 
     stats = []
     for sample in samples:
-        simulated_snps = simulated_genome_path + sample.name + ".simulated.refseq2simseq.map.txt"
-        
         pipeline_snps = pipeline_directory + f'snpTables/{sample.name}_snps.tab'
 
         if not os.path.exists(pipeline_snps):
@@ -124,7 +122,7 @@ def performance_test(
         if not os.path.exists(pipeline_snps):
             raise Exception("Cant Find the pipeline's snps table!!")
 
-        stat = analyse(simulated_snps, pipeline_snps, mask_filepath)
+        stat = analyse(results_path, sample.name, mask_filepath)
         stat["name"] = sample.name
         
         stats.append(stat)
