@@ -47,10 +47,6 @@ def analyse(results_path, sample_name, mask_filepath):
     pipeline_snps = pd.read_csv(pipeline_snp_path, delimiter='\t')
     pipeline_genome = load_consensus(pipeline_genome_path)
 
-    # TODO load proper adapter sequence from file (ask richard)    
-    # Trim adapter sequences off pipeline genome
-    pipeline_genome = pipeline_genome[29:-31]
-
     # Extract SNP positions
     simulated_pos = set(simulated_snps['ref_start'].values)
     pipeline_pos = set(pipeline_snps['POS'].values)
@@ -59,8 +55,8 @@ def analyse(results_path, sample_name, mask_filepath):
     masked_pos = set(masked_positions(mask_filepath))
 
     # Extract N's positions in pipeline genome
-    # +30 to acheive common indexing with snptables
-    n_pos = set([i+30 for i in range(len(pipeline_genome)) if pipeline_genome[i] == 'N'])
+    # +1 to achieve common indexing with snp tables 
+    n_pos = set([i+1 for i in range(len(pipeline_genome)) if pipeline_genome[i] == 'N'])
 
     # TP - true positive -(the variant is in the simulated genome and correctly called by the pipeline)
     tp = len(simulated_pos.intersection(pipeline_pos))
