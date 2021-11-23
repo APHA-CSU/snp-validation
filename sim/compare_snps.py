@@ -111,7 +111,7 @@ def analyse(results_path, sample_name, mask_filepath):
         "sensitivity": sensitivity,
         "miss_rate": miss_rate,
         "f_score": f_score,
-        "total_errors": total_errors,
+        "total_errors": total_errors
     }
 
 def load_consensus(path):
