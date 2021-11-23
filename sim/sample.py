@@ -113,7 +113,7 @@ def simulate_genome_from_vcf(reference_path, simulated_genome_path, predef_snp_p
     # Decompose complex SNPs
     decompose_complex_snps(predef_snp_path, tmp_decomposed_vcf_path)
     params = ["-snp_vcf", tmp_decomposed_vcf_path, 
-              #"-indel_vcf", predef_snp_path # tells simuG to also simulate predefined indels.
+              "-indel_vcf", tmp_decomposed_vcf_path,
               "-seed", str(seed)]
     simulate_genome(reference_path, simulated_genome_path, params)
     # clean tmp decomposed VCF
