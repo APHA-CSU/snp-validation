@@ -29,6 +29,7 @@ def analyse(results_path, sample_name, mask_filepath):
         Returns a dictionary of performance stats
     """
 
+    # TODO DRY up pipeline_directory path: common with validator.py
     pipeline_directory = glob.glob(results_path + 'btb-seq-results/Results_simulated-reads_*')[0] + '/'
     simulated_snp_path = results_path + f'simulated-genome/{sample_name}.simulated.refseq2simseq.map.txt'
     pipeline_snp_path = pipeline_directory + f'snpTables/{sample_name}_snps.tab'
@@ -46,6 +47,7 @@ def analyse(results_path, sample_name, mask_filepath):
     pipeline_snps = pd.read_csv(pipeline_snp_path, delimiter='\t')
     pipeline_genome = load_consensus(pipeline_genome_path)
 
+    # TODO load proper adapter sequence from file (ask richard)    
     # Trim adapter sequences off pipeline genome
     pipeline_genome = pipeline_genome[29:-31]
 
