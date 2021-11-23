@@ -19,7 +19,7 @@ def btb_seq(btb_seq_directory, reads_directory, results_directory):
 
 # TODO: move these functions into samples
 
-def quick_samples(self):
+def quick_samples():
     return [RandomSample(1)]
 
 def standard_samples(vcf_dir='/mnt/fsx-027/snippy'):
@@ -148,7 +148,7 @@ def main():
     args = parser.parse_args(sys.argv[1:])
 
     # Run
-    samples = standard_samples()
+    samples = quick_samples()#standard_samples()
 
     performance_test(
         args.results, 

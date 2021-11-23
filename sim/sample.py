@@ -82,6 +82,7 @@ def simulate_genome_random_snps(reference_path, simulated_genome_path, num_snps=
         Returns:
             None
     """
+    # TODO: include indels 
     params = ["-snp_count", str(num_snps),
                 "-seed", str(seed)]
     simulate_genome(reference_path, simulated_genome_path, params)
