@@ -20,7 +20,7 @@ def btb_seq(btb_seq_directory, reads_directory, results_directory):
 # TODO: move these functions into samples
 
 def quick_samples():
-    return [RandomSample(1)]
+    return [RandomSample(seed=1)]
 
 def standard_samples(vcf_dir='/mnt/fsx-027/snippy'):
     if not os.path.isdir(vcf_dir):
@@ -43,7 +43,7 @@ def performance_test(
     results_path, 
     btb_seq_path, 
     reference_path=DEFAULT_REFERENCE_PATH,
-    samples=[RandomSample(16000, 1)],
+    samples=[RandomSample(16000, 1600, 1)],
     exist_ok=True, 
     branch=None
 ):

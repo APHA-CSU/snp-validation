@@ -55,21 +55,22 @@ class VcfSample(Sample):
         simulate_genome_from_vcf(reference_path, simulated_genome_path, self.predef_snp_path, seed=1)
 
 class RandomSample(Sample):
-    def __init__(self, num_snps=16000, seed=1, per_base_error_rate="0"):
+    def __init__(self, num_snps=16000, num_indels=1600, seed=1, per_base_error_rate="0"):
         self.num_snps = num_snps
+        self.num_indels = num_indels
         self.seed = seed
         self.per_base_error_rate = per_base_error_rate
     
     @property
     def name(self):
-        return f"{type(self).__name__}-snps{self.num_snps}-seed{self.seed}"
+        return f"{type(self).__name__}-snps{self.num_snps}-indels{self.num_indels}-seed{self.seed}"
 
     def simulate_genome(self, reference_path, simulated_genome_path):
-        simulate_genome_random_snps(reference_path, simulated_genome_path, num_snps=self.num_snps, seed=self.seed)
+        simulate_genome_random_snps(reference_path, simulated_genome_path, num_snps=self.num_snps, num_indels=self.num_indels, seed=self.seed)
 
 # TODO: move these functions inside of the classes
 
-def simulate_genome_random_snps(reference_path, simulated_genome_path, num_snps=16000, seed=1):
+def simulate_genome_random_snps(reference_path, simulated_genome_path, num_snps=16000, num_indels=1600, seed=1):
     """ Simulated a genome with random SNPs
 
         TODO: rename simulated_genome_path to simulated_genome_prefix
@@ -82,8 +83,8 @@ def simulate_genome_random_snps(reference_path, simulated_genome_path, num_snps=
         Returns:
             None
     """
-    # TODO: include indels 
     params = ["-snp_count", str(num_snps),
+                "-indel_count", str(num_indels),
                 "-seed", str(seed)]
     simulate_genome(reference_path, simulated_genome_path, params)
 
