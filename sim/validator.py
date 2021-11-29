@@ -119,15 +119,19 @@ def performance_test(
 
     stats = []
     for sample in samples:
-        pipeline_snps = pipeline_directory + f'snpTables/{sample.name}_snps.tab'
-
-        if not os.path.exists(pipeline_snps):
-            pipeline_snps = pipeline_directory + f'snpTables/{sample.name}.tab'
-
-        if not os.path.exists(pipeline_snps):
+        pipeline_snp_path = pipeline_directory + f'snpTables/{sample.name}_snps.tab'
+        if not os.path.exists(pipeline_snp_path):
+            pipeline_snp_path = pipeline_directory + f'snpTables/{sample.name}.tab'
+        if not os.path.exists(pipeline_snp_path):
             raise Exception("Cant Find the pipeline's snps table!!")
-
-        stat = analyse(results_path, sample.name, mask_filepath)
+        simulated_snp_path = results_path + f'simulated-genome/{sample.name}.simulated.refseq2simseq.map.txt'
+        pipeline_genome_path = pipeline_directory + f'consensus/{sample.name}_consensus.fas'
+        if not os.path.exists(pipeline_genome_path):
+            pipeline_genome_path = pipeline_directory + f'consensus/{sample.name}.fas'
+        if not os.path.exists(pipeline_snp_path):
+            raise Exception("Cant Find the pipeline's consensus file!!")
+        
+        stat = analyse(simulated_snp_path, pipeline_snp_path, pipeline_genome_path, mask_filepath)
         stat["name"] = sample.name
         
         stats.append(stat)
@@ -153,7 +157,7 @@ def main():
     args = parser.parse_args(sys.argv[1:])
 
     # Run
-    samples = standard_samples()
+    samples = quick_samples()#standard_samples()
 
     performance_test(
         args.results, 

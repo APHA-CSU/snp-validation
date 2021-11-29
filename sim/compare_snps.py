@@ -22,25 +22,24 @@ def masked_positions(mask_filepath):
 
     return masked_pos
 
-def analyse(results_path, sample_name, mask_filepath):
-    """ Compare simulated SNPs data from simuG against btb-seq's snpTable.tab
-        If adjust == True: applies the mask to simulated SNPs and pipeline SNPs
-        Returns a dictionary of performance stats
-    """
+def load_consensus(path):
+    """ Load a consensus file. Returns the first record in a fasta file a string """
 
-    # TODO DRY up pipeline_directory path: common with validator.py
-    pipeline_directory = glob.glob(results_path + 'btb-seq-results/Results_simulated-reads_*')[0] + '/'
-    simulated_snp_path = results_path + f'simulated-genome/{sample_name}.simulated.refseq2simseq.map.txt'
-    pipeline_snp_path = pipeline_directory + f'snpTables/{sample_name}_snps.tab'
-    if not os.path.exists(pipeline_snp_path):
-        pipeline_snp_path = pipeline_directory + f'snpTables/{sample_name}.tab'
-    if not os.path.exists(pipeline_snp_path):
-        raise Exception("Cant Find the pipeline's snps table!!")
-    pipeline_genome_path = pipeline_directory + f'consensus/{sample_name}_consensus.fas'
-    if not os.path.exists(pipeline_genome_path):
-        pipeline_genome_path = pipeline_directory + f'consensus/{sample_name}.fas'
-    if not os.path.exists(pipeline_snp_path):
-        raise Exception("Cant Find the pipeline's consensus file!!")
+    for seq_record in SeqIO.parse(path, "fasta"):
+        return str(seq_record.seq)
+
+def analyse(simulated_snp_path, pipeline_snp_path, pipeline_genome_path, mask_filepath):
+    """ Compare simulated SNPs data from simuG against btb-seq's snpTable.tab
+        
+        Params:
+            simulated_snp_path (str): path to simulated snp table
+            pipeline_snp_path (str): path to pipeline snp table
+            pipeline_genome_path (str): path to pipeline consensus file
+            mask_filepath (str): path to mask bed file used in pipeline
+        
+        Returns: 
+            (dict) a dictionary of performance stats
+    """
     # Load
     simulated_snps = pd.read_csv(simulated_snp_path,  delimiter='\t')
     pipeline_snps = pd.read_csv(pipeline_snp_path, delimiter='\t')
@@ -91,7 +90,7 @@ def analyse(results_path, sample_name, mask_filepath):
     # F-score as 2*(precision*recall)/(precision-recall)
     f_score = 2*(precision*sensitivity)/(precision+sensitivity)
 
-    #  total number of errors (FP + FN) per million sequenced bases
+    # total number of errors (FP + FN) per million sequenced bases
     total_errors = fp + fn
 
     return {
@@ -108,9 +107,3 @@ def analyse(results_path, sample_name, mask_filepath):
         "f_score": f_score,
         "total_errors": total_errors
     }
-
-def load_consensus(path):
-    """ Load a consensus file. Returns the first record in a fasta file a string """
-
-    for seq_record in SeqIO.parse(path, "fasta"):
-        return str(seq_record.seq)
