@@ -15,11 +15,10 @@ def masked_positions(mask_filepath):
         names=["CHROM", "START", "END", "RPT"]
     )
 
-    # TODO: This is off by one compared to the Emergency Port validation doc
-    #    why is that?
     masked_pos = []
     for i, row in mask.iterrows():
-        masked_pos.extend(list(range(row['START'], row['END']+1)))# This is based off indexing in richards rpt.regions file - inconsisten with bedtools
+        # +1 to to adjust for difference in indexing convention between bedfile and snptables
+        masked_pos.extend(list(range(row['START']+1, row['END']+1)))
 
     return masked_pos
 
