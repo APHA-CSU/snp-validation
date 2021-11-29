@@ -7,11 +7,13 @@ import shutil
 import pandas as pd
 
 from compare_snps import analyse
-from sample import *
+
+from vcf_sample import VcfSample
+from random_sample import RandomSample
+
 from utils import run
 
 DEFAULT_REFERENCE_PATH = './Mycobacterium_bovis_AF212297_LT78304.fa'
-
 
 def btb_seq(btb_seq_directory, reads_directory, results_directory):
     run(["bash", "./btb-seq", reads_directory,
