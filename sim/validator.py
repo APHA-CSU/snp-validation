@@ -148,7 +148,7 @@ def main():
     args = parser.parse_args(sys.argv[1:])
 
     # Run
-    samples = standard_samples()
+    samples = [RandomSample()]
 
     performance_test(
         args.results, 

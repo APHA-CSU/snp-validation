@@ -3,8 +3,16 @@ import errno
 import math 
 import os
 
+# Default  dwgsim settings
+READ_LEN = 150
+OUTER_DISTANCE = 330
+RANDOM_DNA_PROBABILITY = 0.01
+RATE_OF_MUTATIONS = 0
+INDEL_MUTATION_FRACTION = 0,
+INDEX_EXTENSION_PROBABILITY = 0,
+
 class Sample:
-    per_base_error_rate = "0"
+    per_base_error_rate = "0.001-0.01"
     num_read_pairs = 150000
 
     def simulate_genome(self):
@@ -15,16 +23,44 @@ class Sample:
         # TODO: this is ugly, make this human-readable
         return f"unnamed-{str(id(self))}"
 
-    def simulate_reads(self, simulated_genome_path, simulated_reads_path):
-        # # TODO: explicitly path fasta path to simulate
-        fasta_path = simulated_genome_path + self.name + '.simulated.simseq.genome.fa'
-        simulate_reads(
-            fasta_path, 
-            simulated_reads_path, 
-            sample_name=self.name, 
-            per_base_error_rate=self.per_base_error_rate,
-            num_read_pairs=self.num_read_pairs
-        )
+    def simulate_reads(self, 
+        simulated_genome_dir, 
+        simulated_reads_path, 
+        seed=1,
+    ):
+        fasta_path = simulated_genome_dir + self.name + '.simulated.simseq.genome.fa'
+
+        # How dwgsim chooses to name it's output fastq files
+        output_prefix = simulated_reads_path + self.name
+        dwgsim_read_1 = output_prefix + ".bwa.read1.fastq.gz"
+        dwgsim_read_2 = output_prefix + ".bwa.read2.fastq.gz"
+
+        # Output fastq filenames compatible with btb-seq
+        read_1 = output_prefix + "_S1_R1_X.fastq.gz"
+        read_2 = output_prefix + "_S1_R2_X.fastq.gz"
+
+        run([
+            "dwgsim",
+            "-e", str(self.per_base_error_rate),
+            "-E", str(self.per_base_error_rate),
+            "-i",
+            "-d", str(OUTER_DISTANCE),
+            "-N", str(self.num_read_pairs),
+            "-1", str(READ_LEN),
+            "-2", str(READ_LEN),
+            "-r", str(RATE_OF_MUTATIONS),
+            "-R", str(INDEL_MUTATION_FRACTION),
+            "-X", str(INDEX_EXTENSION_PROBABILITY),
+            "-y", str(RANDOM_DNA_PROBABILITY),
+            "-H",
+            "-z", str(seed),
+            fasta_path,
+            output_prefix
+        ])
+
+        # Rename output fastq files
+        os.rename(dwgsim_read_1, read_1)
+        os.rename(dwgsim_read_2, read_2)
 
 class VcfSample(Sample):
     def __init__(self, 
@@ -126,48 +162,3 @@ def simulate_genome(reference_path, simulated_genome_path, params):
     cmd.extend(params)
     run(cmd)
 
-def simulate_reads(
-    genome_fasta,
-    output_directory,
-    sample_name="simulated",
-    num_read_pairs=150000,
-    read_length=150,
-    seed=1,
-    outer_distance=330,
-    random_dna_probability=0.01,
-    rate_of_mutations=0,
-    indel_mutation_fraction=0,
-    indel_extension_probability=0,
-    per_base_error_rate="0.001-0.01" # TODO: default to Ele's reccomendation? 0.001-0.01
-):   
-    # How dwgsim chooses to name it's output fastq files
-    output_prefix = output_directory + sample_name
-    dwgsim_read_1 = output_prefix + ".bwa.read1.fastq.gz"
-    dwgsim_read_2 = output_prefix + ".bwa.read2.fastq.gz"
-
-    # Output fastq filenames compatible with btb-seq
-    read_1 = output_prefix + "_S1_R1_X.fastq.gz"
-    read_2 = output_prefix + "_S1_R2_X.fastq.gz"
-
-    run([
-        "dwgsim",
-        "-e", str(per_base_error_rate),
-        "-E", str(per_base_error_rate),
-        "-i",
-        "-d", str(outer_distance),
-        "-N", str(num_read_pairs),
-        "-1", str(read_length),
-        "-2", str(read_length),
-        "-r", str(rate_of_mutations),
-        "-R", str(indel_mutation_fraction),
-        "-X", str(indel_extension_probability),
-        "-y", str(random_dna_probability),
-        "-H",
-        "-z", str(seed),
-        genome_fasta,
-        output_prefix
-    ])
-
-    # Rename output fastq files
-    os.rename(dwgsim_read_1, read_1)
-    os.rename(dwgsim_read_2, read_2)
