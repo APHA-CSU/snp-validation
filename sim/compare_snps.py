@@ -8,6 +8,8 @@ Calculate performance stats from simulated data
 """
 
 def masked_positions(mask_filepath):
+    """ Parse mask file path. Returns a list of mask positions """
+    
     mask = pd.read_csv(mask_filepath,
         delimiter='\t',
         skiprows=[0,1],
@@ -23,7 +25,7 @@ def masked_positions(mask_filepath):
     return masked_pos
 
 def load_consensus(path):
-    """ Load a consensus file. Returns the first record in a fasta file a string """
+    """ Parse consensus file. Returns the first record in a fasta file a string """
 
     for seq_record in SeqIO.parse(path, "fasta"):
         return str(seq_record.seq)
