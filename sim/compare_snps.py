@@ -48,8 +48,8 @@ def analyse(results_path, sample_name, mask_filepath):
     pipeline_genome = load_consensus(pipeline_genome_path)
 
     # Extract SNP positions
-    simulated_pos = set(simulated_snps['ref_start'].values)
-    pipeline_pos = set(pipeline_snps['POS'].values)
+    simulated_pos = set(simulated_snps.loc[simulated_snps['variant_type'] == 'SNP', 'ref_start'].values)
+    pipeline_pos = set(pipeline_snps.loc[pipeline_snps['TYPE'] == 'SNP', 'POS'].values)
     
     # Extract mask positions    
     masked_pos = set(masked_positions(mask_filepath))
@@ -69,9 +69,6 @@ def analyse(results_path, sample_name, mask_filepath):
 
     # N - the number of missing sites in the pipeline genome
     n = len(n_pos)
-
-    # The size of the mask
-    m = len(masked_pos)
 
     # TPs in masked regions 
     tp_in_mask = len(masked_pos.intersection(simulated_pos.intersection(pipeline_pos)))
