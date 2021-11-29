@@ -11,10 +11,10 @@ RATE_OF_MUTATIONS = 0
 INDEL_MUTATION_FRACTION = 0,
 INDEX_EXTENSION_PROBABILITY = 0,
 PER_BASE_ERROR_RATE = "0.001-0.01"
+NUM_READ_PAIRS = 144997
 
 class Sample:
     per_base_error_rate = PER_BASE_ERROR_RATE
-    num_read_pairs = 150000
 
     def simulate_genome(self):
         raise NotImplementedError()
@@ -63,12 +63,12 @@ class Sample:
         os.rename(dwgsim_read_1, read_1)
         os.rename(dwgsim_read_2, read_2)
 
-    def simug(self, reference_path, simulated_genome_path, params):
-        cmd = ["simuG.pl",
-            "-refseq", reference_path,
-            "-prefix", simulated_genome_path + ".simulated"
-        ]
+def simug(reference_path, simulated_genome_path, params):
+    cmd = ["simuG.pl",
+        "-refseq", reference_path,
+        "-prefix", simulated_genome_path + ".simulated"
+    ]
 
-        cmd.extend(params)
-        
-        run(cmd)
+    cmd.extend(params)
+    
+    run(cmd)

@@ -1,10 +1,11 @@
 import sample 
 
 class RandomSample(sample.Sample):
-    def __init__(self, num_snps=16000, seed=1, per_base_error_rate=sample.PER_BASE_ERROR_RATE):
+    def __init__(self, num_snps=16000, seed=1, per_base_error_rate=sample.PER_BASE_ERROR_RATE, num_read_pairs=sample.NUM_READ_PAIRS):
         self.num_snps = num_snps
         self.seed = seed
         self.per_base_error_rate = per_base_error_rate
+        self.num_read_pairs = num_read_pairs
     
     @property
     def name(self):
@@ -32,4 +33,4 @@ class RandomSample(sample.Sample):
             "-seed", str(self.seed)
         ]
 
-        self.simug(reference_path, simulated_genome_path, params)
+        sample.simug(reference_path, simulated_genome_path, params)
