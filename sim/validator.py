@@ -29,13 +29,18 @@ def standard_samples(vcf_dir='/mnt/fsx-027/snippy'):
     vcf_dir = os.path.join(vcf_dir, '')
 
     vcf_filepaths = glob.glob(vcf_dir+'*.vcf')
+    # sort vcf_filepaths to for using consistent seed values accross runs.
+    vcf_filepaths.sort()
 
     samples = []
 
-    samples += [RandomSample(seed=1), RandomSample(seed=666)]
+    samples += [RandomSample(seed=1,per_base_error_rate="0.001-0.01"),
+    RandomSample(seed=666,per_base_error_rate="0.001-0.01")]
 
+    seed_value = 0
     for filepath in vcf_filepaths:
-        samples.append(VcfSample(filepath))    
+        seed_value+=1 # different seed value for each sample
+        samples.append(VcfSample(filepath, seed=seed_value, per_base_error_rate="0.001-0.01"))    
 
     return samples
 
