@@ -78,22 +78,24 @@ class VcfSample(Sample):
                  num_read_pairs = 144997,
                 ):
         
+        self.seed = seed
+        self.per_base_error_rate = per_base_error_rate
+        self.num_read_pairs = math.ceil(num_read_pairs)
+        
         if os.path.isfile(predef_snp_path):
             self.predef_snp_path = predef_snp_path
         else:
             raise Exception("Cant Find the pipeline's snps table")
-        self.seed = seed
-        self.per_base_error_rate = per_base_error_rate
-        self.num_read_pairs = math.ceil(num_read_pairs)
+        
+        # extract filename
+        basename = os.path.splitext(os.path.basename(self.predef_snp_path))
+        #TODO: this pattern is getting somewhat unweildy.
+        #   etiher use something more general or save metadata separately
+        self._name = f"{type(self).__name__}-{basename}-seed{self.seed}-error{self.per_base_error_rate}-readpairs-{self.num_read_pairs}"
 
     @property
     def name(self):
-        # extract filename
-        #TODO: this will fail if the extension is not 3 charachters long
-        #TODO: this pattern is getting somewhat unweildy.
-        #   etiher use something more general or save metadata separately
-        basename = os.path.basename(self.predef_snp_path)[:-4]
-        return f"{type(self).__name__}-{basename}-seed{self.seed}-error{self.per_base_error_rate}-readpairs-{self.num_read_pairs}"
+        return self._name
 
     def _decompose_complex_snps(self, output_file_path):
         run(['vt', 
@@ -142,10 +144,12 @@ class RandomSample(Sample):
         self.seed = seed
         self.per_base_error_rate = per_base_error_rate
         self.num_read_pairs = math.ceil(num_read_pairs)
+        
+        self._name = f"{type(self).__name__}-snps{self.num_snps}-indels{self.num_indels}-seed{self.seed}"
     
     @property
     def name(self):
-        return f"{type(self).__name__}-snps{self.num_snps}-indels{self.num_indels}-seed{self.seed}"
+        return self._name
 
     def simulate_genome(self, reference_path, simulated_genome_path):
         """ Simulated a genome with random SNPs
