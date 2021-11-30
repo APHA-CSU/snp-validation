@@ -78,8 +78,10 @@ class VcfSample(Sample):
                  num_read_pairs = 144997,
                 ):
         
-        # TODO: check predef_snp_path exists
-        self.predef_snp_path = predef_snp_path
+        if os.path.isfile(predef_snp_path):
+            self.predef_snp_path = predef_snp_path
+        else:
+            raise Exception("Cant Find the pipeline's snps table")
         self.seed = seed
         self.per_base_error_rate = per_base_error_rate
         self.num_read_pairs = math.ceil(num_read_pairs)
