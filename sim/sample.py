@@ -88,7 +88,7 @@ class VcfSample(Sample):
                  predef_snp_path, 
                  seed=1, 
                  per_base_error_rate="0",
-                 num_read_pairs = 144997,
+                 num_read_pairs = 289994,
                 ):
         
         self.seed = seed
@@ -132,11 +132,11 @@ class VcfSample(Sample):
             raise(FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), self.predef_snp_path))
         tmp_decomposed_vcf_path = simulated_genome_path + '.decomposed.vcf'
         # Decompose complex SNPs
-        self._decompose_complex_snps(tmp_decomposed_vcf_path)
+        self.decompose_complex_snps(tmp_decomposed_vcf_path)
         params = ["-snp_vcf", tmp_decomposed_vcf_path, 
                   "-indel_vcf", tmp_decomposed_vcf_path,
                   "-seed", str(seed)]
-        self.simulate_genome_base(reference_path, simulated_genome_path, params)
+        self._simulate_genome_base(reference_path, simulated_genome_path, params)
         # clean tmp decomposed VCF
         run(['rm', tmp_decomposed_vcf_path])
 
@@ -146,7 +146,7 @@ class RandomSample(Sample):
                  num_indels=1600, 
                  seed=1, 
                  per_base_error_rate="0",
-                 num_read_pairs = 144997
+                 num_read_pairs = 289994,
                  ):
         
         self.num_snps = num_snps
