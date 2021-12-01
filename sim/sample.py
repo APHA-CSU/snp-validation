@@ -146,7 +146,7 @@ class RandomSample(Sample):
                  num_indels=1600, 
                  seed=1, 
                  per_base_error_rate="0",
-                 num_read_pairs = 144997,
+                 num_read_pairs = 144997
                  ):
         
         self.num_snps = num_snps
