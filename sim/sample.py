@@ -12,7 +12,7 @@ class Sample:
         return f"unnamed-{str(id(self))}"
 
     def simulate_genome(self):
-        raise NotImplementedError("Please impliment this method")
+        raise NotImplementedError("Please implement this method")
 
     def _simulate_genome_base(self, reference_path, simulated_genome_path, params):
         cmd = ["simuG.pl",
