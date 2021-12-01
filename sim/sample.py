@@ -5,11 +5,9 @@ import os
 
 class Sample:
 
-    # Do we need this?
     @property
     def name(self):
-        # TODO: this is ugly, make this human-readable
-        return f"unnamed-{str(id(self))}"
+        return f"unnamed-{type(self).__name__}-{str(id(self))}"
 
     def simulate_genome(self):
         raise NotImplementedError("Please implement this method")
@@ -102,17 +100,15 @@ class VcfSample(Sample):
         else:
             raise Exception("Cant find the pre-defined snp path")
         
+    @property
+    def name(self):
         # extract filename
         basename = os.path.splitext(os.path.basename(self.predef_snp_path))[0]
         #TODO: this pattern is getting somewhat unweildy.
         #   etiher use something more general or save metadata separately
-        self._name = f"{type(self).__name__}-{basename}-seed{self.seed}-error{self.per_base_error_rate}-readpairs-{self.num_read_pairs}"
+        return f"{type(self).__name__}-{basename}-seed{self.seed}-error{self.per_base_error_rate}-readpairs-{self.num_read_pairs}"
 
-    @property
-    def name(self):
-        return self._name
-
-    def _decompose_complex_snps(self, output_file_path):
+    def decompose_complex_snps(self, output_file_path):
         run(['vt', 
             'decompose_blocksub',
             self.predef_snp_path,
@@ -140,7 +136,7 @@ class VcfSample(Sample):
         params = ["-snp_vcf", tmp_decomposed_vcf_path, 
                   "-indel_vcf", tmp_decomposed_vcf_path,
                   "-seed", str(seed)]
-        self._simulate_genome_base(reference_path, simulated_genome_path, params)
+        self.simulate_genome_base(reference_path, simulated_genome_path, params)
         # clean tmp decomposed VCF
         run(['rm', tmp_decomposed_vcf_path])
 
@@ -159,11 +155,9 @@ class RandomSample(Sample):
         self.per_base_error_rate = per_base_error_rate
         self.num_read_pairs = math.ceil(num_read_pairs)
         
-        self._name = f"{type(self).__name__}-snps{self.num_snps}-indels{self.num_indels}-seed{self.seed}"
-    
     @property
     def name(self):
-        return self._name
+        return f"{type(self).__name__}-snps{self.num_snps}-indels{self.num_indels}-seed{self.seed}"
 
     def simulate_genome(self, reference_path, simulated_genome_path):
         """ Simulated a genome with random SNPs
