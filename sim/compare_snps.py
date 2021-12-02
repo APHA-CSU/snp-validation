@@ -1,7 +1,7 @@
 import pandas as pd
-import glob 
-import os
 from Bio import SeqIO
+
+from utils import run
 
 """
 Calculate performance stats from simulated data
@@ -29,6 +29,10 @@ def load_consensus(path):
 
     for seq_record in SeqIO.parse(path, "fasta"):
         return str(seq_record.seq)
+
+def vcf_tools(simulated_vcf_path, pipeline_vcf_path):
+    run(['vcftools', '--vcf', simulated_vcf_path, '--gzdiff',
+         pipeline_vcf_path, '--diff-site', '--out', 'compare.vcf'])
 
 def analyse(simulated_snp_path, pipeline_snp_path, pipeline_genome_path, mask_filepath):
     """ Compare simulated SNPs data from simuG against btb-seq's snpTable.tab
