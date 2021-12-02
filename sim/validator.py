@@ -6,7 +6,7 @@ import shutil
 
 import pandas as pd
 
-from compare_snps import analyse
+from compare_snps import analyse, vcf_tools
 from sample import *
 from utils import run
 
@@ -82,7 +82,8 @@ def performance_test(
     simulated_reads_path = results_path + 'simulated-reads/'
     btb_seq_backup_path = results_path + 'btb-seq/'
     btb_seq_results_path = results_path + 'btb-seq-results/'
-
+    analyis_path = results_path + 'analysis/' 
+    
     # Paths to simulated reference genome and simulated SNPs file
     mask_filepath = btb_seq_backup_path + "references/Mycbovis-2122-97_LT708304.fas.rpt.regions"
 
@@ -92,6 +93,7 @@ def performance_test(
     os.makedirs(simulated_genome_path, exist_ok=exist_ok)
     os.makedirs(simulated_reads_path, exist_ok=exist_ok)
     os.makedirs(btb_seq_results_path, exist_ok=exist_ok)
+    os.makedirs(analyis_path, exist_ok=exist_ok)
 
     # Backup btb-seq code
     # TODO: exclude the work/ subdirectory from this operation.
@@ -136,6 +138,9 @@ def performance_test(
         
         stats.append(stat)
 
+        vcf_tools(simulated_genome_path+sample.name+'.simulated.refseq2simseq.SNP.vcf', 
+                pipeline_directory+'filteredBcf/'+sample.name+'_filtered.bcf', analyis_path+sample.name)
+
     stats_table = pd.DataFrame(stats)
 
     path = results_path + "stats.csv"
@@ -157,8 +162,9 @@ def main():
     args = parser.parse_args(sys.argv[1:])
 
     # Run
-    samples = standard_samples()
-
+    #samples = standard_samples()
+    samples = quick_samples()
+    
     performance_test(
         args.results, 
         args.btb_seq, 
@@ -169,4 +175,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-

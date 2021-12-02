@@ -30,9 +30,19 @@ def load_consensus(path):
     for seq_record in SeqIO.parse(path, "fasta"):
         return str(seq_record.seq)
 
-def vcf_tools(simulated_vcf_path, pipeline_vcf_path):
-    run(['vcftools', '--vcf', simulated_vcf_path, '--gzdiff',
-         pipeline_vcf_path, '--diff-site', '--out', 'compare.vcf'])
+def load_vcf_tools_output(path):
+    pass
+
+def vcf_tools(simulated_vcf_path, pipeline_bcf_path, analysis_file_path):
+    # Remove indels from pipeline bcf and decode to vcf
+    run(['vcftools', '--bcf', pipeline_bcf_path, '--remove-indels',
+           '--recode', '--recode-INFO-all', '--out', analysis_file_path+'pipeline_SNPs'])
+    run(['vcftools', '--vcf', simulated_vcf_path, '--diff',
+          analysis_file_path+'pipeline_SNPs.recode.vcf', '--diff-site', '--out', analysis_file_path])
+
+def analyse_vcf(simulated_vcf_path, pipeline_vcf_path, analysis_file_path):
+    vcf_tools(simulated_vcf_path, pipeline_vcf_path, analysis_file_path)
+    load_vcf_tools_output(analysis_file_path)
 
 def analyse(simulated_snp_path, pipeline_snp_path, pipeline_genome_path, mask_filepath):
     """ Compare simulated SNPs data from simuG against btb-seq's snpTable.tab
