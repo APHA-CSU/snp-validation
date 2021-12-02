@@ -1,3 +1,6 @@
+from subprocess import PIPE
+from sys import stdout
+
 import pandas as pd
 from Bio import SeqIO
 
@@ -36,9 +39,10 @@ def load_vcf_tools_output(path):
 def vcf_tools(simulated_vcf_path, pipeline_bcf_path, analysis_file_path):
     # Remove indels from pipeline bcf and decode to vcf
     run(['vcftools', '--bcf', pipeline_bcf_path, '--remove-indels',
-           '--recode', '--recode-INFO-all', '--out', analysis_file_path+'pipeline_SNPs'])
-    run(['vcftools', '--vcf', simulated_vcf_path, '--diff',
-          analysis_file_path+'pipeline_SNPs.recode.vcf', '--diff-site', '--out', analysis_file_path])
+         '--recode', '--recode-INFO-all', '--stdout'], stdout=PIPE)
+    run(['vcftools', '--vcf', '-', '--diff', simulated_vcf_path,
+         '--diff-site', '--out', analysis_file_path],
+          stdin=PIPE)
 
 def analyse_vcf(simulated_vcf_path, pipeline_vcf_path, analysis_file_path):
     vcf_tools(simulated_vcf_path, pipeline_vcf_path, analysis_file_path)
