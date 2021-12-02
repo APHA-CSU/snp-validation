@@ -34,19 +34,25 @@ def load_consensus(path):
         return str(seq_record.seq)
 
 def load_vcf_tools_output(path):
-    pass
+    return pd.read_csv(path, delimiter='\t') 
 
 def vcf_tools(simulated_vcf_path, pipeline_bcf_path, analysis_file_path):
-    # Remove indels from pipeline bcf and decode to vcf
-    run(['vcftools', '--bcf', pipeline_bcf_path, '--remove-indels',
-         '--recode', '--recode-INFO-all', '--stdout'], stdout=PIPE)
-    run(['vcftools', '--vcf', '-', '--diff', simulated_vcf_path,
-         '--diff-site', '--out', analysis_file_path],
-          stdin=PIPE)
+    # remove indels from pipeline bcf and decode to vcf
+    with open('pipeline_decoded.vcf', 'r+') as fd:
+        run(['vcftools', '--bcf', pipeline_bcf_path, 
+             '--remove-indels', '--recode', 
+             '--recode-INFO-all', '--stdout'], stdout=fd)
+        fd.seek(0)
+        # compare vcfs
+        run(['vcftools', '--vcf', '-', '--diff', simulated_vcf_path,
+            '--diff-site', '--out', analysis_file_path],
+            stdin=fd)
+        x=0
 
 def analyse_vcf(simulated_vcf_path, pipeline_vcf_path, analysis_file_path):
     vcf_tools(simulated_vcf_path, pipeline_vcf_path, analysis_file_path)
-    load_vcf_tools_output(analysis_file_path)
+    diff_sites = load_vcf_tools_output(analysis_file_path+'.diff.sites_in_files')
+    x = 0
 
 def analyse(simulated_snp_path, pipeline_snp_path, pipeline_genome_path, mask_filepath):
     """ Compare simulated SNPs data from simuG against btb-seq's snpTable.tab

@@ -6,7 +6,7 @@ import shutil
 
 import pandas as pd
 
-from compare_snps import analyse, vcf_tools
+from compare_snps import analyse_vcf
 from sample import *
 from utils import run
 
@@ -133,19 +133,8 @@ def performance_test(
         if not os.path.exists(pipeline_snp_path):
             raise Exception("Cant Find the pipeline's consensus file!!")
         
-        stat = analyse(simulated_snp_path, pipeline_snp_path, pipeline_genome_path, mask_filepath)
-        stat["name"] = sample.name
-        
-        stats.append(stat)
-
-        vcf_tools(simulated_genome_path+sample.name+'.simulated.refseq2simseq.SNP.vcf', 
+        analyse_vcf(simulated_genome_path+sample.name+'.simulated.refseq2simseq.SNP.vcf', 
                 pipeline_directory+'filteredBcf/'+sample.name+'_filtered.bcf', analyis_path+sample.name)
-
-    stats_table = pd.DataFrame(stats)
-
-    path = results_path + "stats.csv"
-    print("***printing to path***")
-    stats_table.to_csv(path)
 
 def checkout(repo_path, branch):
     run(["git", "checkout", str(branch)], cwd=repo_path)
