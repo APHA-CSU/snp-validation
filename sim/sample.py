@@ -132,11 +132,11 @@ class VcfSample(Sample):
             raise(FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), self.predef_snp_path))
         tmp_decomposed_vcf_path = simulated_genome_path + '.decomposed.vcf'
         # Decompose complex SNPs
-        self._decompose_complex_snps(tmp_decomposed_vcf_path)
+        self.decompose_complex_snps(tmp_decomposed_vcf_path)
         params = ["-snp_vcf", tmp_decomposed_vcf_path, 
                   "-indel_vcf", tmp_decomposed_vcf_path,
                   "-seed", str(seed)]
-        self.simulate_genome_base(reference_path, simulated_genome_path, params)
+        self._simulate_genome_base(reference_path, simulated_genome_path, params)
         # clean tmp decomposed VCF
         run(['rm', tmp_decomposed_vcf_path])
 
