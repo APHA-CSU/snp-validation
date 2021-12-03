@@ -38,16 +38,14 @@ def load_vcf_tools_output(path):
 
 def vcf_tools(simulated_vcf_path, pipeline_bcf_path, analysis_file_path):
     # remove indels from pipeline bcf and decode to vcf
-    with open('pipeline_decoded.vcf', 'r+') as fd:
-        run(['vcftools', '--bcf', pipeline_bcf_path, 
-             '--remove-indels', '--recode', 
-             '--recode-INFO-all', '--stdout'], stdout=fd)
-        fd.seek(0)
-        # compare vcfs
-        run(['vcftools', '--vcf', '-', '--diff', simulated_vcf_path,
-            '--diff-site', '--out', analysis_file_path],
-            stdin=fd)
-        x=0
+    ps = run(['vcftools', '--bcf', pipeline_bcf_path, 
+              '--remove-indels', '--recode', 
+              '--recode-INFO-all', '--stdout'], stdout=PIPE)
+    # compare vcfs
+    run(['vcftools', '--vcf', '-', '--diff', simulated_vcf_path,
+         '--diff-site', '--out', analysis_file_path],
+         input=ps.stdout)
+        
 
 def analyse_vcf(simulated_vcf_path, pipeline_vcf_path, analysis_file_path):
     vcf_tools(simulated_vcf_path, pipeline_vcf_path, analysis_file_path)

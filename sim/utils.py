@@ -12,10 +12,12 @@ def run(cmd, *args, **kwargs):
             None
     """
     # TODO: store stdout to a file
-    returncode = subprocess.run(cmd, *args, **kwargs).returncode
+    ps = subprocess.run(cmd, *args, **kwargs)
 
-    if returncode:
+    if ps.returncode:
         raise Exception("""*****
             %s
             cmd failed with exit code %i
-          *****""" % (cmd, returncode))
+          *****""" % (cmd, ps.returncode))
+
+    return ps
