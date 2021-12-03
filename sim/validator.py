@@ -56,6 +56,9 @@ def random_samples():
     return [RandomSample(seed=1, per_base_error_rate="0.001-0.01"),
             RandomSample(seed=666, per_base_error_rate="0.001-0.01")]
 
+def standard_samples():
+    return vcf_samples(('standard',)) + random_samples()
+
 def aph_samples():
     return vcf_samples(('aph',))
 
@@ -178,7 +181,7 @@ def main():
     args = parser.parse_args(sys.argv[1:])
 
     # Run
-    samples = zwyer_samples()
+    samples = standard_samples()
 
     performance_test(
         args.results, 
