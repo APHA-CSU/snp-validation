@@ -1,5 +1,3 @@
-from re import I
-from numpy.lib import utils
 import pandas as pd
 import glob 
 import os
@@ -155,9 +153,3 @@ def site_stats(simulated_snp_path, pipeline_snp_path, bcf_path):
 
     return df
 
-if __name__ == '__main__':
-    pipeline_snps = '/home/aaronfishman/temp/sites3/btb-seq-results/Results_simulated-reads_08Dec21/snpTables/RandomSample-snps16000-indels1600-seed1_snps.tab'
-    simulated_snps = '/home/aaronfishman/temp/sites3/simulated-genome/RandomSample-snps16000-indels1600-seed1.simulated.refseq2simseq.map.txt'
-    # bcf_path = '/home/aaronfishman/temp/ad0-not/btb-seq-results/Results_simulated-reads_07Dec21/filteredBcf/VcfSample-AF-12-00945-19-seed1-error0.001-0.01-readpairs-144997_filtered.bcf'
-    bcf_path = '/home/aaronfishman/temp/sites3/btb-seq-results/Results_simulated-reads_08Dec21//vcf/RandomSample-snps16000-indels1600-seed1.vcf.gz'
-    print(site_stats(simulated_snps, pipeline_snps, bcf_path))
