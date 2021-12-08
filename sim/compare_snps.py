@@ -4,7 +4,7 @@ import glob
 import os
 from Bio import SeqIO
 
-from sim.utils import bcf_summary
+from utils import bcf_summary
 
 """
 Calculate performance stats from simulated data
@@ -132,3 +132,26 @@ def analyse(simulated_snp_path, pipeline_snp_path, pipeline_genome_path, mask_fi
         "f_score": f_score,
         "total_errors": total_errors
     }
+
+if __name__ == '__main__':
+    pipeline_snps = '/home/aaronfishman/temp/ad0-not/btb-seq-results/Results_simulated-reads_07Dec21/snpTables/VcfSample-AF-12-00945-19-seed1-error0.001-0.01-readpairs-144997_snps.tab'
+    simulated_snps = '/home/aaronfishman/temp/ad0-not/simulated-genome/VcfSample-AF-12-00945-19-seed1-error0.001-0.01-readpairs-144997.simulated.refseq2simseq.map.txt'
+    # bcf_path = '/home/aaronfishman/temp/ad0-not/btb-seq-results/Results_simulated-reads_07Dec21/filteredBcf/VcfSample-AF-12-00945-19-seed1-error0.001-0.01-readpairs-144997_filtered.bcf'
+    bcf_path = '/home/aaronfishman/temppp.bcf'
+
+    tp, fp, fn = classify_sites(simulated_snps, pipeline_snps)
+
+    print('tp', tp)
+
+    X = ['fp']*len(fp) + ['fn']*len(fn)
+    Y = list(fp) + list(fn)
+    print('X', X)
+    print('Y', Y)
+    error_type = [x for _, x in sorted(zip(Y, X))]
+    print('error type', error_type)
+
+    df = bcf_summary(bcf_path)
+    df = df[(df.POS.isin(list(fp) + list(fn)))]
+    df['AD1/(AD1+AD0)'] = df['AD1'] / (df['AD1'] + df['AD0'])
+    # df['error_type'] = error_type
+    print(df)

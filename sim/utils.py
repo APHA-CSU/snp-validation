@@ -25,15 +25,18 @@ def run(cmd, *args, **kwargs):
 def bcf_summary(filepath='/home/aaronfishman/temp/filtered.vcf', exclude=None):
     # excluded sites
     if exclude:
-        exclusion_criteria = 'POS=='+' || POS=='.join(str(x) for x in exclude)
+        exclusion_criteria = 'POS==' + ' || POS=='.join(str(x) for x in exclude)
     else:
         exclusion_criteria = '1<0'
+
+    print('exclusion criteris', exclusion_criteria)
     
     # query BCF/VCF
     columns = ['POS', 'AD0', 'AD1', 'DP']
     text = subprocess.check_output(["bcftools", "query", "-f",
         '%POS, %INFO/AD{0}, %INFO/AD{1}, %INFO/DP\n',
-        '-e', exclusion_criteria,
+        # '-e', exclusion_criteria,
+        '-e', 'INFO/AD[1]==0',
         filepath
     ], text=True)
     
