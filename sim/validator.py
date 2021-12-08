@@ -66,6 +66,7 @@ def performance_test(
     os.makedirs(simulated_genome_path, exist_ok=exist_ok)
     os.makedirs(simulated_reads_path, exist_ok=exist_ok)
     os.makedirs(btb_seq_results_path, exist_ok=exist_ok)
+    os.makedirs(site_stats_path, exist_ok=exist_ok)
 
     # Backup btb-seq code
     # TODO: exclude the work/ subdirectory from this operation.

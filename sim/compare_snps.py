@@ -137,16 +137,13 @@ def classify_sites(simulated_snp_path, pipeline_snp_path):
     return tp, fp, fn
 
 def site_stats(simulated_snp_path, pipeline_snp_path, bcf_path):
-    print("simulate", "*******")
-    print("simulate", simulated_snp_path)
-    print("pipeline_snp_path", pipeline_snp_path)
-    print("bcf_path", bcf_path)
+    """ A data frame that shows stats at each fp/fn site """
 
     tp, fp, fn = classify_sites(simulated_snp_path, pipeline_snp_path)
 
     # Summary Bcf
     df = bcf_summary(bcf_path)
-    df = df[(df.POS.isin(list(fp) + list(fn)))]   
+    df = df[df.POS.isin(list(fp) + list(fn))]
 
     # Error Type Column
     df['error_type'] = 'undefined'
