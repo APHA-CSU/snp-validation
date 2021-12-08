@@ -6,7 +6,7 @@ import shutil
 
 import pandas as pd
 
-from compare_snps import analyse
+import compare_snps
 from sample import *
 from utils import run
 
@@ -94,24 +94,32 @@ def performance_test(
         pipeline_snp_path = pipeline_directory + f'snpTables/{sample.name}_snps.tab'
         if not os.path.exists(pipeline_snp_path):
             pipeline_snp_path = pipeline_directory + f'snpTables/{sample.name}.tab'
+        
         if not os.path.exists(pipeline_snp_path):
             raise Exception("Cant Find the pipeline's snps table!!")
+        
         simulated_snp_path = results_path + f'simulated-genome/{sample.name}.simulated.refseq2simseq.map.txt'
         pipeline_genome_path = pipeline_directory + f'consensus/{sample.name}_consensus.fas'
+        
         if not os.path.exists(pipeline_genome_path):
             pipeline_genome_path = pipeline_directory + f'consensus/{sample.name}.fas'
+        
         if not os.path.exists(pipeline_snp_path):
             raise Exception("Cant Find the pipeline's consensus file!!")
         
-        stat = analyse(simulated_snp_path, pipeline_snp_path, pipeline_genome_path, mask_filepath)
+        # Performance Stats
+        stat = compare_snps.sanalyse(simulated_snp_path, pipeline_snp_path, pipeline_genome_path, mask_filepath)
         stat["name"] = sample.name
         
         stats.append(stat)
 
+        # Base Stats
+        tp, fp, fn = compare_snps.classify_sites(simulated_snp_path, pipeline_snp_path)
+        df = compare_snps.bcf_summary(simulated_snp_path, exclude=tp)
+
     stats_table = pd.DataFrame(stats)
 
     path = results_path + "stats.csv"
-    print("***printing to path***")
     stats_table.to_csv(path)
 
 def checkout(repo_path, branch):

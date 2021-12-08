@@ -1,7 +1,10 @@
+from numpy.lib import utils
 import pandas as pd
 import glob 
 import os
 from Bio import SeqIO
+
+from sim.utils import bcf_summary
 
 """
 Calculate performance stats from simulated data
@@ -29,6 +32,26 @@ def load_consensus(path):
 
     for seq_record in SeqIO.parse(path, "fasta"):
         return str(seq_record.seq)
+
+def classify_sites(simulated_snp_path, pipeline_snp_path):
+    # Load
+    simulated_snps = pd.read_csv(simulated_snp_path,  delimiter='\t')
+    pipeline_snps = pd.read_csv(pipeline_snp_path, delimiter='\t')
+
+    # Extract SNP positions
+    simulated_pos = set(simulated_snps.loc[simulated_snps['variant_type'] == 'SNP', 'ref_start'].values)
+    pipeline_pos = set(pipeline_snps.loc[pipeline_snps['TYPE'] == 'SNP', 'POS'].values)
+    
+    # TP - true positive -(the variant is in the simulated genome and correctly called by the pipeline)
+    tp = simulated_pos.intersection(pipeline_pos)
+
+    # FP (the pipeline calls a variant that is not in the simulated genome),
+    fp = pipeline_pos - simulated_pos
+
+    # FN SNP calls (the variant is in the simulated genome but the pipeline does not call it).
+    fn =  simulated_pos - pipeline_pos
+
+    return tp, fp, fn
 
 def analyse(simulated_snp_path, pipeline_snp_path, pipeline_genome_path, mask_filepath):
     """ Compare simulated SNPs data from simuG against btb-seq's snpTable.tab
