@@ -1,3 +1,4 @@
+from re import I
 from numpy.lib import utils
 import pandas as pd
 import glob 
@@ -32,26 +33,6 @@ def load_consensus(path):
 
     for seq_record in SeqIO.parse(path, "fasta"):
         return str(seq_record.seq)
-
-def classify_sites(simulated_snp_path, pipeline_snp_path):
-    # Load
-    simulated_snps = pd.read_csv(simulated_snp_path,  delimiter='\t')
-    pipeline_snps = pd.read_csv(pipeline_snp_path, delimiter='\t')
-
-    # Extract SNP positions
-    simulated_pos = set(simulated_snps.loc[simulated_snps['variant_type'] == 'SNP', 'ref_start'].values)
-    pipeline_pos = set(pipeline_snps.loc[pipeline_snps['TYPE'] == 'SNP', 'POS'].values)
-    
-    # TP - true positive -(the variant is in the simulated genome and correctly called by the pipeline)
-    tp = simulated_pos.intersection(pipeline_pos)
-
-    # FP (the pipeline calls a variant that is not in the simulated genome),
-    fp = pipeline_pos - simulated_pos
-
-    # FN SNP calls (the variant is in the simulated genome but the pipeline does not call it).
-    fn =  simulated_pos - pipeline_pos
-
-    return tp, fp, fn
 
 def analyse(simulated_snp_path, pipeline_snp_path, pipeline_genome_path, mask_filepath):
     """ Compare simulated SNPs data from simuG against btb-seq's snpTable.tab
@@ -133,25 +114,53 @@ def analyse(simulated_snp_path, pipeline_snp_path, pipeline_genome_path, mask_fi
         "total_errors": total_errors
     }
 
-if __name__ == '__main__':
-    pipeline_snps = '/home/aaronfishman/temp/ad0-not/btb-seq-results/Results_simulated-reads_07Dec21/snpTables/VcfSample-AF-12-00945-19-seed1-error0.001-0.01-readpairs-144997_snps.tab'
-    simulated_snps = '/home/aaronfishman/temp/ad0-not/simulated-genome/VcfSample-AF-12-00945-19-seed1-error0.001-0.01-readpairs-144997.simulated.refseq2simseq.map.txt'
-    # bcf_path = '/home/aaronfishman/temp/ad0-not/btb-seq-results/Results_simulated-reads_07Dec21/filteredBcf/VcfSample-AF-12-00945-19-seed1-error0.001-0.01-readpairs-144997_filtered.bcf'
-    bcf_path = '/home/aaronfishman/temppp.bcf'
+def classify_sites(simulated_snp_path, pipeline_snp_path):
+    """ Determine TPs, FPs and FNs. TODO: DRY with analyse()"""
 
-    tp, fp, fn = classify_sites(simulated_snps, pipeline_snps)
+    # Load
+    simulated_snps = pd.read_csv(simulated_snp_path,  delimiter='\t')
+    pipeline_snps = pd.read_csv(pipeline_snp_path, delimiter='\t')
 
-    print('tp', tp)
+    # Extract SNP positions
+    simulated_pos = set(simulated_snps.loc[simulated_snps['variant_type'] == 'SNP', 'ref_start'].values)
+    pipeline_pos = set(pipeline_snps.loc[pipeline_snps['TYPE'] == 'SNP', 'POS'].values)
+    
+    # TP - true positive -(the variant is in the simulated genome and correctly called by the pipeline)
+    tp = simulated_pos.intersection(pipeline_pos)
 
-    X = ['fp']*len(fp) + ['fn']*len(fn)
-    Y = list(fp) + list(fn)
-    print('X', X)
-    print('Y', Y)
-    error_type = [x for _, x in sorted(zip(Y, X))]
-    print('error type', error_type)
+    # FP (the pipeline calls a variant that is not in the simulated genome),
+    fp = pipeline_pos - simulated_pos
 
+    # FN SNP calls (the variant is in the simulated genome but the pipeline does not call it).
+    fn =  simulated_pos - pipeline_pos
+
+    return tp, fp, fn
+
+def site_stats(simulated_snp_path, pipeline_snp_path, bcf_path):
+    print("simulate", "*******")
+    print("simulate", simulated_snp_path)
+    print("pipeline_snp_path", pipeline_snp_path)
+    print("bcf_path", bcf_path)
+
+    tp, fp, fn = classify_sites(simulated_snp_path, pipeline_snp_path)
+
+    # Summary Bcf
     df = bcf_summary(bcf_path)
-    df = df[(df.POS.isin(list(fp) + list(fn)))]
+    df = df[(df.POS.isin(list(fp) + list(fn)))]   
+
+    # Error Type Column
+    df['error_type'] = 'undefined'
+    df.loc[df.POS.isin(list(fp)), 'error_type'] = 'fp'
+    df.loc[df.POS.isin(list(fn)), 'error_type'] = 'fn'
+    
+    # AD0 column
     df['AD1/(AD1+AD0)'] = df['AD1'] / (df['AD1'] + df['AD0'])
-    # df['error_type'] = error_type
-    print(df)
+
+    return df
+
+if __name__ == '__main__':
+    pipeline_snps = '/home/aaronfishman/temp/sites3/btb-seq-results/Results_simulated-reads_08Dec21/snpTables/RandomSample-snps16000-indels1600-seed1_snps.tab'
+    simulated_snps = '/home/aaronfishman/temp/sites3/simulated-genome/RandomSample-snps16000-indels1600-seed1.simulated.refseq2simseq.map.txt'
+    # bcf_path = '/home/aaronfishman/temp/ad0-not/btb-seq-results/Results_simulated-reads_07Dec21/filteredBcf/VcfSample-AF-12-00945-19-seed1-error0.001-0.01-readpairs-144997_filtered.bcf'
+    bcf_path = '/home/aaronfishman/temp/sites3/btb-seq-results/Results_simulated-reads_08Dec21//vcf/RandomSample-snps16000-indels1600-seed1.vcf.gz'
+    print(site_stats(simulated_snps, pipeline_snps, bcf_path))
