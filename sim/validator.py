@@ -23,7 +23,8 @@ def performance_test(
     reference_path=DEFAULT_REFERENCE_PATH,
     samples=[RandomSample(16000, 1600, 1)],
     exist_ok=True, 
-    branch=None
+    branch=None,
+    light_mode=False
 ):
     """ Runs a performance test against the pipeline
 
@@ -126,6 +127,13 @@ def performance_test(
     path = results_path + "stats.csv"
     stats_table.to_csv(path)
 
+    # clean-up
+    if light_mode:
+        shutil.rmtree(simulated_reads_path)
+        shutil.rmtree(simulated_genome_path)
+        shutil.rmtree(btb_seq_results_path)
+        shutil.rmtree(btb_seq_backup_path)
+
 def checkout(repo_path, branch):
     run(["git", "checkout", str(branch)], cwd=repo_path)
 
@@ -136,6 +144,8 @@ def main():
     parser.add_argument("results", help="path to performance test results")
     parser.add_argument("--branch", help="name of btb-seq branch to use", default=None)
     parser.add_argument("--ref", "-r", help="optional path to reference fasta", default=DEFAULT_REFERENCE_PATH)
+    parser.add_argument("--light", "-l", dest='light_mode', help="optional argument to run in light mode", 
+                        action='store_true', default=False)
     parser.add_argument("--quick", "-q", help="Run quick samples", action='store_true')
 
     args = parser.parse_args(sys.argv[1:])
@@ -152,7 +162,8 @@ def main():
         args.btb_seq, 
         args.ref,
         samples=samples, 
-        branch=args.branch
+        branch=args.branch,
+        light_mode = args.light_mode
     )
 
 if __name__ == '__main__':
