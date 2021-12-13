@@ -144,7 +144,7 @@ class VcfSample(Sample):
 class RandomSample(Sample):
     def __init__(self, 
                  num_snps=16000, 
-                 num_indels=1600, 
+                 num_indels=3898, 
                  seed=1, 
                  per_base_error_rate="0",
                  num_read_pairs = 144997
