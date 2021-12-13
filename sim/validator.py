@@ -196,15 +196,9 @@ def main():
     performance_test(
         args.output_path, 
         args.btb_seq, 
-<<<<<<< HEAD
         samples, 
         branch=args.branch,
-=======
-        args.ref,
-        samples=samples, 
-        branch=args.branch,
         light_mode = args.light_mode
->>>>>>> main
     )
 
 if __name__ == '__main__':
