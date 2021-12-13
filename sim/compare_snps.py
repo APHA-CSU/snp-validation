@@ -3,6 +3,8 @@ import glob
 import os
 from Bio import SeqIO
 
+from utils import bcf_summary
+
 """
 Calculate performance stats from simulated data
 """
@@ -109,3 +111,45 @@ def analyse(simulated_snp_path, pipeline_snp_path, pipeline_genome_path, mask_fi
         "f_score": f_score,
         "total_errors": total_errors
     }
+
+def classify_sites(simulated_snp_path, pipeline_snp_path):
+    """ Determine TPs, FPs and FNs. TODO: DRY with analyse()"""
+
+    # Load
+    simulated_snps = pd.read_csv(simulated_snp_path,  delimiter='\t')
+    pipeline_snps = pd.read_csv(pipeline_snp_path, delimiter='\t')
+
+    # Extract SNP positions
+    simulated_pos = set(simulated_snps.loc[simulated_snps['variant_type'] == 'SNP', 'ref_start'].values)
+    pipeline_pos = set(pipeline_snps.loc[pipeline_snps['TYPE'] == 'SNP', 'POS'].values)
+    
+    # TP - true positive -(the variant is in the simulated genome and correctly called by the pipeline)
+    tp = simulated_pos.intersection(pipeline_pos)
+
+    # FP (the pipeline calls a variant that is not in the simulated genome),
+    fp = pipeline_pos - simulated_pos
+
+    # FN SNP calls (the variant is in the simulated genome but the pipeline does not call it).
+    fn =  simulated_pos - pipeline_pos
+
+    return tp, fp, fn
+
+def site_stats(simulated_snp_path, pipeline_snp_path, bcf_path):
+    """ A data frame that shows stats at each fp/fn site """
+
+    tp, fp, fn = classify_sites(simulated_snp_path, pipeline_snp_path)
+
+    # Summary Bcf
+    df = bcf_summary(bcf_path)
+    df = df[df.POS.isin(list(fp) + list(fn))]
+
+    # Error Type Column
+    df['error_type'] = 'undefined'
+    df.loc[df.POS.isin(list(fp)), 'error_type'] = 'fp'
+    df.loc[df.POS.isin(list(fn)), 'error_type'] = 'fn'
+    
+    # AD0 column
+    df['AD1/(AD1+AD0)'] = df['AD1'] / (df['AD1'] + df['AD0'])
+
+    return df
+

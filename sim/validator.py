@@ -6,11 +6,12 @@ import shutil
 
 import pandas as pd
 
-from compare_snps import analyse
+import compare_snps
 from sample import *
 from utils import run
 
 DEFAULT_REFERENCE_PATH = './Mycobacterium_bovis_AF212297_LT78304.fa'
+
 
 def btb_seq(btb_seq_directory, reads_directory, results_directory):
     run(["bash", "./btb-seq", reads_directory,
@@ -55,6 +56,7 @@ def performance_test(
     simulated_reads_path = results_path + 'simulated-reads/'
     btb_seq_backup_path = results_path + 'btb-seq/'
     btb_seq_results_path = results_path + 'btb-seq-results/'
+    site_stats_path = results_path + 'site-stats/'
 
     # Paths to simulated reference genome and simulated SNPs file
     mask_filepath = btb_seq_backup_path + "references/Mycbovis-2122-97_LT708304.fas.rpt.regions"
@@ -65,6 +67,7 @@ def performance_test(
     os.makedirs(simulated_genome_path, exist_ok=exist_ok)
     os.makedirs(simulated_reads_path, exist_ok=exist_ok)
     os.makedirs(btb_seq_results_path, exist_ok=exist_ok)
+    os.makedirs(site_stats_path, exist_ok=exist_ok)
 
     # Backup btb-seq code
     # TODO: exclude the work/ subdirectory from this operation.
@@ -95,24 +98,33 @@ def performance_test(
         pipeline_snp_path = pipeline_directory + f'snpTables/{sample.name}_snps.tab'
         if not os.path.exists(pipeline_snp_path):
             pipeline_snp_path = pipeline_directory + f'snpTables/{sample.name}.tab'
+        
         if not os.path.exists(pipeline_snp_path):
             raise Exception("Cant Find the pipeline's snps table!!")
+        
         simulated_snp_path = results_path + f'simulated-genome/{sample.name}.simulated.refseq2simseq.map.txt'
         pipeline_genome_path = pipeline_directory + f'consensus/{sample.name}_consensus.fas'
+        
         if not os.path.exists(pipeline_genome_path):
             pipeline_genome_path = pipeline_directory + f'consensus/{sample.name}.fas'
+        
         if not os.path.exists(pipeline_snp_path):
             raise Exception("Cant Find the pipeline's consensus file!!")
         
-        stat = analyse(simulated_snp_path, pipeline_snp_path, pipeline_genome_path, mask_filepath)
+        # Performance Stats
+        stat = compare_snps.analyse(simulated_snp_path, pipeline_snp_path, pipeline_genome_path, mask_filepath)
         stat["name"] = sample.name
         
         stats.append(stat)
 
+        # Site Statistics at fp/fn/tp positions
+        vcf_path = f"{pipeline_directory}/vcf/{sample.name}.vcf.gz"
+        site_stats = compare_snps.site_stats(simulated_snp_path, pipeline_snp_path, vcf_path)
+        site_stats.to_csv(f"{site_stats_path}/{sample.name}_stats.csv")
+
     stats_table = pd.DataFrame(stats)
 
     path = results_path + "stats.csv"
-    print("***printing to path***")
     stats_table.to_csv(path)
 
     # clean-up
@@ -127,19 +139,24 @@ def checkout(repo_path, branch):
 
 def main():
     # Parse
-    parser = argparse.ArgumentParser(
-        description="Performance test btb-seq code")
+    parser = argparse.ArgumentParser(description="Performance test btb-seq code")
     parser.add_argument("btb_seq", help="path to btb-seq code")
     parser.add_argument("results", help="path to performance test results")
     parser.add_argument("--branch", help="name of btb-seq branch to use", default=None)
     parser.add_argument("--ref", "-r", help="optional path to reference fasta", default=DEFAULT_REFERENCE_PATH)
     parser.add_argument("--light", "-l", dest='light_mode', help="optional argument to run in light mode", 
                         action='store_true', default=False)
+    parser.add_argument("--quick", "-q", help="Run quick samples", action='store_true')
+
     args = parser.parse_args(sys.argv[1:])
 
-    # Run
-    samples = quick_samples()#standard_samples()
+    # Collect Samples
+    if args.quick:
+        samples = quick_samples()
+    else:
+        samples = standard_samples()
 
+    # Run
     performance_test(
         args.results, 
         args.btb_seq, 
