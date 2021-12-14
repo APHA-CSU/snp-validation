@@ -43,7 +43,7 @@ def ofat(btb_seq_path, output_path, branches=DEFAULT_BRANCHES,
     output_path = os.path.join(output_path, '')     
     
     # generate samples
-    samples = validator.quick_samples()#standard_samples()
+    samples = validator.standard_samples()
     # simulate reads
     validator.simulations(output_path, samples, reference_path)
     
@@ -55,7 +55,8 @@ def ofat(btb_seq_path, output_path, branches=DEFAULT_BRANCHES,
                 output_path,
                 btb_seq_path,
                 samples, 
-                branch=branch
+                branch=branch,
+                light_mode=True
             )
         except Exception as e:
             print(e)
