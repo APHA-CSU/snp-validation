@@ -1,6 +1,4 @@
 import pandas as pd
-import glob 
-import os
 from Bio import SeqIO
 
 from utils import bcf_summary

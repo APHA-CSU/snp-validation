@@ -11,16 +11,21 @@ def run(cmd, *args, **kwargs):
             cwd (str): Set surr
 
         Returns:
-            None
+            None: if capture_output == False (default)
+            process' stdout (str): if capture_output == True 
     """
     # TODO: store stdout to a file
-    returncode = subprocess.run(cmd, *args, **kwargs).returncode
+    ps = subprocess.run(cmd, *args, **kwargs)
 
+    returncode = ps.returncode
     if returncode:
         raise Exception("""*****
             %s
             cmd failed with exit code %i
           *****""" % (cmd, returncode))
+
+    if "capture_output" in kwargs and kwargs["capture_output"]:
+        return ps.stdout.decode().strip('\n')
 
 def bcf_summary(filepath='/home/aaronfishman/temp/filtered.vcf'):
     # Query

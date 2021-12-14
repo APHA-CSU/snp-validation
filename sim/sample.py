@@ -215,7 +215,8 @@ def quick_samples():
 def random_samples():
     """ Returns a list containing two RandomSample objects 
     """
-    return [RandomSample(seed=1, per_base_error_rate="0.001-0.01"),
+    return [RandomSample(seed=5, num_snps=0, num_indels=0, per_base_error_rate="0.001-0.01"),
+            RandomSample(seed=1, per_base_error_rate="0.001-0.01"),
             RandomSample(seed=666, per_base_error_rate="0.001-0.01")]
 
 def standard_samples():

@@ -12,6 +12,8 @@ import validator
     Run the performance benchmarking tool against a multiple git branches
 """
 
+DEFAULT_REFERENCE_PATH = './Mycobacterium_bovis_AF212297_LT78304.fa'
+
 # Initial list of branches that we are testing
 DEFAULT_BRANCHES = [
     "BaseQual",
@@ -27,7 +29,8 @@ DEFAULT_BRANCHES = [
     "v2"
 ]
 
-def ofat(btb_seq_path, results_path, branches=DEFAULT_BRANCHES):
+def ofat(btb_seq_path, output_path, branches=DEFAULT_BRANCHES, 
+         reference_path=DEFAULT_REFERENCE_PATH):
     """ Runs a performance test against the pipeline
 
         Parameters:
@@ -37,35 +40,29 @@ def ofat(btb_seq_path, results_path, branches=DEFAULT_BRANCHES):
     """
     # Add trailing slash
     btb_seq_path = os.path.join(btb_seq_path, '')
-    results_path = os.path.join(results_path, '')     
+    output_path = os.path.join(output_path, '')     
     
-    # TODO: set the reference file relative to the 
-    #   This is awkward to do atm because many of the branches
-    #   we are testing are not up to date with the latest sim code
-
-    # Prepare output directory
-    os.makedirs(results_path, exist_ok=False)
-
-    samples = validator.standard_samples()
-
+    # generate samples
+    samples = validator.quick_samples()#standard_samples()
+    # simulate reads
+    simulated_reads_path = validator.simulate(output_path, samples, reference_path)
+    
     # Benchmark the branches
     for branch in branches:
-        branch_results_path = results_path + branch + '/'
 
         try:
             validator.performance_test(
-                branch_results_path, 
+                output_path,
                 btb_seq_path,
-                samples=samples, 
-                branch=branch
+                samples, 
+                results_path=output_path + branch,
+                simulated_reads_path=simulated_reads_path,
+                branch=branch,
+                light_mode=True
             )
         except Exception as e:
             print(e)
             print(f"***FAILED BRANCH: {branch}****", branch)
-
-    # Analyse results
-    return None
-    return analyse(results_path)
 
 def analyse(root_path):
     """ Analyse results from an ofat run
