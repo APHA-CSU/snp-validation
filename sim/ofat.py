@@ -63,10 +63,6 @@ def ofat(btb_seq_path, output_path, branches=DEFAULT_BRANCHES,
             print(e)
             print(f"***FAILED BRANCH: {branch}****", branch)
 
-    # Analyse results
-    return None
-    #return analyse(results_path)
-
 def analyse(root_path):
     """ Analyse results from an ofat run
 

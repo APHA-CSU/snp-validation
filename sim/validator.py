@@ -15,7 +15,7 @@ DEFAULT_REFERENCE_PATH = './Mycobacterium_bovis_AF212297_LT78304.fa'
 
 def btb_seq(btb_seq_directory, reads_directory, results_directory):
     run(["bash", "./btb-seq", reads_directory,
-         results_directory], cwd=btb_seq_directory)
+          results_directory], cwd=btb_seq_directory)
 
 def simulate(
     output_path,
@@ -96,12 +96,14 @@ def performance_test(
         raise Exception("Pipeline code repository not found")
 
     # Output Directories
-    results_path = os.path.join(output_path + branch, '')
+    if branch:
+        results_path = os.path.join(output_path + branch, '')
+    else:
+        results_path = os.path.join(output_path + get_branch(btb_seq_path))
     os.makedirs(results_path, exist_ok=exist_ok)
-
-    btb_seq_backup_path = results_path + 'btb-seq/'
-    btb_seq_results_path = results_path + 'btb-seq-results/'
-    site_stats_path = results_path + 'site-stats/'
+    btb_seq_backup_path = results_path + '/btb-seq/'
+    btb_seq_results_path = results_path + '/btb-seq-results/'
+    site_stats_path = results_path + '/site-stats/'
 
     # Paths to mask file and simulated reads directory 
     mask_filepath = btb_seq_backup_path + "references/Mycbovis-2122-97_LT708304.fas.rpt.regions"
@@ -172,12 +174,15 @@ def performance_test(
 def checkout(repo_path, branch):
     run(["git", "checkout", str(branch)], cwd=repo_path)
 
+def get_branch(repo_path):
+    return run(['git', 'rev-parse', '--abbrev-ref', 'HEAD'], capture_output=True, cwd=repo_path)
+
 def main():
     # Parse
     parser = argparse.ArgumentParser(description="Performance test btb-seq code")
     parser.add_argument("btb_seq", help="path to btb-seq code")
     parser.add_argument("output_path", help="path to performance test results")
-    parser.add_argument("--branch", help="name of btb-seq branch to use", default='master')
+    parser.add_argument("--branch", help="name of btb-seq branch to use", default=None)
     parser.add_argument("--ref", "-r", help="optional path to reference fasta", default=DEFAULT_REFERENCE_PATH)
     parser.add_argument("--light", "-l", dest='light_mode', help="optional argument to run in light mode", 
                         action='store_true', default=False)

@@ -2,7 +2,7 @@ import subprocess
 import pandas as pd
 from io import StringIO
 
-def run(cmd, *args, **kwargs):
+def run(cmd, *args, capture_output=False, **kwargs):
     """ Run a command and assert that the process exits with a non-zero exit code.
         See python's subprocess.run command for args/kwargs
 
@@ -11,16 +11,21 @@ def run(cmd, *args, **kwargs):
             cwd (str): Set surr
 
         Returns:
-            None
+            None: if capture_output == False (default)
+            process' stdout (str): if capture_output == True 
     """
     # TODO: store stdout to a file
-    returncode = subprocess.run(cmd, *args, **kwargs).returncode
+    ps = subprocess.run(cmd, *args, capture_output=capture_output, **kwargs)
 
+    returncode = ps.returncode
     if returncode:
         raise Exception("""*****
             %s
             cmd failed with exit code %i
           *****""" % (cmd, returncode))
+
+    if capture_output:
+        return ps.stdout.decode().strip('\n')
 
 def bcf_summary(filepath='/home/aaronfishman/temp/filtered.vcf'):
     # Query
