@@ -43,7 +43,7 @@ def ofat(btb_seq_path, output_path, branches=DEFAULT_BRANCHES,
     output_path = os.path.join(output_path, '')     
     
     # generate samples
-    samples = validator.standard_samples()
+    samples = validator.quick_samples()#standard_samples()
     # simulate reads
     simulated_reads_path = validator.simulate(output_path, samples, reference_path)
     
@@ -55,7 +55,8 @@ def ofat(btb_seq_path, output_path, branches=DEFAULT_BRANCHES,
                 output_path,
                 btb_seq_path,
                 samples, 
-                simulated_reads_path,
+                results_path=output_path + branch,
+                simulated_reads_path=simulated_reads_path,
                 branch=branch,
                 light_mode=True
             )

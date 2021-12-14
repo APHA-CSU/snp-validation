@@ -64,6 +64,7 @@ def performance_test(
     output_path,
     btb_seq_path, 
     samples,
+    results_path=None,
     simulated_reads_path=None,  
     exist_ok=True, 
     branch=None,
@@ -72,12 +73,14 @@ def performance_test(
     """ Runs a performance test against the pipeline
 
         Parameters:
-            output_path (str): Path to output
+            output_path (str): Path to output - for simulations
             btb_seq_path (str): Path to btb-seq code is stored
             samples (list of Sample objects): Samples on which to run validation on
+            results_path (str): path to results - if None defaults to output_path
             simulated_reads_path (str): path to simualted reads
             exist_ok (bool): Whether or not to throw an error if a results directory already exists
             branch (str): Checkout git branch on the repo (default None)
+            light_mode (bool): switch to delete non-essential analysis files (default False)
 
         Returns:
             None
@@ -86,6 +89,10 @@ def performance_test(
     # Add trailing slash
     btb_seq_path = os.path.join(btb_seq_path, '')
     output_path = os.path.join(output_path, '')
+    if not results_path:
+        results_path = output_path
+    else:
+        results_path = os.path.join(results_path, '')
 
     # Run simulations if path to simulated reads not provided 
     if not simulated_reads_path:
@@ -93,12 +100,10 @@ def performance_test(
     elif not os.path.isdir(output_path):
         raise Exception("Output path not found")
 
+    # Validate btb_seq_path
     if not os.path.isdir(btb_seq_path):
         raise Exception("Pipeline code repository not found")
 
-    # Output Directories
-    branch_name = branch if branch else get_branch(btb_seq_path)
-    results_path = os.path.join(output_path, branch_name, '')
     os.makedirs(results_path, exist_ok=exist_ok)
     btb_seq_backup_path = results_path + '/btb-seq/'
     btb_seq_results_path = results_path + '/btb-seq-results/'
@@ -173,9 +178,6 @@ def performance_test(
 def checkout(repo_path, branch):
     run(["git", "checkout", str(branch)], cwd=repo_path)
 
-def get_branch(repo_path):
-    return run(['git', 'rev-parse', '--abbrev-ref', 'HEAD'], capture_output=True, cwd=repo_path)
-
 def main():
     # Parse
     parser = argparse.ArgumentParser(description="Performance test btb-seq code")
@@ -203,7 +205,7 @@ def main():
         args.output_path, 
         args.btb_seq, 
         samples, 
-        simulated_reads_path,
+        simulated_read_path=simulated_reads_path,
         branch=args.branch,
         light_mode = args.light_mode
     )
