@@ -32,7 +32,7 @@ def simulate(
             exist_ok (bool): Whether or not to throw an error if a results directory already exists
 
         Returns:
-            None
+            simulate_reads_path (str): Path to simulated reads 
     """
 
     # Validate Input
@@ -55,6 +55,8 @@ def simulate(
     for sample in samples:
         sample.simulate_genome(reference_path, simulated_genome_path + sample.name)
         sample.simulate_reads(simulated_genome_path, simulated_reads_path)
+
+    return simulated_reads_path
 
 
 def performance_test(
@@ -84,8 +86,10 @@ def performance_test(
     btb_seq_path = os.path.join(btb_seq_path, '')
     output_path = os.path.join(output_path, '')
 
-    # # Validate Input
-    if not os.path.isdir(output_path):
+    # Run simulations if path to simulated reads not provided 
+    if not simulated_reads_path:
+        simulated_reads_path = simulate(output_path, samples)     
+    elif not os.path.isdir(output_path):
         raise Exception("Output path not found")
 
     if not os.path.isdir(btb_seq_path):
@@ -101,8 +105,6 @@ def performance_test(
 
     # Paths to mask file and simulated reads directory 
     mask_filepath = btb_seq_backup_path + "references/Mycbovis-2122-97_LT708304.fas.rpt.regions"
-    if not simulated_reads_path:
-        simulated_reads_path = output_path + 'simulated-reads/'
 
     # TODO: handle dwgsim vcf files. Make sure we are taking into account variants it might generate
 
@@ -190,13 +192,14 @@ def main():
         samples = standard_samples()
 
     # Simulate reads
-    simulate(args.output_path, samples)
+    simulated_reads_path = simulate(args.output_path, samples)
 
     # Run
     performance_test(
         args.output_path, 
         args.btb_seq, 
         samples, 
+        simulated_reads_path,
         branch=args.branch,
         light_mode = args.light_mode
     )
