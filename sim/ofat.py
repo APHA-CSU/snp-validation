@@ -45,7 +45,7 @@ def ofat(btb_seq_path, output_path, branches=DEFAULT_BRANCHES,
     # generate samples
     samples = validator.standard_samples()
     # simulate reads
-    validator.simulations(output_path, samples, reference_path)
+    validator.simulate(output_path, samples, reference_path)
     
     # Benchmark the branches
     for branch in branches:

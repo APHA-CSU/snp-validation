@@ -17,7 +17,7 @@ def btb_seq(btb_seq_directory, reads_directory, results_directory):
     run(["bash", "./btb-seq", reads_directory,
          results_directory], cwd=btb_seq_directory)
 
-def simulations(
+def simulate(
     output_path,
     samples,
     reference_path=DEFAULT_REFERENCE_PATH,
@@ -190,7 +190,7 @@ def main():
         samples = standard_samples()
 
     # Simulate reads
-    simulations(args.output_path, samples)
+    simulate(args.output_path, samples)
 
     # Run
     performance_test(
