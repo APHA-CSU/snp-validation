@@ -96,10 +96,8 @@ def performance_test(
         raise Exception("Pipeline code repository not found")
 
     # Output Directories
-    if branch:
-        results_path = os.path.join(output_path + branch, '')
-    else:
-        results_path = os.path.join(output_path + get_branch(btb_seq_path))
+    branch_name = branch if branch else get_branch(btb_seq_path)
+    results_path = os.path.join(output_path, branch_name, '')
     os.makedirs(results_path, exist_ok=exist_ok)
     btb_seq_backup_path = results_path + '/btb-seq/'
     btb_seq_results_path = results_path + '/btb-seq-results/'
