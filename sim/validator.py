@@ -8,14 +8,12 @@ import pandas as pd
 
 import compare_snps
 from sample import *
-from utils import run
+import utils
 
 DEFAULT_REFERENCE_PATH = './Mycobacterium_bovis_AF212297_LT78304.fa'
 
-
 def btb_seq(btb_seq_directory, reads_directory, results_directory):
-    run(["bash", "./btb-seq", reads_directory,
-          results_directory], cwd=btb_seq_directory)
+    utils.run(["bash", "./btb-seq", reads_directory, results_directory], cwd=btb_seq_directory)
 
 def simulate(
     output_path,
@@ -23,7 +21,7 @@ def simulate(
     reference_path=DEFAULT_REFERENCE_PATH,
     exist_ok=True
 ):
-    """ Runs a performance test against the pipeline
+    """ Simulate a number of samples
 
         Parameters:
             output_path (str): Path to output
@@ -38,6 +36,7 @@ def simulate(
     # Validate Input
     if os.path.isdir(output_path):
         raise Exception("Output path already exists")
+
     os.makedirs(output_path)
     
     output_path = os.path.join(output_path, '')
@@ -58,7 +57,6 @@ def simulate(
 
     # TODO: pass reads path into function rather than generating inside
     return simulated_reads_path
-
 
 def performance_test(
     output_path,
@@ -190,7 +188,7 @@ def main():
 
     # Set branch
     if args.branch:
-        checkout(args.btb_seq, args.branch)
+        utils.checkout(args.btb_seq, args.branch)
 
     # Simulate reads
     simulated_reads_path = simulate(args.output_path, samples)
