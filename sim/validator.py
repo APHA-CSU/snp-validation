@@ -59,10 +59,10 @@ def simulate(
 def sequence(btb_seq_path, reads_path, results_path):
     # Validate
     if not os.path.exists(btb_seq_path):
-        raise Exception("Could not find btb-seq repo at: ", btb_seq_path)
+        raise Exception("btb-seq code does not exist: ", btb_seq_path)
 
     if not os.path.exists(reads_path):
-        raise Exception("Could not find reads path: ", reads_path)
+        raise Exception("reads path does not exist: ", reads_path)
 
     os.makedirs(results_path, exist_ok=True)
 
@@ -73,16 +73,11 @@ def sequence(btb_seq_path, reads_path, results_path):
     # TODO: handle when glob does not return a unique path
     return glob.glob(results_path + '/Results_*')[0] + '/'
 
-def benchmark(processed_samples):
-    pass
 
 def performance_test(
+    btb_seq_path,
     output_path,
-    btb_seq_path, 
     samples,
-    results_path=None,
-    simulated_reads_path=None,  
-    exist_ok=True, 
     light_mode=False
 ):
     """ Runs a performance test against the pipeline
@@ -100,12 +95,35 @@ def performance_test(
         Returns:
             None
     """
-    
-    reads_path = "BLAH"
 
-    simulated_samples = simulate(samples, reads_path)
-    processed_samples = sequence(simulated_samples, btb_seq_path, reads_path)
-    benchmark(processed_samples)
+
+    # Define output paths
+    genomes_path = os.path.join(output_path, 'genomes')
+    reads_path = os.path.join(output_path, 'reads')
+    btb_seq_backup_path = os.path.join(output_path, 'btb-seq')
+    results_path = os.path.join(output_path, 'sequenced')
+    stats_path = os.path.join(output_path, 'stats')
+
+    # Initialise
+    # TODO: exclude the work/ subdirectory from this operation to save space
+    shutil.copytree(btb_seq_path, btb_seq_backup_path, symlinks=True)
+    os.makedirs(stats_path, exist_ok=True)
+
+    # Simulate
+    simulated_samples = simulate(samples, genomes_path, reads_path)
+    results_path = sequence(btb_seq_path, reads_path, results_path)
+    sequenced_samples = sequenced_sample.from_results_dir(results_path)
+    processed_samples = processed_sample.from_list(simulated_samples, sequenced_samples)
+
+    stats, site_stats = benchmark(processed_samples)
+
+    # Save
+    stats.to_csv(output_path + '/stats.csv')
+
+    for name, df in site_stats.items():
+        df.to_csv(stats_path + f'/{name}_stats.csv')
+
+    # Cleanup
 
     return None
 
@@ -193,6 +211,31 @@ def performance_test(
         shutil.rmtree(btb_seq_results_path)
         shutil.rmtree(btb_seq_backup_path)
 
+def benchmark(processed_samples, mask_filepath=DEFAULT_MASK_PATH):
+    stats = []
+    site_stats = {}
+
+    for sample in processed_samples:
+        simulated_snp_path = sample.genome.snp_table_path
+        pipeline_snp_path = sample.sequenced.snp_table_path
+        pipeline_genome_path = sample.genome.genome_path
+        vcf_path = sample.sequenced.vcf_path
+
+        # Performance Stats
+        stat = compare_snps.analyse(simulated_snp_path, pipeline_snp_path, pipeline_genome_path, mask_filepath)
+        stat["name"] = sample.name
+        
+        stats.append(stat)
+
+        # Site Statistics at fp/fn/tp positions
+        site_stat = compare_snps.site_stats(simulated_snp_path, pipeline_snp_path, vcf_path)
+
+        site_stats[sample.name] = site_stat
+
+    stats_table = pd.DataFrame(stats)
+    return stats_table, site_stats
+
+
 def main():
     # Parse
     parser = argparse.ArgumentParser(description="Performance test btb-seq code")
@@ -231,87 +274,23 @@ def main():
         light_mode = args.light_mode
     )
 
-class RandomSample2(Sample):
-    def __init__(self, 
-        reference_path,
-            num_snps=16000, 
-            num_indels=3898, 
-            seed=1, 
-            per_base_error_rate="0",
-            num_read_pairs = 289994
-    ):
-        # TODO: Validate
-        self.reference_path = reference_path
-
-        self.num_snps = num_snps
-        self.num_indels = num_indels
-        self.seed = seed
-        self.per_base_error_rate = per_base_error_rate
-        self.num_read_pairs = math.ceil(num_read_pairs)
-        
-    @property
-    def name(self):
-        return f"{type(self).__name__}-snps{self.num_snps}-indels{self.num_indels}-seed{self.seed}"
-
-    def simulate_genome(self, simulated_genome_path):
-        """ Simulated a genome with random SNPs
-
-            TODO: rename simulated_genome_path to simulated_genome_prefix
-            Parameters:
-                reference_path (str): Path to reference genome
-                simulated_genome_path (str): Path to simlated genome
-                num_snps (int): Number of random SNPs
-                seed (int): Seed value for simulation
-
-            Returns:
-                None
-        """
-        params = [
-            "-snp_count", str(self.num_snps),
-            "-indel_count", str(self.num_indels),
-            "-seed", str(self.seed)
-        ]
-        self._simulate_genome_base(self.reference_path, simulated_genome_path, params)
-
-        snp_vcf_path = simulated_genome_path + '.simulated.refseq2simseq.SNP.vcf'
-        indel_vcf_path = simulated_genome_path + '.simulated.refseq2simseq.INDEL.vcf'
-        snp_table_path = simulated_genome_path + '.simulated.refseq2simseq.map.txt'
-        genome_path = simulated_genome_path + '.simulated.simseq.genome.fa'
-
-        return simulated_genome.SimulatedGenome(self.name, genome_path, snp_table_path, snp_vcf_path, indel_vcf_path)
-
-def benchmark(processed_samples, mask_filepath=DEFAULT_MASK_PATH):
-    stats = []
-    site_stats = {}
-
-    for sample in processed_samples:
-        simulated_snp_path = sample.genome.snp_table_path
-        pipeline_snp_path = sample.sequenced.snp_table_path
-        pipeline_genome_path = sample.genome.genome_path
-        vcf_path = sample.sequenced.vcf_path
-
-        # Performance Stats
-        stat = compare_snps.analyse(simulated_snp_path, pipeline_snp_path, pipeline_genome_path, mask_filepath)
-        stat["name"] = sample.name
-        
-        stats.append(stat)
-
-        # Site Statistics at fp/fn/tp positions
-        site_stat = compare_snps.site_stats(simulated_snp_path, pipeline_snp_path, vcf_path)
-
-        site_stats[sample.name] = site_stat
-
-    stats_table = pd.DataFrame(stats)
-    return stats_table, site_stats
-
-    path = results_path + "stats.csv"
-    stats_table.to_csv(path)
-
-# class ProcessedSample:
-#     def __init__(self, simulated_sample, sequenced_sample):
-#         pass
 
 if __name__ == '__main__':
+    btb_seq_path = '/home/aaronfishman/repos/btb-seq/'
+    output_path = '/home/aaronfishman/temp/cleanup/'
+
+    samples = [standard_samples()[0], RandomSample('/home/aaronfishman/tinygenome.fas', num_snps=0, num_indels=0)]
+
+
+    performance_test(
+        btb_seq_path,
+        output_path,
+        samples,
+        light_mode=False
+    )
+    quit()
+
+
     ###### main()
     samples = [standard_samples()[0], RandomSample('/home/aaronfishman/tinygenome.fas', num_snps=0, num_indels=0)]
         
@@ -327,9 +306,5 @@ if __name__ == '__main__':
 
     stats, site_stats = benchmark(processed_samples)
 
-    print("processed samples", processed_samples)
-
-    print("stats", stats)
-    print("site_stats", site_stats)
 
     a = 1
