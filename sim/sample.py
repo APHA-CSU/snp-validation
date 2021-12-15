@@ -4,8 +4,14 @@ import math
 import os
 import glob
 
-class Sample:
+from simulated_genome import SimulatedGenome
 
+DEFAULT_REFERENCE_PATH = './Mycobacterium_bovis_AF212297_LT78304.fa'
+DEFAULT_MASK_PATH = './Mycbovis-2122-97_LT708304.fas.rpt.regions'
+DEFAULT_NUM_READ_PAIRS = 289994
+DEFAULT_NUM_READ_PAIRS = 100
+
+class Sample:
     @property
     def name(self):
         return f"unnamed-{type(self).__name__}-{str(id(self))}"
@@ -89,11 +95,15 @@ class Sample:
 
 class VcfSample(Sample):
     def __init__(self, 
-                 predef_snp_path, 
-                 seed=1, 
-                 per_base_error_rate="0",
-                 num_read_pairs = 289994,
-                ):
+        predef_snp_path, 
+        reference_path=DEFAULT_REFERENCE_PATH,
+        seed=1, 
+        per_base_error_rate="0",
+        num_read_pairs = DEFAULT_NUM_READ_PAIRS,
+    ):
+
+        # TODO: Validate
+        self.reference_path = reference_path
         
         self.seed = seed
         self.per_base_error_rate = per_base_error_rate
@@ -118,7 +128,7 @@ class VcfSample(Sample):
             self.predef_snp_path,
             '-o', output_file_path])
 
-    def simulate_genome(self, reference_path, simulated_genome_path, seed=1):
+    def simulate_genome(self, simulated_genome_path, seed=1):
         """ Simulated a genome with random SNPs
 
             TODO: rename simulated_genome_path to simulated_genome_prefix
@@ -140,19 +150,31 @@ class VcfSample(Sample):
         params = ["-snp_vcf", tmp_decomposed_vcf_path, 
                   "-indel_vcf", tmp_decomposed_vcf_path,
                   "-seed", str(seed)]
-        self._simulate_genome_base(reference_path, simulated_genome_path, params)
+        self._simulate_genome_base(self.reference_path, simulated_genome_path, params)
         # clean tmp decomposed VCF
         run(['rm', tmp_decomposed_vcf_path])
 
+        # TODO: DRY with RandomSample
+        snp_vcf_path = simulated_genome_path + '.simulated.refseq2simseq.SNP.vcf'
+        indel_vcf_path = simulated_genome_path + '.simulated.refseq2simseq.INDEL.vcf'
+        snp_table_path = simulated_genome_path + '.simulated.refseq2simseq.map.txt'
+        genome_path = simulated_genome_path + '.simulated.simseq.genome.fa'
+
+        return SimulatedGenome(self.name, genome_path, snp_table_path, snp_vcf_path, indel_vcf_path)
+
+
 class RandomSample(Sample):
     def __init__(self, 
-                 num_snps=16000, 
-                 num_indels=3898, 
-                 seed=1, 
-                 per_base_error_rate="0",
-                 num_read_pairs = 289994
-                 ):
-        
+        reference_path=DEFAULT_REFERENCE_PATH,
+        num_snps=16000, 
+        num_indels=3898, 
+        seed=1, 
+        per_base_error_rate="0",
+        num_read_pairs = DEFAULT_NUM_READ_PAIRS
+    ):
+        # TODO: Validate
+        self.reference_path = reference_path
+
         self.num_snps = num_snps
         self.num_indels = num_indels
         self.seed = seed
@@ -163,7 +185,7 @@ class RandomSample(Sample):
     def name(self):
         return f"{type(self).__name__}-snps{self.num_snps}-indels{self.num_indels}-seed{self.seed}"
 
-    def simulate_genome(self, reference_path, simulated_genome_path):
+    def simulate_genome(self, simulated_genome_path):
         """ Simulated a genome with random SNPs
 
             TODO: rename simulated_genome_path to simulated_genome_prefix
@@ -176,11 +198,21 @@ class RandomSample(Sample):
             Returns:
                 None
         """
-        params = ["-snp_count", str(self.num_snps),
-                    "-indel_count", str(self.num_indels),
-                    "-seed", str(self.seed)]
-        self._simulate_genome_base(reference_path, simulated_genome_path, params)
+        params = [
+            "-snp_count", str(self.num_snps),
+            "-indel_count", str(self.num_indels),
+            "-seed", str(self.seed)
+        ]
 
+        self._simulate_genome_base(self.reference_path, simulated_genome_path, params)
+
+        # TODO: DRY with VcfSample
+        snp_vcf_path = simulated_genome_path + '.simulated.refseq2simseq.SNP.vcf'
+        indel_vcf_path = simulated_genome_path + '.simulated.refseq2simseq.INDEL.vcf'
+        snp_table_path = simulated_genome_path + '.simulated.refseq2simseq.map.txt'
+        genome_path = simulated_genome_path + '.simulated.simseq.genome.fa'
+
+        return SimulatedGenome(self.name, genome_path, snp_table_path, snp_vcf_path, indel_vcf_path)
 
 def vcf_samples(datasets, snippy_dir='/mnt/fsx-027/snippy/'):
     """ Returns a list of VcfSample objects built from data sets contained

@@ -21,7 +21,10 @@ def from_list(genomes, sequenced):
         raise Exception("Sequenced samples with non-unique names found")
 
     if set(genome_dict.keys()) != set(sequenced_dict.keys()):
-        raise Exception("Genome sample names are different to sequenced sample names")
+        raise Exception(f"""Genome sample names are different to sequenced sample names
+            Genomes: {genome_dict.keys()}
+            Sequenced: {sequenced_dict.keys()}
+        """)
     
     # Match
     samples = []

@@ -48,7 +48,6 @@ def simulate(
     for sample in samples:
         simulated = sample.simulate_genome(genomes_path + sample.name)
 
-        sample.num_read_pairs = 100
         sample.simulate_reads(simulated.genome_path, reads_path)
 
         simulated_samples.append(simulated)
@@ -284,6 +283,7 @@ class RandomSample2(Sample):
 def benchmark(processed_samples, mask_filepath=DEFAULT_MASK_PATH):
     stats = []
     site_stats = {}
+
     for sample in processed_samples:
         simulated_snp_path = sample.genome.snp_table_path
         pipeline_snp_path = sample.sequenced.snp_table_path
@@ -312,17 +312,8 @@ def benchmark(processed_samples, mask_filepath=DEFAULT_MASK_PATH):
 #         pass
 
 if __name__ == '__main__':
-    # #########
-    # results_path = '/home/aaronfishman/temp/vally-1/btb-seq-results/Results_simulated-reads_15Dec21'
-    
-    
-
-    # print(samples)
-    # quit()
-
-
     ###### main()
-    samples = [RandomSample2('/home/aaronfishman/tinygenome.fas', num_snps=0, num_indels=0)]
+    samples = [standard_samples()[0], RandomSample('/home/aaronfishman/tinygenome.fas', num_snps=0, num_indels=0)]
         
     genomes_path = '/home/aaronfishman/temp/genomes/'
     reads_path = '/home/aaronfishman/temp/reads/'
