@@ -295,8 +295,56 @@ class SimulatedGenome:
         if not os.path.exists(path):
             raise Exception("Could not find path: ", path)
 
+class SequencedSample:
+    def __init__(self, name, vcf_path, filtered_bcf_path, snp_table_path):
+        # Validate
+        self.assert_path_exists(vcf_path)
+        self.assert_path_exists(filtered_bcf_path)
+        self.assert_path_exists(snp_table_path)
+
+        # Assign
+        self.vcf_path = vcf_path
+        self.filtered_bcf_path = filtered_bcf_path
+        self.snp_table_path = snp_table_path
+        self.name = name
+
+    def assert_path_exists(self, path):
+        if not os.path.exists(path):
+            raise Exception("Could not find path: ", path)
+
+def from_results_dir(results_dir):
+    # TODO: Take from csv rather than consensus directory?
+    paths = glob.glob(results_dir + '/consensus/*_consensus.fas')
+    names = [os.path.basename(p)[:-14] for p in paths]
+
+    samples = []
+    for name in names:
+        sample = SequencedSample(name, 
+            results_dir + f'/vcf/{name}.vcf.gz',
+            results_dir + f'/filteredBcf/{name}_filtered.bcf',
+            results_dir + f'/snpTables/{name}_snps.tab'
+        )
+
+        samples.append(sample)
+
+    return samples
+
+    print("names", names)
+
+# class ProcessedSample:
+#     def __init__(self, simulated_sample, sequenced_sample):
+#         pass
+
 if __name__ == '__main__':
-    # main()
+    #########
+    results_path = '/home/aaronfishman/temp/vally-1/btb-seq-results/Results_simulated-reads_15Dec21'
+    samples = from_results_dir(results_path)
+
+    print(samples)
+    quit()
+
+
+    ###### main()
     samples = [RandomSample2('/home/aaronfishman/tinygenome.fas', num_snps=0, num_indels=0)]
         
     genomes_path = '/home/aaronfishman/temp/genomes/'
