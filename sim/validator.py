@@ -274,11 +274,11 @@ class RandomSample2(Sample):
         snp_table_path = simulated_genome_path + '.simulated.refseq2simseq.map.txt'
         genome_path = simulated_genome_path + '.simulated.simseq.genome.fa'
 
-        return SimulatedGenome(genome_path, snp_table_path, snp_vcf_path, indel_vcf_path)
+        return SimulatedGenome(self.name, genome_path, snp_table_path, snp_vcf_path, indel_vcf_path)
 
 
 class SimulatedGenome:
-    def __init__(self, genome_path, snp_table_path, snp_vcf_path, indel_vcf_path):
+    def __init__(self, name, genome_path, snp_table_path, snp_vcf_path, indel_vcf_path):
         # Validate
         self.assert_path_exists(genome_path)
         self.assert_path_exists(snp_table_path)
@@ -290,6 +290,8 @@ class SimulatedGenome:
         self.snp_table_path = snp_table_path
         self.snp_vcf_path = snp_vcf_path
         self.indel_vcf_path = indel_vcf_path
+        
+        self.name = name
 
     def assert_path_exists(self, path):
         if not os.path.exists(path):
@@ -329,19 +331,47 @@ def from_results_dir(results_dir):
 
     return samples
 
-    print("names", names)
+class ProcessedSample:
+    def __init__(self, simulated_genome, sequenced_sample):
+        self.genome = simulated_genome
+        self.sample = sequenced_sample
+
+        # TODO: other convenience functions?
+
+def from_list(genomes, sequenced):
+    genome_dict = {g.name: g for g in genomes}
+    sequenced_dict = {s.name: s for s in sequenced}
+
+    # Validate
+    if len(genome_dict) != len(genomes):
+        raise Exception("Genomes with non-unique names found")
+
+    if len(sequenced_dict) != len(sequenced):
+        raise Exception("Sequenced samples with non-unique names found")
+
+    if set(genome_dict.keys()) != set(sequenced_dict.keys()):
+        raise Exception("Genome sample names are different to sequenced sample names")
+    
+    # Match
+    samples = []
+    for name in genome_dict:
+        sample = ProcessedSample(genome_dict[name], sequenced_dict[name])
+        samples.append(sample)
+
+    return samples
 
 # class ProcessedSample:
 #     def __init__(self, simulated_sample, sequenced_sample):
 #         pass
 
 if __name__ == '__main__':
-    #########
-    results_path = '/home/aaronfishman/temp/vally-1/btb-seq-results/Results_simulated-reads_15Dec21'
-    samples = from_results_dir(results_path)
+    # #########
+    # results_path = '/home/aaronfishman/temp/vally-1/btb-seq-results/Results_simulated-reads_15Dec21'
+    
+    
 
-    print(samples)
-    quit()
+    # print(samples)
+    # quit()
 
 
     ###### main()
@@ -354,5 +384,9 @@ if __name__ == '__main__':
 
     simulated_samples = simulate(samples, genomes_path, reads_path)
     results_path = sequence(btb_seq_path, reads_path, results_path)
+    sequenced_samples = from_results_dir(results_path)
+    processed_samples = from_list(simulated_samples, sequenced_samples)
+
+    print("processed samples", processed_samples)
 
     a = 1
