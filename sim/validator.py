@@ -105,7 +105,7 @@ def performance_test(
     sequenced_samples = sequenced_sample.from_results_dir(results_path)
     processed_samples = processed_sample.from_list(simulated_samples, sequenced_samples)
 
-    stats, site_stats = benchmark(processed_samples)
+    stats, site_stats = compare_snps.benchmark(processed_samples)
 
     # Save
     stats.to_csv(output_path + '/stats.csv')
@@ -150,7 +150,6 @@ def main():
         simulated_read_path=simulated_reads_path,
         light_mode = args.light_mode
     )
-
 
 if __name__ == '__main__':
     btb_seq_path = '/home/aaronfishman/repos/btb-seq/'
