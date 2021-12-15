@@ -9,6 +9,7 @@ import pandas as pd
 import compare_snps
 from sample import *
 import utils
+from processed_sample import ProcessedSample
 
 DEFAULT_REFERENCE_PATH = './Mycobacterium_bovis_AF212297_LT78304.fa'
 
@@ -16,10 +17,10 @@ def btb_seq(btb_seq_directory, reads_directory, results_directory):
     utils.run(["bash", "./btb-seq", reads_directory, results_directory], cwd=btb_seq_directory)
 
 def simulate(
-    output_path,
     samples,
+    genomes_path,
+    reads_path, 
     reference_path=DEFAULT_REFERENCE_PATH,
-    exist_ok=True
 ):
     """ Simulate a number of samples
 
@@ -34,29 +35,30 @@ def simulate(
     """
 
     # Validate Input
-    if os.path.isdir(output_path):
-        raise Exception("Output path already exists")
+    reads_path = os.path.join(reads_path, '')
+    genomes_path = os.path.join(genomes_path, '')
+    os.makedirs(genomes_path, exist_ok=True)
+    os.makedirs(reads_path, exist_ok=True)
 
-    os.makedirs(output_path)
-    
-    output_path = os.path.join(output_path, '')
-
-    # Output Directories
-    simulated_genome_path = output_path + 'simulated-genome/'
-    simulated_reads_path = output_path + 'simulated-reads/'
-
-    # Create Output Directories
-    os.makedirs(simulated_genome_path, exist_ok=exist_ok)
-    os.makedirs(simulated_reads_path, exist_ok=exist_ok)
-
-    # Simulate Reads
-    # TODO:could these function singatures be improved?
+    # Simulate genome and reads
+    simulated_samples = []
     for sample in samples:
-        sample.simulate_genome(reference_path, simulated_genome_path + sample.name)
-        sample.simulate_reads(simulated_genome_path, simulated_reads_path)
+        simulated = sample.simulate_genome(genomes_path + sample.name)
+
+        sample.num_read_pairs = 100
+        sample.simulate_reads(simulated.genome_path, reads_path)
+
+        simulated_samples.append(simulated)
 
     # TODO: pass reads path into function rather than generating inside
-    return simulated_reads_path
+    return simulated_samples
+
+
+def sequence(btb_seq_path, reads_path, results_path):
+    pass
+
+def benchmark(processed_samples):
+    pass
 
 def performance_test(
     output_path,
@@ -82,6 +84,14 @@ def performance_test(
         Returns:
             None
     """
+    
+    reads_path = "BLAH"
+
+    simulated_samples = simulate(samples, reads_path)
+    processed_samples = sequence(simulated_samples, btb_seq_path, reads_path)
+    benchmark(processed_samples)
+
+    return None
 
     # Add trailing slash
     btb_seq_path = os.path.join(btb_seq_path, '')
@@ -174,8 +184,11 @@ def main():
     parser.add_argument("output_path", help="path to performance test results")
     parser.add_argument("--branch", help="name of btb-seq branch to use", default=None)
     parser.add_argument("--ref", "-r", help="optional path to reference fasta", default=DEFAULT_REFERENCE_PATH)
-    parser.add_argument("--light", "-l", dest='light_mode', help="optional argument to run in light mode", 
-                        action='store_true', default=False)
+    parser.add_argument("--light", "-l", 
+        dest='light_mode', 
+        help="optional argument to run in light mode", 
+        action='store_true', default=False
+    )
     parser.add_argument("--quick", "-q", help="Run quick samples", action='store_true')
 
     args = parser.parse_args(sys.argv[1:])
@@ -202,5 +215,78 @@ def main():
         light_mode = args.light_mode
     )
 
+class RandomSample2(Sample):
+    def __init__(self, 
+        reference_path,
+            num_snps=16000, 
+            num_indels=3898, 
+            seed=1, 
+            per_base_error_rate="0",
+            num_read_pairs = 289994
+    ):
+        # TODO: Validate
+        self.reference_path = reference_path
+
+        self.num_snps = num_snps
+        self.num_indels = num_indels
+        self.seed = seed
+        self.per_base_error_rate = per_base_error_rate
+        self.num_read_pairs = math.ceil(num_read_pairs)
+        
+    @property
+    def name(self):
+        return f"{type(self).__name__}-snps{self.num_snps}-indels{self.num_indels}-seed{self.seed}"
+
+    def simulate_genome(self, simulated_genome_path):
+        """ Simulated a genome with random SNPs
+
+            TODO: rename simulated_genome_path to simulated_genome_prefix
+            Parameters:
+                reference_path (str): Path to reference genome
+                simulated_genome_path (str): Path to simlated genome
+                num_snps (int): Number of random SNPs
+                seed (int): Seed value for simulation
+
+            Returns:
+                None
+        """
+        params = ["-snp_count", str(self.num_snps),
+                    "-indel_count", str(self.num_indels),
+                    "-seed", str(self.seed)]
+        self._simulate_genome_base(self.reference_path, simulated_genome_path, params)
+
+        snp_vcf_path = simulated_genome_path + '.simulated.refseq2simseq.SNP.vcf'
+        indel_vcf_path = simulated_genome_path + '.simulated.refseq2simseq.INDEL.vcf'
+        snp_table_path = simulated_genome_path + '.simulated.refseq2simseq.map.txt'
+        genome_path = simulated_genome_path + '.simulated.simseq.genome.fa'
+
+        return SimulatedGenome(genome_path, snp_table_path, snp_vcf_path, indel_vcf_path)
+
+
+class SimulatedGenome:
+    def __init__(self, genome_path, snp_table_path, snp_vcf_path, indel_vcf_path):
+        # Validate
+        self.assert_path_exists(genome_path)
+        self.assert_path_exists(snp_table_path)
+        self.assert_path_exists(snp_vcf_path)
+        self.assert_path_exists(indel_vcf_path)
+
+        # Assign
+        self.genome_path = genome_path
+        self.snp_table_path = snp_table_path
+        self.snp_vcf_path = snp_vcf_path
+        self.indel_vcf_path = indel_vcf_path
+
+    def assert_path_exists(self, path):
+        if not os.path.exists(path):
+            raise Exception("Could not find path: ", path)
+
 if __name__ == '__main__':
-    main()
+    # main()
+    samples = [RandomSample2('/home/aaronfishman/tinygenome.fas', num_snps=0, num_indels=0)]
+        
+    genomes_path = '/home/aaronfishman/temp/genomes/'
+    reads_path = '/home/aaronfishman/temp/reads/'
+    simulated_samples = simulate(samples, genomes_path, reads_path)
+
+    a = 1

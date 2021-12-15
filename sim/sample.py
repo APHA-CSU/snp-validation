@@ -48,7 +48,8 @@ class Sample:
             Returns:
                 None  
         """
-        genome_fasta_path = simulated_genome_path + self.name + '.simulated.simseq.genome.fa'
+        # genome_fasta_path = simulated_genome_path + self.name + '.simulated.simseq.genome.fa'
+        genome_fasta_path = simulated_genome_path
 
         output_prefix = simulated_reads_path + self.name
         
@@ -82,6 +83,8 @@ class Sample:
         # Rename output fastq files
         os.rename(dwgsim_read_1, read_1)
         os.rename(dwgsim_read_2, read_2)
+
+        return read_1, read_2
 
 
 class VcfSample(Sample):
