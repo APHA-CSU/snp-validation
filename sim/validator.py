@@ -16,14 +16,11 @@ import simulated_genome
 DEFAULT_REFERENCE_PATH = './Mycobacterium_bovis_AF212297_LT78304.fa'
 DEFAULT_MASK_PATH = './Mycbovis-2122-97_LT708304.fas.rpt.regions'
 
-def btb_seq(btb_seq_directory, reads_directory, results_directory):
-    utils.run(["bash", "./btb-seq", reads_directory, results_directory], cwd=btb_seq_directory)
 
 def simulate(
     samples,
     genomes_path,
     reads_path, 
-    reference_path=DEFAULT_REFERENCE_PATH,
 ):
     """ Simulate a number of samples
 
@@ -47,16 +44,14 @@ def simulate(
     simulated_samples = []
     for sample in samples:
         simulated = sample.simulate_genome(genomes_path + sample.name)
-
         sample.simulate_reads(simulated.genome_path, reads_path)
-
         simulated_samples.append(simulated)
 
     # TODO: pass reads path into function rather than generating inside
     return simulated_samples
 
-
 def sequence(btb_seq_path, reads_path, results_path):
+    """ Sequence reads with btb-seq """
     # Validate
     if not os.path.exists(btb_seq_path):
         raise Exception("btb-seq code does not exist: ", btb_seq_path)
@@ -67,12 +62,11 @@ def sequence(btb_seq_path, reads_path, results_path):
     os.makedirs(results_path, exist_ok=True)
 
     # Sequence
-    btb_seq(btb_seq_path, reads_path, results_path)
+    utils.run(["bash", "./btb-seq", reads_path, results_path], cwd=btb_seq_path)
 
     # Result directory
     # TODO: handle when glob does not return a unique path
     return glob.glob(results_path + '/Results_*')[0] + '/'
-
 
 def performance_test(
     btb_seq_path,
@@ -95,8 +89,6 @@ def performance_test(
         Returns:
             None
     """
-
-
     # Define output paths
     genomes_path = os.path.join(output_path, 'genomes')
     reads_path = os.path.join(output_path, 'reads')
@@ -192,7 +184,6 @@ if __name__ == '__main__':
     output_path = '/home/aaronfishman/temp/cleanup/'
 
     samples = [standard_samples()[0], RandomSample('/home/aaronfishman/tinygenome.fas', num_snps=0, num_indels=0)]
-
 
     performance_test(
         btb_seq_path,
