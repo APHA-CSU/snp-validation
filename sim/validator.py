@@ -11,11 +11,9 @@ from sample import *
 import utils
 import processed_sample
 import sequenced_sample
-import simulated_genome
 
 DEFAULT_REFERENCE_PATH = './Mycobacterium_bovis_AF212297_LT78304.fa'
 DEFAULT_MASK_PATH = './Mycbovis-2122-97_LT708304.fas.rpt.regions'
-
 
 def simulate(
     samples,
@@ -114,31 +112,6 @@ def performance_test(
 
     for name, df in site_stats.items():
         df.to_csv(stats_path + f'/{name}_stats.csv')
-
-def benchmark(processed_samples, mask_filepath=DEFAULT_MASK_PATH):
-    stats = []
-    site_stats = {}
-
-    for sample in processed_samples:
-        simulated_snp_path = sample.genome.snp_table_path
-        pipeline_snp_path = sample.sequenced.snp_table_path
-        pipeline_genome_path = sample.genome.genome_path
-        vcf_path = sample.sequenced.vcf_path
-
-        # Performance Stats
-        stat = compare_snps.analyse(simulated_snp_path, pipeline_snp_path, pipeline_genome_path, mask_filepath)
-        stat["name"] = sample.name
-        
-        stats.append(stat)
-
-        # Site Statistics at fp/fn/tp positions
-        site_stat = compare_snps.site_stats(simulated_snp_path, pipeline_snp_path, vcf_path)
-
-        site_stats[sample.name] = site_stat
-
-    stats_table = pd.DataFrame(stats)
-    return stats_table, site_stats
-
 
 def main():
     # Parse

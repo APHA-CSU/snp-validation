@@ -4,8 +4,11 @@ from Bio import SeqIO
 from utils import bcf_summary
 
 """
-Calculate performance stats from simulated data
+    Calculate performance stats from simulated data
 """
+
+DEFAULT_REFERENCE_PATH = './Mycobacterium_bovis_AF212297_LT78304.fa'
+DEFAULT_MASK_PATH = './Mycbovis-2122-97_LT708304.fas.rpt.regions'
 
 def masked_positions(mask_filepath):
     """ Parse mask file path. Returns a list of mask positions """
@@ -150,3 +153,31 @@ def site_stats(simulated_snp_path, pipeline_snp_path, bcf_path):
     df['AD1/(AD1+AD0)'] = df['AD1'] / (df['AD1'] + df['AD0'])
 
     return df
+
+def benchmark(processed_samples, mask_filepath=DEFAULT_MASK_PATH):
+    # Initialise
+    stats = []
+    site_stats = {}
+
+    # Analyse
+    for sample in processed_samples:
+        simulated_snp_path = sample.genome.snp_table_path
+        pipeline_snp_path = sample.sequenced.snp_table_path
+        pipeline_genome_path = sample.genome.genome_path
+        vcf_path = sample.sequenced.vcf_path
+
+        # Performance Stats
+        stat = analyse(simulated_snp_path, pipeline_snp_path, pipeline_genome_path, mask_filepath)
+        stat["name"] = sample.name
+        
+        stats.append(stat)
+
+        # Site Statistics at fp/fn/tp positions
+        site_stat = site_stats(simulated_snp_path, pipeline_snp_path, vcf_path)
+
+        site_stats[sample.name] = site_stat
+
+    # Combine
+    stats_table = pd.DataFrame(stats)
+
+    return stats_table, site_stats
