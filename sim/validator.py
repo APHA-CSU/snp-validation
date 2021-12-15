@@ -55,7 +55,21 @@ def simulate(
 
 
 def sequence(btb_seq_path, reads_path, results_path):
-    pass
+    # Validate
+    if not os.path.exists(btb_seq_path):
+        raise Exception("Could not find btb-seq repo at: ", btb_seq_path)
+
+    if not os.path.exists(reads_path):
+        raise Exception("Could not find reads path: ", reads_path)
+
+    os.makedirs(results_path, exist_ok=True)
+
+    # Sequence
+    btb_seq(btb_seq_path, reads_path, results_path)
+
+    # Result directory
+    # TODO: handle when glob does not return a unique path
+    return glob.glob(results_path + '/Results_*')[0] + '/'
 
 def benchmark(processed_samples):
     pass
@@ -287,6 +301,10 @@ if __name__ == '__main__':
         
     genomes_path = '/home/aaronfishman/temp/genomes/'
     reads_path = '/home/aaronfishman/temp/reads/'
+    results_path = '/home/aaronfishman/temp/results/'
+    btb_seq_path = '/home/aaronfishman/repos/btb-seq/'
+
     simulated_samples = simulate(samples, genomes_path, reads_path)
+    results_path = sequence(btb_seq_path, reads_path, results_path)
 
     a = 1
