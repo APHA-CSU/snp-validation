@@ -9,7 +9,9 @@ import pandas as pd
 import compare_snps
 from sample import *
 import utils
-from processed_sample import ProcessedSample
+import processed_sample
+import sequenced_sample
+import simulated_genome
 
 DEFAULT_REFERENCE_PATH = './Mycobacterium_bovis_AF212297_LT78304.fa'
 
@@ -274,91 +276,9 @@ class RandomSample2(Sample):
         snp_table_path = simulated_genome_path + '.simulated.refseq2simseq.map.txt'
         genome_path = simulated_genome_path + '.simulated.simseq.genome.fa'
 
-        return SimulatedGenome(self.name, genome_path, snp_table_path, snp_vcf_path, indel_vcf_path)
+        return simulated_genome.SimulatedGenome(self.name, genome_path, snp_table_path, snp_vcf_path, indel_vcf_path)
 
 
-class SimulatedGenome:
-    def __init__(self, name, genome_path, snp_table_path, snp_vcf_path, indel_vcf_path):
-        # Validate
-        self.assert_path_exists(genome_path)
-        self.assert_path_exists(snp_table_path)
-        self.assert_path_exists(snp_vcf_path)
-        self.assert_path_exists(indel_vcf_path)
-
-        # Assign
-        self.genome_path = genome_path
-        self.snp_table_path = snp_table_path
-        self.snp_vcf_path = snp_vcf_path
-        self.indel_vcf_path = indel_vcf_path
-        
-        self.name = name
-
-    def assert_path_exists(self, path):
-        if not os.path.exists(path):
-            raise Exception("Could not find path: ", path)
-
-class SequencedSample:
-    def __init__(self, name, vcf_path, filtered_bcf_path, snp_table_path):
-        # Validate
-        self.assert_path_exists(vcf_path)
-        self.assert_path_exists(filtered_bcf_path)
-        self.assert_path_exists(snp_table_path)
-
-        # Assign
-        self.vcf_path = vcf_path
-        self.filtered_bcf_path = filtered_bcf_path
-        self.snp_table_path = snp_table_path
-        self.name = name
-
-    def assert_path_exists(self, path):
-        if not os.path.exists(path):
-            raise Exception("Could not find path: ", path)
-
-def from_results_dir(results_dir):
-    # TODO: Take from csv rather than consensus directory?
-    paths = glob.glob(results_dir + '/consensus/*_consensus.fas')
-    names = [os.path.basename(p)[:-14] for p in paths]
-
-    samples = []
-    for name in names:
-        sample = SequencedSample(name, 
-            results_dir + f'/vcf/{name}.vcf.gz',
-            results_dir + f'/filteredBcf/{name}_filtered.bcf',
-            results_dir + f'/snpTables/{name}_snps.tab'
-        )
-
-        samples.append(sample)
-
-    return samples
-
-class ProcessedSample:
-    def __init__(self, simulated_genome, sequenced_sample):
-        self.genome = simulated_genome
-        self.sample = sequenced_sample
-
-        # TODO: other convenience functions?
-
-def from_list(genomes, sequenced):
-    genome_dict = {g.name: g for g in genomes}
-    sequenced_dict = {s.name: s for s in sequenced}
-
-    # Validate
-    if len(genome_dict) != len(genomes):
-        raise Exception("Genomes with non-unique names found")
-
-    if len(sequenced_dict) != len(sequenced):
-        raise Exception("Sequenced samples with non-unique names found")
-
-    if set(genome_dict.keys()) != set(sequenced_dict.keys()):
-        raise Exception("Genome sample names are different to sequenced sample names")
-    
-    # Match
-    samples = []
-    for name in genome_dict:
-        sample = ProcessedSample(genome_dict[name], sequenced_dict[name])
-        samples.append(sample)
-
-    return samples
 
 # class ProcessedSample:
 #     def __init__(self, simulated_sample, sequenced_sample):
@@ -384,8 +304,10 @@ if __name__ == '__main__':
 
     simulated_samples = simulate(samples, genomes_path, reads_path)
     results_path = sequence(btb_seq_path, reads_path, results_path)
-    sequenced_samples = from_results_dir(results_path)
-    processed_samples = from_list(simulated_samples, sequenced_samples)
+    sequenced_samples = sequenced_sample.from_results_dir(results_path)
+    processed_samples = processed_sample.from_list(simulated_samples, sequenced_samples)
+
+
 
     print("processed samples", processed_samples)
 
