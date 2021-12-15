@@ -14,6 +14,7 @@ import sequenced_sample
 import simulated_genome
 
 DEFAULT_REFERENCE_PATH = './Mycobacterium_bovis_AF212297_LT78304.fa'
+DEFAULT_MASK_PATH = './Mycbovis-2122-97_LT708304.fas.rpt.regions'
 
 def btb_seq(btb_seq_directory, reads_directory, results_directory):
     utils.run(["bash", "./btb-seq", reads_directory, results_directory], cwd=btb_seq_directory)
@@ -266,9 +267,11 @@ class RandomSample2(Sample):
             Returns:
                 None
         """
-        params = ["-snp_count", str(self.num_snps),
-                    "-indel_count", str(self.num_indels),
-                    "-seed", str(self.seed)]
+        params = [
+            "-snp_count", str(self.num_snps),
+            "-indel_count", str(self.num_indels),
+            "-seed", str(self.seed)
+        ]
         self._simulate_genome_base(self.reference_path, simulated_genome_path, params)
 
         snp_vcf_path = simulated_genome_path + '.simulated.refseq2simseq.SNP.vcf'
@@ -278,7 +281,31 @@ class RandomSample2(Sample):
 
         return simulated_genome.SimulatedGenome(self.name, genome_path, snp_table_path, snp_vcf_path, indel_vcf_path)
 
+def benchmark(processed_samples, mask_filepath=DEFAULT_MASK_PATH):
+    stats = []
+    site_stats = {}
+    for sample in processed_samples:
+        simulated_snp_path = sample.genome.snp_table_path
+        pipeline_snp_path = sample.sequenced.snp_table_path
+        pipeline_genome_path = sample.genome.genome_path
+        vcf_path = sample.sequenced.vcf_path
 
+        # Performance Stats
+        stat = compare_snps.analyse(simulated_snp_path, pipeline_snp_path, pipeline_genome_path, mask_filepath)
+        stat["name"] = sample.name
+        
+        stats.append(stat)
+
+        # Site Statistics at fp/fn/tp positions
+        site_stat = compare_snps.site_stats(simulated_snp_path, pipeline_snp_path, vcf_path)
+
+        site_stats[sample.name] = site_stat
+
+    stats_table = pd.DataFrame(stats)
+    return stats_table, site_stats
+
+    path = results_path + "stats.csv"
+    stats_table.to_csv(path)
 
 # class ProcessedSample:
 #     def __init__(self, simulated_sample, sequenced_sample):
@@ -307,8 +334,11 @@ if __name__ == '__main__':
     sequenced_samples = sequenced_sample.from_results_dir(results_path)
     processed_samples = processed_sample.from_list(simulated_samples, sequenced_samples)
 
-
+    stats, site_stats = benchmark(processed_samples)
 
     print("processed samples", processed_samples)
+
+    print("stats", stats)
+    print("site_stats", site_stats)
 
     a = 1

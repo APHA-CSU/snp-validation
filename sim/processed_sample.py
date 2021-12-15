@@ -1,7 +1,11 @@
 class ProcessedSample:
     def __init__(self, simulated_genome, sequenced_sample):
+        if simulated_genome.name != sequenced_sample.name:
+            raise Exception("Sample names do not match")
+
+        self.name = simulated_genome.name
         self.genome = simulated_genome
-        self.sample = sequenced_sample
+        self.sequenced = sequenced_sample
 
         # TODO: other convenience functions?
 

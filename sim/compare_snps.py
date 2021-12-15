@@ -150,4 +150,3 @@ def site_stats(simulated_snp_path, pipeline_snp_path, bcf_path):
     df['AD1/(AD1+AD0)'] = df['AD1'] / (df['AD1'] + df['AD0'])
 
     return df
-
