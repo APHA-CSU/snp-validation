@@ -67,7 +67,6 @@ def performance_test(
     results_path=None,
     simulated_reads_path=None,  
     exist_ok=True, 
-    branch=None,
     light_mode=False
 ):
     """ Runs a performance test against the pipeline
@@ -124,11 +123,6 @@ def performance_test(
     #   from the work/ directory nextflow generates
     shutil.copytree(btb_seq_path, btb_seq_backup_path, symlinks=True)
 
-    # TODO: Use nextflow's method of choosing github branches
-    #    the method handles automatic pulling of github branches.
-    if branch:
-        checkout(btb_seq_backup_path, branch)
-
     # Run the pipeline
     btb_seq(btb_seq_backup_path, simulated_reads_path, btb_seq_results_path)
 
@@ -175,9 +169,6 @@ def performance_test(
         shutil.rmtree(btb_seq_results_path)
         shutil.rmtree(btb_seq_backup_path)
 
-def checkout(repo_path, branch):
-    run(["git", "checkout", str(branch)], cwd=repo_path)
-
 def main():
     # Parse
     parser = argparse.ArgumentParser(description="Performance test btb-seq code")
@@ -197,6 +188,10 @@ def main():
     else:
         samples = standard_samples()
 
+    # Set branch
+    if args.branch:
+        checkout(args.btb_seq, args.branch)
+
     # Simulate reads
     simulated_reads_path = simulate(args.output_path, samples)
 
@@ -206,7 +201,6 @@ def main():
         args.btb_seq, 
         samples, 
         simulated_read_path=simulated_reads_path,
-        branch=args.branch,
         light_mode = args.light_mode
     )
 

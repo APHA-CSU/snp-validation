@@ -37,3 +37,6 @@ def bcf_summary(filepath='/home/aaronfishman/temp/filtered.vcf'):
     
     # Construct data frame
     return pd.read_csv(StringIO(text), header=None, names=columns)
+
+def checkout(repo_path, branch):
+    run(["git", "checkout", str(branch)], cwd=repo_path)
