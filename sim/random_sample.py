@@ -12,7 +12,7 @@ class RandomSample(Sample):
         num_snps=16000, 
         num_indels=3898, 
         seed=1, 
-        per_base_error_rate="0",
+        per_base_error_rate=config.DEFAULT_PER_BASE_ERROR_RATE,
         num_read_pairs=config.DEFAULT_NUM_READ_PAIRS
     ):
         # TODO: Validate

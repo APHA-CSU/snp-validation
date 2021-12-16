@@ -1,8 +1,12 @@
 from utils import run
 import os
 
+import config
+
 class Sample:
     """ Sample data required for generating genomes and reads """
+
+    per_base_error_rate = config.DEFAULT_PER_BASE_ERROR_RATE
 
     @property
     def name(self):
