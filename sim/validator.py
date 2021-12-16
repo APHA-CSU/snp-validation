@@ -22,10 +22,9 @@ def simulate(
     """ Simulate a number of samples
 
         Parameters:
-            output_path (str): Path to output
-            samples (list of Sample objects): Samples for building simulated reads
-            reference_path (str): Path to reference genome
-            exist_ok (bool): Whether or not to throw an error if a results directory already exists
+            samples (list of Sample objects): Samples for generating simulated reads
+            genomes_path (string): path to directory containing output genomes
+            reads_path (string): path to directory containing output fastq reads
 
         Returns:
             simulate_reads_path (str): Path to simulated reads 
@@ -34,8 +33,8 @@ def simulate(
     # Validate Input
     reads_path = os.path.join(reads_path, '')
     genomes_path = os.path.join(genomes_path, '')
-    os.makedirs(genomes_path, exist_ok=True)
-    os.makedirs(reads_path, exist_ok=True)
+    os.makedirs(genomes_path, exist_ok=False)
+    os.makedirs(reads_path, exist_ok=False)
 
     # Simulate genome and reads
     simulated_samples = []
@@ -56,7 +55,7 @@ def sequence(btb_seq_path, reads_path, results_path):
     if not os.path.exists(reads_path):
         raise Exception("reads path does not exist: ", reads_path)
 
-    os.makedirs(results_path, exist_ok=True)
+    os.makedirs(results_path, exist_ok=False)
 
     # Sequence
     utils.run(["bash", "./btb-seq", reads_path, results_path], cwd=btb_seq_path)
@@ -74,14 +73,10 @@ def performance_test(
     """ Runs a performance test against the pipeline
 
         Parameters:
-            output_path (str): Path to output - for simulations
             btb_seq_path (str): Path to btb-seq code is stored
+            output_path (str): Path to output - for simulations
             samples (list of Sample objects): Samples on which to run validation on
-            results_path (str): path to results - if None defaults to output_path
-            simulated_reads_path (str): path to simualted reads
-            exist_ok (bool): Whether or not to throw an error if a results directory already exists
-            branch (str): Checkout git branch on the repo (default None)
-            light_mode (bool): switch to delete non-essential analysis files (default False)
+            light_mode (bool): keep only output statistics to save disk space (default False)
 
         Returns:
             None
@@ -97,7 +92,7 @@ def performance_test(
     # TODO: exclude the work/ subdirectory from this operation to save space
     os.makedirs(output_path)
     shutil.copytree(btb_seq_path, btb_seq_backup_path, symlinks=True)
-    os.makedirs(stats_path, exist_ok=True)
+    os.makedirs(stats_path, exist_ok=False)
 
     # Simulate
     simulated_samples = simulate(samples, genomes_path, reads_path)

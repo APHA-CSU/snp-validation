@@ -9,6 +9,7 @@ from genome import SimulatedGenome
 import config
 
 class VcfSample(Sample):
+    """ A sample generated from vcf file using simuG """
     def __init__(self, 
         predef_snp_path, 
         reference_path=config.DEFAULT_REFERENCE_PATH,

@@ -1,4 +1,10 @@
+
+
 class ProcessedSample:
+    """ simulated genomes combined with and btb-seq sequence data 
+        Useful for making comparisons when post-processing results
+    """
+
     def __init__(self, simulated_genome, sequenced_sample):
         if simulated_genome.name != sequenced_sample.name:
             raise Exception("Sample names do not match")
@@ -10,6 +16,10 @@ class ProcessedSample:
         # TODO: other convenience functions?
 
 def from_list(genomes, sequenced):
+    """ Construct processed samples from lists of SimulatedGenomes and SequencedSamples 
+        Throws an error if the sample names are not consistent.
+    """
+
     genome_dict = {g.name: g for g in genomes}
     sequenced_dict = {s.name: s for s in sequenced}
 

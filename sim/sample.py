@@ -1,8 +1,9 @@
 from utils import run
 import os
 
-
 class Sample:
+    """ Sample data required for generating genomes and reads """
+
     @property
     def name(self):
         return f"unnamed-{type(self).__name__}-{str(id(self))}"
@@ -50,7 +51,6 @@ class Sample:
             Returns:
                 None  
         """
-        # genome_fasta_path = simulated_genome_path + self.name + '.simulated.simseq.genome.fa'
         genome_fasta_path = simulated_genome_path
 
         output_prefix = simulated_reads_path + self.name

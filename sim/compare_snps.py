@@ -155,6 +155,12 @@ def site_stats(simulated_snp_path, pipeline_snp_path, bcf_path):
     return df
 
 def benchmark(processed_samples, mask_filepath=config.DEFAULT_MASK_PATH):
+    """ Assess performance of processed samples. 
+        Returns:
+            stats_table : sample-wise dataframe that summarises performance
+            sitewise_stats: dictionary of DataFrames keyed by sample name
+    """
+    
     # Initialise
     stats = []
     sitewise_stats = {}
