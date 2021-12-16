@@ -2,9 +2,6 @@ import subprocess
 import pandas as pd
 from io import StringIO
 
-DEFAULT_REFERENCE_PATH = './Mycobacterium_bovis_AF212297_LT78304.fa'
-DEFAULT_MASK_PATH = './Mycbovis-2122-97_LT708304.fas.rpt.regions'
-DEFAULT_NUM_READ_PAIRS = 100
 
 def run(cmd, *args, **kwargs):
     """ Run a command and assert that the process exits with a non-zero exit code.

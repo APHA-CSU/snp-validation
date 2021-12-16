@@ -6,18 +6,15 @@ from utils import run
 
 from sample import Sample
 from genome import SimulatedGenome
-
-DEFAULT_REFERENCE_PATH = './Mycobacterium_bovis_AF212297_LT78304.fa'
-DEFAULT_MASK_PATH = './Mycbovis-2122-97_LT708304.fas.rpt.regions'
-DEFAULT_NUM_READ_PAIRS = 100
+import config
 
 class VcfSample(Sample):
     def __init__(self, 
         predef_snp_path, 
-        reference_path=DEFAULT_REFERENCE_PATH,
+        reference_path=config.DEFAULT_REFERENCE_PATH,
         seed=1, 
         per_base_error_rate="0",
-        num_read_pairs = DEFAULT_NUM_READ_PAIRS,
+        num_read_pairs=config.DEFAULT_NUM_READ_PAIRS,
     ):
 
         # TODO: Validate

@@ -3,16 +3,14 @@ import sys
 import argparse
 import glob
 import json
-
 import pandas as pd
-import validator
 
+import validator
+import config
 
 """
     Run the performance benchmarking tool against a multiple git branches
 """
-
-DEFAULT_REFERENCE_PATH = './Mycobacterium_bovis_AF212297_LT78304.fa'
 
 # Initial list of branches that we are testing
 DEFAULT_BRANCHES = [
@@ -30,7 +28,7 @@ DEFAULT_BRANCHES = [
 ]
 
 def ofat(btb_seq_path, output_path, branches=DEFAULT_BRANCHES, 
-         reference_path=DEFAULT_REFERENCE_PATH):
+         reference_path=config.DEFAULT_REFERENCE_PATH):
     """ Runs a performance test against the pipeline
 
         Parameters:

@@ -2,13 +2,13 @@ import pandas as pd
 from Bio import SeqIO
 
 from utils import bcf_summary
+import config
+
 
 """
     Calculate performance stats from simulated data
 """
 
-from utils import DEFAULT_REFERENCE_PATH
-from utils import DEFAULT_MASK_PATH
 
 def masked_positions(mask_filepath):
     """ Parse mask file path. Returns a list of mask positions """
@@ -154,7 +154,7 @@ def site_stats(simulated_snp_path, pipeline_snp_path, bcf_path):
 
     return df
 
-def benchmark(processed_samples, mask_filepath=DEFAULT_MASK_PATH):
+def benchmark(processed_samples, mask_filepath=config.DEFAULT_MASK_PATH):
     # Initialise
     stats = []
     site_stats = {}

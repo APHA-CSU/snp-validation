@@ -3,13 +3,10 @@ from subprocess import CompletedProcess
 from unittest.mock import Mock, mock_open, patch
 from sample import Sample
 import genome
-import sequenced
-import processed
 
 import validator
 
 class ValidatorTests(unittest.TestCase):
-    # @patch("validator.open", new_callable=mock_open, read_data="mock-text")
     def test_validator(self):
         """ A simple introductory unit test that checks we can run through the
             validator without errors

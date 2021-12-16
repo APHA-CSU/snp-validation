@@ -12,8 +12,7 @@ import compare_snps
 import sequenced
 import processed
 
-DEFAULT_REFERENCE_PATH = './Mycobacterium_bovis_AF212297_LT78304.fa'
-DEFAULT_MASK_PATH = './Mycbovis-2122-97_LT708304.fas.rpt.regions'
+import config
 
 def simulate(
     samples,
@@ -119,7 +118,7 @@ def main():
     parser.add_argument("btb_seq", help="path to btb-seq code")
     parser.add_argument("output_path", help="path to performance test results")
     parser.add_argument("--branch", help="name of btb-seq branch to use", default=None)
-    parser.add_argument("--ref", "-r", help="optional path to reference fasta", default=DEFAULT_REFERENCE_PATH)
+    parser.add_argument("--ref", "-r", help="optional path to reference fasta", default=config.DEFAULT_REFERENCE_PATH)
     parser.add_argument("--light", "-l", 
         dest='light_mode', 
         help="optional argument to run in light mode", 
