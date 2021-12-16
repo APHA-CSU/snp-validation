@@ -2,10 +2,13 @@ import pandas as pd
 from Bio import SeqIO
 
 from utils import bcf_summary
+import config
+
 
 """
-Calculate performance stats from simulated data
+    Calculate performance stats from simulated data
 """
+
 
 def masked_positions(mask_filepath):
     """ Parse mask file path. Returns a list of mask positions """
@@ -151,3 +154,36 @@ def site_stats(simulated_snp_path, pipeline_snp_path, bcf_path):
 
     return df
 
+def benchmark(processed_samples, mask_filepath=config.DEFAULT_MASK_PATH):
+    """ Assess performance of processed samples. 
+        Returns:
+            stats_table : sample-wise dataframe that summarises performance
+            sitewise_stats: dictionary of DataFrames keyed by sample name
+    """
+    
+    # Initialise
+    stats = []
+    sitewise_stats = {}
+
+    # Analyse
+    for sample in processed_samples:
+        simulated_snp_path = sample.genome.snp_table_path
+        pipeline_snp_path = sample.sequenced.snp_table_path
+        pipeline_genome_path = sample.genome.genome_path
+        vcf_path = sample.sequenced.vcf_path
+
+        # Performance Stats
+        stat = analyse(simulated_snp_path, pipeline_snp_path, pipeline_genome_path, mask_filepath)
+        stat["name"] = sample.name
+        
+        stats.append(stat)
+
+        # Site Statistics at fp/fn/tp positions
+        site_stat = site_stats(simulated_snp_path, pipeline_snp_path, vcf_path)
+
+        sitewise_stats[sample.name] = site_stat
+
+    # Combine
+    stats_table = pd.DataFrame(stats)
+
+    return stats_table, sitewise_stats
