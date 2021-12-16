@@ -7,8 +7,8 @@ from utils import bcf_summary
     Calculate performance stats from simulated data
 """
 
-DEFAULT_REFERENCE_PATH = './Mycobacterium_bovis_AF212297_LT78304.fa'
-DEFAULT_MASK_PATH = './Mycbovis-2122-97_LT708304.fas.rpt.regions'
+from utils import DEFAULT_REFERENCE_PATH
+from utils import DEFAULT_MASK_PATH
 
 def masked_positions(mask_filepath):
     """ Parse mask file path. Returns a list of mask positions """

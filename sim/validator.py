@@ -6,11 +6,11 @@ import shutil
 
 import pandas as pd
 
-import compare_snps
-from sample import *
+import sample_sets
 import utils
-import processed_sample
-import sequenced_sample
+import compare_snps
+import sequenced
+import processed
 
 DEFAULT_REFERENCE_PATH = './Mycobacterium_bovis_AF212297_LT78304.fa'
 DEFAULT_MASK_PATH = './Mycbovis-2122-97_LT708304.fas.rpt.regions'
@@ -102,8 +102,8 @@ def performance_test(
     # Simulate
     simulated_samples = simulate(samples, genomes_path, reads_path)
     results_path = sequence(btb_seq_path, reads_path, results_path)
-    sequenced_samples = sequenced_sample.from_results_dir(results_path)
-    processed_samples = processed_sample.from_list(simulated_samples, sequenced_samples)
+    sequenced_samples = sequenced.from_results_dir(results_path)
+    processed_samples = processed.from_list(simulated_samples, sequenced_samples)
 
     stats, site_stats = compare_snps.benchmark(processed_samples)
 
@@ -131,9 +131,10 @@ def main():
 
     # Collect Samples
     if args.quick:
-        samples = quick_samples()
+        samples = sample_sets.quick_samples()
+
     else:
-        samples = standard_samples()
+        samples = sample_sets.standard_samples()
 
     # Set branch
     if args.branch:
@@ -155,7 +156,7 @@ if __name__ == '__main__':
     btb_seq_path = '/home/aaronfishman/repos/btb-seq/'
     output_path = '/home/aaronfishman/temp/cleanup/'
 
-    samples = [standard_samples()[0], RandomSample('/home/aaronfishman/tinygenome.fas', num_snps=0, num_indels=0)]
+    samples = [sample_sets.standard_samples()[0], sample_sets.RandomSample('/home/aaronfishman/tinygenome.fas', num_snps=0, num_indels=0)]
 
     performance_test(
         btb_seq_path,
@@ -176,8 +177,8 @@ if __name__ == '__main__':
 
     simulated_samples = simulate(samples, genomes_path, reads_path)
     results_path = sequence(btb_seq_path, reads_path, results_path)
-    sequenced_samples = sequenced_sample.from_results_dir(results_path)
-    processed_samples = processed_sample.from_list(simulated_samples, sequenced_samples)
+    sequenced_samples = sequenced.from_results_dir(results_path)
+    processed_samples = processed.from_list(simulated_samples, sequenced_samples)
 
     stats, site_stats = benchmark(processed_samples)
 
