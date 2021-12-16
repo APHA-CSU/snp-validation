@@ -73,6 +73,7 @@ class Sample:
             "-X", str(indel_extension_probability),
             "-y", str(random_dna_probability),
             "-H",
+            "-o", "1",
             "-z", str(seed),
             genome_fasta_path,
             output_prefix
