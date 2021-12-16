@@ -157,7 +157,7 @@ def site_stats(simulated_snp_path, pipeline_snp_path, bcf_path):
 def benchmark(processed_samples, mask_filepath=config.DEFAULT_MASK_PATH):
     # Initialise
     stats = []
-    site_stats = {}
+    sitewise_stats = {}
 
     # Analyse
     for sample in processed_samples:
@@ -175,9 +175,9 @@ def benchmark(processed_samples, mask_filepath=config.DEFAULT_MASK_PATH):
         # Site Statistics at fp/fn/tp positions
         site_stat = site_stats(simulated_snp_path, pipeline_snp_path, vcf_path)
 
-        site_stats[sample.name] = site_stat
+        sitewise_stats[sample.name] = site_stat
 
     # Combine
     stats_table = pd.DataFrame(stats)
 
-    return stats_table, site_stats
+    return stats_table, sitewise_stats

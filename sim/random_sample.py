@@ -7,11 +7,11 @@ import config
 class RandomSample(Sample):
     def __init__(self, 
         reference_path=config.DEFAULT_REFERENCE_PATH,
-        num_snps=16000, 
+        num_snps=0,#16000, 
         num_indels=3898, 
         seed=1, 
         per_base_error_rate="0",
-        num_read_pairs = config.DEFAULT_NUM_READ_PAIRS
+        num_read_pairs=config.DEFAULT_NUM_READ_PAIRS
     ):
         # TODO: Validate
         self.reference_path = reference_path
@@ -44,6 +44,10 @@ class RandomSample(Sample):
             "-indel_count", str(self.num_indels),
             "-seed", str(self.seed)
         ]
+
+        print("ref", self.reference_path)
+        print("simulated_genome_path", simulated_genome_path)
+        print("params", params)
 
         self._simulate_genome_base(self.reference_path, simulated_genome_path, params)
 

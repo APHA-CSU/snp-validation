@@ -95,6 +95,7 @@ def performance_test(
 
     # Initialise
     # TODO: exclude the work/ subdirectory from this operation to save space
+    os.makedirs(output_path)
     shutil.copytree(btb_seq_path, btb_seq_backup_path, symlinks=True)
     os.makedirs(stats_path, exist_ok=True)
 
@@ -111,6 +112,13 @@ def performance_test(
 
     for name, df in site_stats.items():
         df.to_csv(stats_path + f'/{name}_stats.csv')
+
+    # Cleanup
+    if light_mode:
+        shutil.rmtree(genomes_path)
+        shutil.rmtree(reads_path)
+        shutil.rmtree(btb_seq_backup_path)
+        shutil.rmtree(results_path)
 
 def main():
     # Parse
@@ -139,19 +147,19 @@ def main():
     if args.branch:
         utils.checkout(args.btb_seq, args.branch)
 
-    # Simulate reads
-    simulated_reads_path = simulate(args.output_path, samples)
-
     # Run
     performance_test(
-        args.output_path, 
         args.btb_seq, 
+        args.output_path, 
         samples, 
-        simulated_read_path=simulated_reads_path,
         light_mode = args.light_mode
     )
 
 if __name__ == '__main__':
+    main()
+    quit()
+
+    ######
     btb_seq_path = '/home/aaronfishman/repos/btb-seq/'
     output_path = '/home/aaronfishman/temp/cleanup/'
 
