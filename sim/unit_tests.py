@@ -33,7 +33,7 @@ class ValidatorTests(unittest.TestCase):
         mock_sample.simulate_reads = Mock(return_value=['READ1', 'READ2'])
 
         # Run test
-        validator.performance_test('./', './', [mock_sample])
+        validator.pipeline('./', './', [mock_sample])
 
 if __name__ == '__main__':
     unittest.main()
