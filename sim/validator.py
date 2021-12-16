@@ -152,37 +152,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-    quit()
-
-    ######
-    btb_seq_path = '/home/aaronfishman/repos/btb-seq/'
-    output_path = '/home/aaronfishman/temp/cleanup/'
-
-    samples = [sample_sets.standard_samples()[0], sample_sets.RandomSample('/home/aaronfishman/tinygenome.fas', num_snps=0, num_indels=0)]
-
-    performance_test(
-        btb_seq_path,
-        output_path,
-        samples,
-        light_mode=False
-    )
-    quit()
-
-
-    ###### main()
-    samples = [standard_samples()[0], RandomSample('/home/aaronfishman/tinygenome.fas', num_snps=0, num_indels=0)]
-        
-    genomes_path = '/home/aaronfishman/temp/genomes/'
-    reads_path = '/home/aaronfishman/temp/reads/'
-    results_path = '/home/aaronfishman/temp/results/'
-    btb_seq_path = '/home/aaronfishman/repos/btb-seq/'
-
-    simulated_samples = simulate(samples, genomes_path, reads_path)
-    results_path = sequence(btb_seq_path, reads_path, results_path)
-    sequenced_samples = sequenced.from_results_dir(results_path)
-    processed_samples = processed.from_list(simulated_samples, sequenced_samples)
-
-    stats, site_stats = benchmark(processed_samples)
-
-
-    a = 1
