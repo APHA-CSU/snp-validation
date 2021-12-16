@@ -1,7 +1,8 @@
 import subprocess
-import pandas as pd
 from io import StringIO
+import os
 
+import pandas as pd
 
 def run(cmd, *args, **kwargs):
     """ Run a command and assert that the process exits with a non-zero exit code.
@@ -41,3 +42,8 @@ def bcf_summary(filepath='/home/aaronfishman/temp/filtered.vcf'):
 
 def checkout(repo_path, branch):
     run(["git", "checkout", str(branch)], cwd=repo_path)
+
+
+def assert_path_exists(self, path):
+    if not os.path.exists(path):
+        raise Exception("Could not find path: ", path)
