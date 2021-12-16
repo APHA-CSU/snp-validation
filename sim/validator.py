@@ -27,10 +27,10 @@ def simulate(
             reads_path (string): path to directory containing output fastq reads
 
         Returns:
-            simulate_reads_path (str): Path to simulated reads 
+            simulated_samples (str): Path to simulated reads 
     """
 
-    # Validate Input
+    # Initialise
     reads_path = os.path.join(reads_path, '')
     genomes_path = os.path.join(genomes_path, '')
     os.makedirs(genomes_path, exist_ok=False)
@@ -43,7 +43,6 @@ def simulate(
         sample.simulate_reads(simulated.genome_path, reads_path)
         simulated_samples.append(simulated)
 
-    # TODO: pass reads path into function rather than generating inside
     return simulated_samples
 
 def sequence(btb_seq_path, reads_path, results_path):
@@ -90,7 +89,7 @@ def performance_test(
 
     # Initialise
     # TODO: exclude the work/ subdirectory from this operation to save space
-    os.makedirs(output_path)
+    os.makedirs(output_path, exist_ok=False)
     shutil.copytree(btb_seq_path, btb_seq_backup_path, symlinks=True)
     os.makedirs(stats_path, exist_ok=False)
 
