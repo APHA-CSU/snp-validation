@@ -137,20 +137,19 @@ def main():
     # TODO: benchmarking. Might be useful to be able to reprocess analysis if it changes
 
     # Parse
-    args = vars(parser.parse_args())
+    kwargs = vars(parser.parse_args())
 
-    if not args:
+    if not kwargs:
         parser.print_help()
         return
 
-    if "quick" in args:
-        args["samples"] = sample_sets.quick_samples() if args["quick"] else sample_sets.standard_samples()
-        del args["quick"]
+    if "quick" in kwargs:
+        kwargs["samples"] = sample_sets.quick_samples() if kwargs["quick"] else sample_sets.standard_samples()
+        del kwargs["quick"]
 
     # Run chosen option
-    func = args["func"]
-    del args["func"]
-    func(**args)
+    func = kwargs.pop("func")
+    func(**kwargs)
 
 if __name__ == '__main__':
     main()
