@@ -64,7 +64,7 @@ def sequence(btb_seq_path, reads_path, results_path):
     # TODO: handle when glob does not return a unique path
     return glob.glob(results_path + '/Results_*')[0] + '/'
 
-def performance_test(
+def pipeline(
     btb_seq_path,
     output_path,
     samples,
@@ -116,39 +116,41 @@ def performance_test(
         shutil.rmtree(results_path)
 
 def main():
+    parser = argparse.ArgumentParser(prog="Performance test btb-seq code")
+    subparsers = parser.add_subparsers(help='sub-command help')
+
+    # Full SNP Validation pipeline
+    subparser = subparsers.add_parser('pipeline', help='Run the full validation pipeline: simulation, sequencing and benchmarking')
+    subparser.add_argument("btb_seq_path", help="path to btb-seq code")
+    subparser.add_argument("output_path", help="path to performance test results")
+    subparser.add_argument("--light", "-l", action='store_true', dest='light_mode', help="optional argument to run in light mode")
+    subparser.add_argument("--quick", "-q", help="Run quick samples", action='store_true')
+    subparser.set_defaults(func=pipeline)
+
+    # Simulation
+    subparser = subparsers.add_parser('simulate', help='Simulate genomes and reads')
+    subparser.add_argument("genomes_path", help="path to directory containing output genomes")
+    subparser.add_argument("reads_path", help="path to directory containing output reads")
+    subparser.add_argument("--quick", "-q", help="Run quick samples", action='store_true')
+    subparser.set_defaults(func=simulate)
+
+    # TODO: benchmarking. Might be useful to be able to reprocess analysis if it changes
+
     # Parse
-    parser = argparse.ArgumentParser(description="Performance test btb-seq code")
-    parser.add_argument("btb_seq", help="path to btb-seq code")
-    parser.add_argument("output_path", help="path to performance test results")
-    parser.add_argument("--branch", help="name of btb-seq branch to use", default=None)
-    parser.add_argument("--ref", "-r", help="optional path to reference fasta", default=config.DEFAULT_REFERENCE_PATH)
-    parser.add_argument("--light", "-l", 
-        dest='light_mode', 
-        help="optional argument to run in light mode", 
-        action='store_true', default=False
-    )
-    parser.add_argument("--quick", "-q", help="Run quick samples", action='store_true')
+    args = vars(parser.parse_args())
 
-    args = parser.parse_args(sys.argv[1:])
+    if not args:
+        parser.print_help()
+        return
 
-    # Collect Samples
-    if args.quick:
-        samples = sample_sets.quick_samples()
+    if "quick" in args:
+        args["samples"] = sample_sets.quick_samples() if args["quick"] else sample_sets.standard_samples()
+        del args["quick"]
 
-    else:
-        samples = sample_sets.standard_samples()
-
-    # Set branch
-    if args.branch:
-        utils.checkout(args.btb_seq, args.branch)
-
-    # Run
-    performance_test(
-        args.btb_seq, 
-        args.output_path, 
-        samples, 
-        light_mode = args.light_mode
-    )
+    # Run chosen option
+    func = args["func"]
+    del args["func"]
+    func(**args)
 
 if __name__ == '__main__':
     main()
