@@ -26,24 +26,22 @@ def vcf_samples(datasets, snippy_dir='/mnt/fsx-027/snippy/'):
     # sort vcf_filepaths for using consistent seed values accross runs
     vcf_filepaths.sort()
     samples = []
-    seed_value = 0
-    for filepath in vcf_filepaths:
-        seed_value+=1 # different seed value for each sample
-        samples.append(VcfSample(filepath, seed=seed_value, per_base_error_rate="0.001-0.01"))    
+    for i, filepath in enumerate(vcf_filepaths):
+        samples.append(VcfSample(filepath, seed=i+1))    
 
     return samples
 
 def quick_samples():
-    """ Returns a list containing a single RandomSample object
-    """
+    """ List containing a single RandomSample object """
     return [RandomSample(seed=1)]
 
 def random_samples():
-    """ Returns a list containing two RandomSample objects 
-    """
-    return [RandomSample(seed=5, num_snps=0, num_indels=0, per_base_error_rate="0.001-0.01"),
-            RandomSample(seed=1, per_base_error_rate="0.001-0.01"),
-            RandomSample(seed=666, per_base_error_rate="0.001-0.01")]
+    """ List containing two RandomSample objects """
+    return [
+        RandomSample(seed=5, num_snps=0, num_indels=0),
+        RandomSample(seed=1),
+        RandomSample(seed=666)
+    ]
 
 def standard_samples():
     """ Returns a list of Sample objects for the standard dataset
