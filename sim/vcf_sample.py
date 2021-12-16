@@ -45,19 +45,20 @@ class VcfSample(Sample):
             '-o', output_file_path])
 
     def simulate_genome(self, simulated_genome_path, seed=1):
-        """ Simulated a genome with random SNPs
+        """ Simulate the genome
 
             TODO: rename simulated_genome_path to simulated_genome_prefix
 
             Parameters:
                 reference_path (str): Path to reference genome
-                simulated_genome_path (str): Path to simlated genome
-                predef_snps_path (str): Path to snippy generated VCF file.
                 seed (int): Seed value for simulation
 
             Returns:
                 None
         """
+
+        # TODO: put the files into a temp directory
+
         if not os.path.isfile(self.predef_snp_path):
             raise(FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), self.predef_snp_path))
         tmp_decomposed_vcf_path = simulated_genome_path + '.decomposed.vcf'

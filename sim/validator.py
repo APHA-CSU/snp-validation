@@ -85,7 +85,7 @@ def performance_test(
     genomes_path = os.path.join(output_path, 'genomes')
     reads_path = os.path.join(output_path, 'reads')
     btb_seq_backup_path = os.path.join(output_path, 'btb-seq')
-    results_path = os.path.join(output_path, 'sequenced')
+    results_path_parent = os.path.join(output_path, 'sequenced')
     stats_path = os.path.join(output_path, 'stats')
 
     # Initialise
@@ -96,7 +96,7 @@ def performance_test(
 
     # Simulate
     simulated_samples = simulate(samples, genomes_path, reads_path)
-    results_path = sequence(btb_seq_path, reads_path, results_path)
+    results_path = sequence(btb_seq_path, reads_path, results_path_parent)
     sequenced_samples = sequenced.from_results_dir(results_path)
     processed_samples = processed.from_list(simulated_samples, sequenced_samples)
 
