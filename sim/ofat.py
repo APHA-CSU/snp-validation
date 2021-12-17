@@ -42,6 +42,8 @@ def ofat(btb_seq_path, genomes_path, reads_path, output_path, branches=DEFAULT_B
     output_path = os.path.join(output_path, '')     
     
     # Benchmark the branches
+    failed_branches = []
+
     for branch in branches:
         # Make output path
         branch_path = os.path.join(output_path, branch)
@@ -62,6 +64,13 @@ def ofat(btb_seq_path, genomes_path, reads_path, output_path, branches=DEFAULT_B
         except Exception as e:
             print(e)
             print(f"***FAILED BRANCH: {branch}****", branch)
+            failed_branches.append(branch)
+
+    if failed_branches:
+        print("FAILED BRANCHES: ", failed_branches)
+
+    else:
+        print("No failed branches :)")
 
 def analyse(root_path):
     """ Analyse results from an ofat run
@@ -114,22 +123,6 @@ def analyse(root_path):
 
 if __name__ == '__main__':
     ########
-
-    btb_seq = '/home/aaronfishman/repos/btb-seq'
-    results = '/home/aaronfishman/temp/ofat-3'
-    
-    genomes_path = '/home/aaronfishman/temp/bfast-genomes-3'
-    # genomes_path = '/mnt/fsx-027/temp/genomes'
-    
-    reads_path = '/home/aaronfishman/temp/bfast-reads-3'
-    # reads_path = '/mnt/fsx-027/temp/reads'
-
-    ofat(btb_seq, genomes_path, reads_path, results, branches=DEFAULT_BRANCHES[:2])
-
-    quit()
-
-
-    ########
     # Parse
     parser = argparse.ArgumentParser(description="Run the performance benchmarking tool against a number of git branches")
 
@@ -139,5 +132,4 @@ if __name__ == '__main__':
     args = parser.parse_args(sys.argv[1:])
 
     # Run
-    ofat(args.btb_seq, args.results)
     ofat(args.btb_seq, args.results)
