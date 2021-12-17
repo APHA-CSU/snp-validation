@@ -1,4 +1,4 @@
-
+import utils
 
 class ProcessedSample:
     """ simulated genomes combined with and btb-seq sequence data 
@@ -20,23 +20,14 @@ def from_list(genomes, sequenced):
         Throws an error if the sample names are not consistent.
     """
 
+    # Validate
+    if not utils.names_consistent(genomes, sequenced):
+        raise Exception("Genome names inconsistent with sequenced names")
+
+    # Match
     genome_dict = {g.name: g for g in genomes}
     sequenced_dict = {s.name: s for s in sequenced}
 
-    # Validate
-    if len(genome_dict) != len(genomes):
-        raise Exception("Genomes with non-unique names found")
-
-    if len(sequenced_dict) != len(sequenced):
-        raise Exception("Sequenced samples with non-unique names found")
-
-    if set(genome_dict.keys()) != set(sequenced_dict.keys()):
-        raise Exception(f"""Genome sample names are different to sequenced sample names
-            Genomes: {genome_dict.keys()}
-            Sequenced: {sequenced_dict.keys()}
-        """)
-    
-    # Match
     samples = []
     for name in genome_dict:
         sample = ProcessedSample(genome_dict[name], sequenced_dict[name])

@@ -6,6 +6,8 @@ import genome
 
 import validator
 
+import utils
+
 class ValidatorTests(unittest.TestCase):
     def test_validator(self):
         """ A simple introductory unit test that checks we can run through the
@@ -34,6 +36,23 @@ class ValidatorTests(unittest.TestCase):
 
         # Run test
         validator.pipeline('./', './', [mock_sample])
+
+    def test_names_consistent(self):
+        """ Ensure names consistent works as expected """
+        self.assertTrue(utils.names_consistent([], []))
+        self.assertTrue(utils.names_consistent([mock_name("A")], [mock_name("A")]))
+        self.assertTrue(utils.names_consistent(mock_names("AB"), mock_names("BA")))
+        
+        self.assertFalse(utils.names_consistent(mock_names("ABB"), mock_names("ABB")))
+        self.assertFalse(utils.names_consistent(mock_names("ABC"), mock_names("ABD")))
+
+def mock_name(name):
+    mock = Mock()
+    mock.name = name
+    return mock
+
+def mock_names(names):
+    return [mock_name(name) for name in names]
 
 if __name__ == '__main__':
     unittest.main()

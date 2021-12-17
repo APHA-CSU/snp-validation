@@ -11,6 +11,8 @@ import utils
 import compare_snps
 import sequenced
 import processed
+import genome
+import reads
 
 import config
 
@@ -61,7 +63,8 @@ def sequence(btb_seq_path, reads_path, results_path):
 
     # Result directory
     # TODO: handle when glob does not return a unique path
-    return glob.glob(results_path + '/Results_*')[0] + '/'
+    path = glob.glob(results_path + '/Results_*')[0] + '/'
+    return sequenced.from_results_dir(path)
 
 def pipeline(
     btb_seq_path,
@@ -84,7 +87,7 @@ def pipeline(
     genomes_path = os.path.join(output_path, 'genomes')
     reads_path = os.path.join(output_path, 'reads')
     btb_seq_backup_path = os.path.join(output_path, 'btb-seq')
-    results_path_parent = os.path.join(output_path, 'sequenced')
+    results_path = os.path.join(output_path, 'sequenced')
     stats_path = os.path.join(output_path, 'stats')
 
     # Initialise
@@ -94,10 +97,9 @@ def pipeline(
     os.makedirs(stats_path, exist_ok=False)
 
     # Simulate
-    simulated_samples = simulate(samples, genomes_path, reads_path)
-    results_path = sequence(btb_seq_path, reads_path, results_path_parent)
-    sequenced_samples = sequenced.from_results_dir(results_path)
-    processed_samples = processed.from_list(simulated_samples, sequenced_samples)
+    genomes = simulate(samples, genomes_path, reads_path)
+    sequenced_samples = sequence(btb_seq_backup_path, reads_path, results_path)
+    processed_samples = processed.from_list(genomes, sequenced_samples)
 
     stats, site_stats = compare_snps.benchmark(processed_samples)
 
@@ -111,6 +113,40 @@ def pipeline(
     if light_mode:
         shutil.rmtree(genomes_path)
         shutil.rmtree(reads_path)
+        shutil.rmtree(btb_seq_backup_path)
+        shutil.rmtree(results_path)
+
+def sequence_and_benchmark(btb_seq_path, genomes_path, reads_path, output_path, light_mode):
+    # Load
+    genomes = genome.from_directory(genomes_path)
+    read_pairs = reads.from_directory(reads_path)
+
+    if not utils.names_consistent(genomes, read_pairs):
+        raise Exception("Genomes and read names not consistent")
+
+    # Initialise
+    results_path = os.path.join(output_path, 'sequenced')
+    stats_path = os.path.join(output_path, 'stats')
+    btb_seq_backup_path = os.path.join(output_path, 'btb-seq')
+
+    os.makedirs(stats_path, exist_ok=False)
+
+    shutil.copytree(btb_seq_path, btb_seq_backup_path, symlinks=True)
+    
+    # Sequence
+    sequenced_samples = sequence(btb_seq_backup_path, reads_path, results_path)
+    processed_samples = processed.from_list(genomes, sequenced_samples)
+    stats, site_stats = compare_snps.benchmark(processed_samples)
+
+    # Save
+    # TODO: consolidate with pipeline()
+    stats.to_csv(output_path + '/stats.csv')
+
+    for name, df in site_stats.items():
+        df.to_csv(stats_path + f'/{name}_stats.csv')
+
+    # Cleanup
+    if light_mode:
         shutil.rmtree(btb_seq_backup_path)
         shutil.rmtree(results_path)
 
@@ -132,6 +168,15 @@ def main():
     subparser.add_argument("reads_path", help="path to directory containing output reads")
     subparser.add_argument("--quick", "-q", help="Run quick samples", action='store_true')
     subparser.set_defaults(func=simulate)
+
+    # Sequence
+    subparser = subparsers.add_parser('sequence', help='Sequence preprocessed reads and benchmark')
+    subparser.add_argument("btb_seq_path", help="path to directory containing btb-seq code")
+    subparser.add_argument("genomes_path", help="path to directory containing input genomes")
+    subparser.add_argument("reads_path", help="path to directory containing input reads")
+    subparser.add_argument("output_path", help="path to output directory")
+    subparser.add_argument("--light", "-l", action='store_true', dest='light_mode', help="optional argument to run in light mode")
+    subparser.set_defaults(func=sequence_and_benchmark)
 
     # TODO: benchmarking. Might be useful to be able to reprocess analysis if it changes
 

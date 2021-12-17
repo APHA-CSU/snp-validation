@@ -47,3 +47,21 @@ def checkout(repo_path, branch):
 def assert_path_exists(path):
     if not os.path.exists(path):
         raise Exception("Could not find path: ", path)
+
+def names_consistent(x, y):
+    """ True if the name properties between two lists are consistent and unique. False otherwise """
+
+    x_dict = {X.name: X for X in x}
+    y_dict = {Y.name: Y for Y in y}
+
+    # Validate
+    if len(x_dict) != len(x):
+        return False
+
+    if len(y_dict) != len(y):
+        return False
+
+    if set(x_dict.keys()) != set(y_dict.keys()):
+        return False
+
+    return True
