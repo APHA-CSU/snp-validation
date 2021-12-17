@@ -36,9 +36,3 @@ def from_directory(path, read_1_postfix='_S1_R1_X.fastq.gz', read_2_postfix='_S1
         reads.append(Reads(read_1, read_2, name=name_1))
 
     return reads
-
-if __name__ == '__main__':
-    path = '/home/aaronfishman/temp/reads/'
-    reads = from_directory(path)
-    print('reads', reads)
-    print('reads', reads[0].name)

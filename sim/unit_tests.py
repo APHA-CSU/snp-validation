@@ -54,10 +54,5 @@ def mock_name(name):
 def mock_names(names):
     return [mock_name(name) for name in names]
 
-class MockName():
-    def __init__(self, name):
-        self.name = name
-
-
 if __name__ == '__main__':
     unittest.main()

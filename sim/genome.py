@@ -21,11 +21,6 @@ class SimulatedGenome:
         
         self.name = name
 
-# RandomSample-snps0-indels3898-seed1.simulated.refseq2simseq.INDEL.vcf
-# RandomSample-snps0-indels3898-seed1.simulated.refseq2simseq.SNP.vcf
-# RandomSample-snps0-indels3898-seed1.simulated.refseq2simseq.map.txt
-# RandomSample-snps0-indels3898-seed1.simulated.simseq.genome.fa
-
 def from_directory(path):
     """ List of SimulatedGenome from directory """
     # Initialise
@@ -46,10 +41,3 @@ def from_directory(path):
         samples.append(SimulatedGenome(name, genome_path, snp_table_path, snp_vcf_path, indel_vcf_path))
 
     return samples
-
-if __name__ == '__main__':
-    path = os.path.expanduser('~/temp/bfast-genomes-3/')
-
-    samples = from_directory(path)
-
-    print(samples)
