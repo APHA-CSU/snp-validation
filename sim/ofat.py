@@ -43,6 +43,9 @@ def ofat(btb_seq_path, genomes_path, reads_path, output_path, branches=DEFAULT_B
     
     # Benchmark the branches
     for branch in branches:
+        # Make output path
+        branch_path = os.path.join(output_path, branch)
+        os.makedirs(branch_path)
 
         try:
             utils.checkout(btb_seq_path, branch)
@@ -52,7 +55,7 @@ def ofat(btb_seq_path, genomes_path, reads_path, output_path, branches=DEFAULT_B
                 btb_seq_path, 
                 genomes_path, 
                 reads_path, 
-                output_path, 
+                branch_path, 
                 True
             )
 
@@ -111,14 +114,17 @@ def analyse(root_path):
 
 if __name__ == '__main__':
     ########
-    DEFAULT_BRANCHES = DEFAULT_BRANCHES[:1]
 
     btb_seq = '/home/aaronfishman/repos/btb-seq'
-    results = '/home/aaronfishman/temp/ofat-1'
+    results = '/home/aaronfishman/temp/ofat-3'
+    
     genomes_path = '/home/aaronfishman/temp/bfast-genomes-3'
+    # genomes_path = '/mnt/fsx-027/temp/genomes'
+    
     reads_path = '/home/aaronfishman/temp/bfast-reads-3'
+    # reads_path = '/mnt/fsx-027/temp/reads'
 
-    ofat(btb_seq, genomes_path, reads_path, results, branches=[DEFAULT_BRANCHES[0]])
+    ofat(btb_seq, genomes_path, reads_path, results, branches=DEFAULT_BRANCHES[:2])
 
     quit()
 
