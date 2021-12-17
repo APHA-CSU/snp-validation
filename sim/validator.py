@@ -116,9 +116,11 @@ def pipeline(
         shutil.rmtree(results_path)
 
 def sequence_and_benchmark(btb_seq_path, genomes_path, reads_path, output_path, light_mode):
-    # Initialise
+    # Load
     genomes = genome.from_directory(genomes_path)
+    
 
+    # Initialise
     results_path = os.path.join(output_path, 'sequenced')
     stats_path = os.path.join(output_path, 'stats')
     btb_seq_backup_path = os.path.join(output_path, 'btb-seq')
@@ -133,6 +135,7 @@ def sequence_and_benchmark(btb_seq_path, genomes_path, reads_path, output_path, 
     stats, site_stats = compare_snps.benchmark(processed_samples)
 
     # Save
+    # TODO: consolidate with pipeline()
     stats.to_csv(output_path + '/stats.csv')
 
     for name, df in site_stats.items():
