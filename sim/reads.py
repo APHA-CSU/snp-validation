@@ -14,13 +14,10 @@ class Reads:
         self.read_2_path = read_2_path
         self.name = name
 
-def from_directory(path):
+def from_directory(path, read_1_postfix='_S1_R1_X.fastq.gz', read_2_postfix='_S1_R2_X.fastq.gz'):
+    # Find reads
     path = os.path.join(path, '')
 
-    read_1_postfix = '_S1_R1_X.fastq.gz'
-    read_2_postfix = '_S1_R2_X.fastq.gz'
-
-    # Find reads
     read_1s = sorted(glob.glob(path + "*" + read_1_postfix))
     read_2s = sorted(glob.glob(path + "*" + read_2_postfix))
 
@@ -34,7 +31,7 @@ def from_directory(path):
         name_2 = os.path.basename(read_2)[:-len(read_2_postfix)]
 
         if name_1 != name_2:
-            raise Exception(f"Could not pair reads, inconsistent names: {name_1}, {name_2}")
+            raise Exception(f"Name mismatch, Could not pair reads: {name_1}, {name_2}")
 
         reads.append(Reads(read_1, read_2, name=name_1))
 

@@ -12,6 +12,7 @@ import compare_snps
 import sequenced
 import processed
 import genome
+import reads
 
 import config
 
@@ -118,7 +119,10 @@ def pipeline(
 def sequence_and_benchmark(btb_seq_path, genomes_path, reads_path, output_path, light_mode):
     # Load
     genomes = genome.from_directory(genomes_path)
-    
+    read_pairs = reads.from_directory(reads_path)
+
+    if not utils.names_consistent(genomes, read_pairs):
+        raise Exception("Genomes and read names not consistent")
 
     # Initialise
     results_path = os.path.join(output_path, 'sequenced')
