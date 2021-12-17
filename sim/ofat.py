@@ -123,6 +123,22 @@ def analyse(root_path):
 
 if __name__ == '__main__':
     ########
+
+    btb_seq = '/home/aaronfishman/repos/btb-seq'
+    results = '/home/aaronfishman/temp/ofat-3'
+    
+    genomes_path = '/home/aaronfishman/temp/bfast-genomes-3'
+    # genomes_path = '/mnt/fsx-027/temp/genomes'
+    
+    reads_path = '/home/aaronfishman/temp/bfast-reads-3'
+    # reads_path = '/mnt/fsx-027/temp/reads'
+
+    ofat(btb_seq, genomes_path, reads_path, results)
+
+    quit()
+
+
+    ########
     # Parse
     parser = argparse.ArgumentParser(description="Run the performance benchmarking tool against a number of git branches")
 
@@ -132,4 +148,5 @@ if __name__ == '__main__':
     args = parser.parse_args(sys.argv[1:])
 
     # Run
+    ofat(args.btb_seq, args.results)
     ofat(args.btb_seq, args.results)
