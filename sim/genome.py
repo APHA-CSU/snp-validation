@@ -33,9 +33,8 @@ def from_directory(path):
     path = os.path.join(path, '')
     filepaths = glob.glob(path + f'*{postfix}')
 
-    samples = []
-
     # Construct
+    samples = []
     for filepath in filepaths:
         name = os.path.basename(filepath[:-len(postfix)])
         
@@ -47,7 +46,7 @@ def from_directory(path):
         samples.append(SimulatedGenome(name, genome_path, snp_table_path, snp_vcf_path, indel_vcf_path))
 
     return samples
-    
+
 if __name__ == '__main__':
     path = os.path.expanduser('~/temp/bfast-genomes-3/')
 
