@@ -116,6 +116,29 @@ def pipeline(
         shutil.rmtree(btb_seq_backup_path)
         shutil.rmtree(results_path)
 
+def benchmarking(genomes_path, results_path, output_path):
+
+    if not os.path.exists(results_path):
+        raise Exception("Results path does not exist: ", results_path)
+    if not os.path.exists(genomes_path):
+        raise Exception("Genomes path does not exist: ", genomes_path)
+    if not os.path.exists(output_path):
+        raise Exception("Output path does not exist: ", output_path)
+    genomes = genome.from_directory(genomes_path)
+    # TODO: handle when glob does not return a unique path
+    path = glob.glob(results_path + '/Results_*')[0] + '/'
+    if not os.path.exists(path):
+        raise Exception("Not a valid results path: ", results_path) 
+    sequenced_samples = sequenced.from_results_dir(path)
+    processed_samples = processed.from_list(genomes, sequenced_samples)
+    stats_path = os.path.join(output_path, 'stats')
+    os.makedirs(stats_path, exist_ok=False)
+    stats, site_stats = compare_snps.benchmark(processed_samples)
+    # TODO: consolidate with pipeline()
+    stats.to_csv(output_path + '/stats.csv')
+    for name, df in site_stats.items():
+        df.to_csv(stats_path + f'/{name}_stats.csv')
+
 def sequence_and_benchmark(btb_seq_path, genomes_path, reads_path, output_path, light_mode):
     # Load
     genomes = genome.from_directory(genomes_path)
@@ -182,7 +205,6 @@ def main():
 
     # Parse
     kwargs = vars(parser.parse_args())
-
     if not kwargs:
         parser.print_help()
         return
