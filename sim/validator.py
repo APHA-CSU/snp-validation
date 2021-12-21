@@ -74,7 +74,7 @@ def pipeline(
     samples,
     light_mode=False
 ):
-    """ Runs a performance test against the pipeline
+    """ Runs a performance test against btb-seq pipeline 
 
         Parameters:
             btb_seq_path (str): Path to btb-seq code is stored
@@ -119,6 +119,7 @@ def pipeline(
         shutil.rmtree(results_path)
 
 def benchmark(genomes_path, results_path, output_path):
+    """ Benchmark btb-seq by comparing called SNPs (results_path) with true SNPs (genomes_path) """
     # Validate input
     utils.assert_path_exists(output_path)
 
@@ -141,6 +142,7 @@ def benchmark(genomes_path, results_path, output_path):
         df.to_csv(stats_path + f'/{name}_stats.csv')
 
 def sequence_and_benchmark(btb_seq_path, genomes_path, reads_path, output_path, light_mode):
+    """ Combines sequencing and benchmarking. See sequence() and benchmark() """
     # Load
     genomes = genome.from_directory(genomes_path)
     read_pairs = reads.from_directory(reads_path)
