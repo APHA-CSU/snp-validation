@@ -173,14 +173,6 @@ def main():
     parser = argparse.ArgumentParser(prog="Performance test btb-seq code")
     subparsers = parser.add_subparsers(help='sub-command help')
 
-    # Full SNP Validation pipeline
-    subparser = subparsers.add_parser('pipeline', help='Run the full validation pipeline: simulation, sequencing and benchmarking')
-    subparser.add_argument("btb_seq_path", help="path to btb-seq code")
-    subparser.add_argument("output_path", help="path to performance test results")
-    subparser.add_argument("--light", "-l", action='store_true', dest='light_mode', help="optional argument to run in light mode")
-    subparser.add_argument("--quick", "-q", help="Run quick samples", action='store_true')
-    subparser.set_defaults(func=pipeline)
-
     # Simulation
     subparser = subparsers.add_parser('simulate', help='Simulate genomes and reads')
     subparser.add_argument("genomes_path", help="path to directory containing output genomes")
@@ -188,14 +180,12 @@ def main():
     subparser.add_argument("--quick", "-q", help="Run quick samples", action='store_true')
     subparser.set_defaults(func=simulate)
 
-    # Sequence
-    subparser = subparsers.add_parser('sequence', help='Sequence preprocessed reads and benchmark')
+    # Sequence 
+    subparser = subparsers.add_parser('sequence', help='Sequence samples')
     subparser.add_argument("btb_seq_path", help="path to directory containing btb-seq code")
-    subparser.add_argument("genomes_path", help="path to directory containing input genomes")
     subparser.add_argument("reads_path", help="path to directory containing input reads")
-    subparser.add_argument("output_path", help="path to output directory")
-    subparser.add_argument("--light", "-l", action='store_true', dest='light_mode', help="optional argument to run in light mode")
-    subparser.set_defaults(func=sequence_and_benchmark)
+    subparser.add_argument("results_path", help="path to directory containing btb-seq results")
+    subparser.set_defaults(func=sequence)
 
     # Benchmark
     subparser = subparsers.add_parser('benchmark', help='Benchmark sequenced samples')
@@ -203,6 +193,23 @@ def main():
     subparser.add_argument("results_path", help="path to directory containing btb-seq results")
     subparser.add_argument("output_path", help="path to output directory")
     subparser.set_defaults(func=benchmark)
+
+    # Sequence and benchmark
+    subparser = subparsers.add_parser('sequence_and_benchmark', help='Sequence preprocessed reads and benchmark')
+    subparser.add_argument("btb_seq_path", help="path to directory containing btb-seq code")
+    subparser.add_argument("genomes_path", help="path to directory containing input genomes")
+    subparser.add_argument("reads_path", help="path to directory containing input reads")
+    subparser.add_argument("output_path", help="path to output directory")
+    subparser.add_argument("--light", "-l", action='store_true', dest='light_mode', help="optional argument to run in light mode")
+    subparser.set_defaults(func=sequence_and_benchmark)
+
+    # Full SNP Validation pipeline
+    subparser = subparsers.add_parser('pipeline', help='Run the full validation pipeline: simulation, sequencing and benchmarking')
+    subparser.add_argument("btb_seq_path", help="path to btb-seq code")
+    subparser.add_argument("output_path", help="path to performance test results")
+    subparser.add_argument("--light", "-l", action='store_true', dest='light_mode', help="optional argument to run in light mode")
+    subparser.add_argument("--quick", "-q", help="Run quick samples", action='store_true')
+    subparser.set_defaults(func=pipeline)
 
     # Parse
     kwargs = vars(parser.parse_args())
