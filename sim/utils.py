@@ -1,6 +1,7 @@
 import subprocess
 from io import StringIO
 import os
+import glob
 
 import pandas as pd
 
@@ -64,3 +65,8 @@ def names_consistent(x, y):
         return False
 
     return True
+
+def get_results_path(path):
+    """ Return full results path name to match with btb-seq output """
+    # TODO: handle when glob does not return a unique path
+    return glob.glob(path + '/Results_*')[0] + '/'
