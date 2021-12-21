@@ -117,7 +117,7 @@ def pipeline(
         shutil.rmtree(results_path)
 
 def benchmark(genomes_path, results_path, output_path):
-
+    # Validate input
     if not os.path.exists(results_path):
         raise Exception("Results path does not exist: ", results_path)
     if not os.path.exists(genomes_path):
@@ -129,11 +129,16 @@ def benchmark(genomes_path, results_path, output_path):
     path = glob.glob(results_path + '/Results_*')[0] + '/'
     if not os.path.exists(path):
         raise Exception("Not a valid results path: ", results_path) 
+
     sequenced_samples = sequenced.from_results_dir(path)
     processed_samples = processed.from_list(genomes, sequenced_samples)
+
     stats_path = os.path.join(output_path, 'stats')
     os.makedirs(stats_path, exist_ok=False)
+
+    # Benchmark
     stats, site_stats = compare_snps.benchmark(processed_samples)
+
     # TODO: consolidate with pipeline()
     stats.to_csv(output_path + '/stats.csv')
     for name, df in site_stats.items():
