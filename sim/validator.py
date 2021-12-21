@@ -139,7 +139,7 @@ def benchmark(genomes_path, results_path, output_path):
     # Benchmark
     stats, site_stats = compare_snps.benchmark(processed_samples)
 
-    # TODO: consolidate with pipeline()
+    # Save
     stats.to_csv(output_path + '/stats.csv')
     for name, df in site_stats.items():
         df.to_csv(stats_path + f'/{name}_stats.csv')
@@ -154,24 +154,15 @@ def sequence_and_benchmark(btb_seq_path, genomes_path, reads_path, output_path, 
 
     # Initialise
     results_path = os.path.join(output_path, 'sequenced')
-    stats_path = os.path.join(output_path, 'stats')
     btb_seq_backup_path = os.path.join(output_path, 'btb-seq')
-
-    os.makedirs(stats_path, exist_ok=False)
 
     shutil.copytree(btb_seq_path, btb_seq_backup_path, symlinks=True)
     
     # Sequence
-    sequenced_samples = sequence(btb_seq_backup_path, reads_path, results_path)
-    processed_samples = processed.from_list(genomes, sequenced_samples)
-    stats, site_stats = compare_snps.benchmark(processed_samples)
+    sequence(btb_seq_backup_path, reads_path, results_path)
 
-    # Save
-    # TODO: consolidate with pipeline()
-    stats.to_csv(output_path + '/stats.csv')
-
-    for name, df in site_stats.items():
-        df.to_csv(stats_path + f'/{name}_stats.csv')
+    # Benchmark
+    benchmark(genomes_path, results_path, output_path)
 
     # Cleanup
     if light_mode:
