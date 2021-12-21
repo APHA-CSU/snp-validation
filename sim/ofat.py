@@ -7,6 +7,7 @@ import pandas as pd
 
 import validator
 import config
+import utils
 
 """
     Run the performance benchmarking tool against a multiple git branches
@@ -24,11 +25,11 @@ DEFAULT_BRANCHES = [
     "SNPwindow",
     "RepeatMask",
     "v1",
-    "v2"
+    "v2",
+    "master"
 ]
 
-def ofat(btb_seq_path, output_path, branches=DEFAULT_BRANCHES, 
-         reference_path=config.DEFAULT_REFERENCE_PATH):
+def ofat(btb_seq_path, genomes_path, reads_path, output_path, branches=DEFAULT_BRANCHES):
     """ Runs a performance test against the pipeline
 
         Parameters:
@@ -40,27 +41,36 @@ def ofat(btb_seq_path, output_path, branches=DEFAULT_BRANCHES,
     btb_seq_path = os.path.join(btb_seq_path, '')
     output_path = os.path.join(output_path, '')     
     
-    # generate samples
-    samples = validator.quick_samples()#standard_samples()
-    # simulate reads
-    simulated_reads_path = validator.simulate(output_path, samples, reference_path)
-    
     # Benchmark the branches
+    failed_branches = []
+
     for branch in branches:
+        # Make output path
+        branch_path = os.path.join(output_path, branch)
+        os.makedirs(branch_path)
 
         try:
-            validator.performance_test(
-                output_path,
-                btb_seq_path,
-                samples, 
-                results_path=output_path + branch,
-                simulated_reads_path=simulated_reads_path,
-                branch=branch,
-                light_mode=True
+            utils.checkout(btb_seq_path, branch)
+            
+            # Run
+            validator.sequence_and_benchmark(
+                btb_seq_path, 
+                genomes_path, 
+                reads_path, 
+                branch_path, 
+                True
             )
+
         except Exception as e:
             print(e)
             print(f"***FAILED BRANCH: {branch}****", branch)
+            failed_branches.append(branch)
+
+    if failed_branches:
+        print("FAILED BRANCHES: ", failed_branches)
+
+    else:
+        print("No failed branches :)")
 
 def analyse(root_path):
     """ Analyse results from an ofat run
@@ -112,15 +122,14 @@ def analyse(root_path):
     })
 
 if __name__ == '__main__':
-    # Parse
     parser = argparse.ArgumentParser(description="Run the performance benchmarking tool against a number of git branches")
 
-    parser.add_argument("btb_seq", help="path to btb-seq code")
+    parser.add_argument("btb_seq", help="path to btb-seq code directory")
+    parser.add_argument("genomes", help="path to simulated genomes directory")
+    parser.add_argument("reads", help="path to reads directory")
     parser.add_argument("results", help="path to results directory")
 
     args = parser.parse_args(sys.argv[1:])
 
     # Run
-    df = ofat(args.btb_seq, args.results)
-    print("OFAT run completed, results:")
-    print(df)
+    ofat(args.btb_seq, args.genomes, args.reads, args.results)

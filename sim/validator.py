@@ -61,6 +61,8 @@ def sequence(btb_seq_path, reads_path, results_path):
     # Sequence
     utils.run(["bash", "./btb-seq", reads_path, results_path], cwd=btb_seq_path)
 
+    # TODO: Cleanup
+
     # Result directory
     # TODO: handle when glob does not return a unique path
     path = glob.glob(results_path + '/Results_*')[0] + '/'

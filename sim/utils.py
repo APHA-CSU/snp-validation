@@ -43,7 +43,6 @@ def bcf_summary(filepath='/home/aaronfishman/temp/filtered.vcf'):
 def checkout(repo_path, branch):
     run(["git", "checkout", str(branch)], cwd=repo_path)
 
-
 def assert_path_exists(path):
     if not os.path.exists(path):
         raise Exception("Could not find path: ", path)
