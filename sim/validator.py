@@ -59,7 +59,7 @@ def sequence(btb_seq_path, reads_path, results_path):
     # Sequence
     utils.run(["bash", "./btb-seq", reads_path, results_path], cwd=btb_seq_path)
 
-    results_path_full = utils.get_results_path(results_path)
+    results_path_full = utils.get_full_results_path(results_path)
     return sequenced.from_results_dir(results_path_full)
 
 def pipeline(
@@ -119,7 +119,7 @@ def benchmark(genomes_path, results_path, output_path):
 
     genomes = genome.from_directory(genomes_path)
 
-    results_path_full = utils.get_results_path(results_path)
+    results_path_full = utils.get_full_results_path(results_path)
     sequenced_samples = sequenced.from_results_dir(results_path_full)
     processed_samples = processed.from_list(genomes, sequenced_samples)
 
