@@ -126,12 +126,11 @@ def benchmark(genomes_path, results_path, output_path):
         raise Exception("Genomes path does not exist: ", genomes_path)
     if not os.path.exists(output_path):
         raise Exception("Output path does not exist: ", output_path)
+
     genomes = genome.from_directory(genomes_path)
+
     # TODO: handle when glob does not return a unique path
     path = glob.glob(results_path + '/Results_*')[0] + '/'
-    if not os.path.exists(path):
-        raise Exception("Not a valid results path: ", results_path) 
-
     sequenced_samples = sequenced.from_results_dir(path)
     processed_samples = processed.from_list(genomes, sequenced_samples)
 
