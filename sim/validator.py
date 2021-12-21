@@ -116,7 +116,7 @@ def pipeline(
         shutil.rmtree(btb_seq_backup_path)
         shutil.rmtree(results_path)
 
-def benchmarking(genomes_path, results_path, output_path):
+def benchmark(genomes_path, results_path, output_path):
 
     if not os.path.exists(results_path):
         raise Exception("Results path does not exist: ", results_path)
@@ -201,13 +201,18 @@ def main():
     subparser.add_argument("--light", "-l", action='store_true', dest='light_mode', help="optional argument to run in light mode")
     subparser.set_defaults(func=sequence_and_benchmark)
 
-    # TODO: benchmarking. Might be useful to be able to reprocess analysis if it changes
+    # Benchmark
+    subparser = subparsers.add_parser('benchmark', help='Benchmark sequenced samples')
+    subparser.add_argument("genomes_path", help="path to directory containing input genomes")
+    subparser.add_argument("results_path", help="path to directory containing btb-seq results")
+    subparser.add_argument("output_path", help="path to output directory")
+    subparser.set_defaults(func=benchmark)
 
     # Parse
     kwargs = vars(parser.parse_args())
     if not kwargs:
-        parser.print_help()
-        return
+       parser.print_help()
+       return
 
     if "quick" in kwargs:
         kwargs["samples"] = sample_sets.quick_samples() if kwargs["quick"] else sample_sets.standard_samples()
@@ -216,6 +221,7 @@ def main():
     # Run chosen option
     func = kwargs.pop("func")
     func(**kwargs)
+
 
 if __name__ == '__main__':
     main()
