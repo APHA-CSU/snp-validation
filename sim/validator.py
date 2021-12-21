@@ -120,12 +120,7 @@ def pipeline(
 
 def benchmark(genomes_path, results_path, output_path):
     # Validate input
-    if not os.path.exists(results_path):
-        raise Exception("Results path does not exist: ", results_path)
-    if not os.path.exists(genomes_path):
-        raise Exception("Genomes path does not exist: ", genomes_path)
-    if not os.path.exists(output_path):
-        raise Exception("Output path does not exist: ", output_path)
+    utils.assert_path_exists(output_path)
 
     genomes = genome.from_directory(genomes_path)
 
