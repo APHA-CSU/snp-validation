@@ -66,7 +66,7 @@ def names_consistent(x, y):
 
     return True
 
-def get_results_path(path):
+def get_full_results_path(path):
     """ Return full results path name to match with btb-seq output """
     # TODO: handle when glob does not return a unique path
     return glob.glob(path + '/Results_*')[0] + '/'
