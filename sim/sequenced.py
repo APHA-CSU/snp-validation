@@ -20,6 +20,8 @@ class SequencedSample:
 
 def from_results_dir(results_dir):
     """ A list of samples conststructed from the btb-seq results directory """
+    #Validate input
+    utils.assert_path_exists(results_dir)
 
     # Sample names
     # TODO: Take from csv rather than consensus directory?

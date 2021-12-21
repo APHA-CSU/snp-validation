@@ -23,6 +23,9 @@ class SimulatedGenome:
 
 def from_directory(path):
     """ List of SimulatedGenome from directory """
+    # Validate input
+    utils.assert_path_exists(path)
+
     # Initialise
     postfix = '.simulated.simseq.genome.fa'
     path = os.path.join(path, '')

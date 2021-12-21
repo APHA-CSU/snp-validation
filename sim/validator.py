@@ -1,6 +1,4 @@
 import os
-import glob
-import sys
 import argparse
 import shutil
 
@@ -61,12 +59,8 @@ def sequence(btb_seq_path, reads_path, results_path):
     # Sequence
     utils.run(["bash", "./btb-seq", reads_path, results_path], cwd=btb_seq_path)
 
-    # TODO: Cleanup
-
-    # Result directory
-    # TODO: handle when glob does not return a unique path
-    path = glob.glob(results_path + '/Results_*')[0] + '/'
-    return sequenced.from_results_dir(path)
+    results_path_full = utils.get_full_results_path(results_path)
+    return sequenced.from_results_dir(results_path_full)
 
 def pipeline(
     btb_seq_path,
@@ -74,7 +68,7 @@ def pipeline(
     samples,
     light_mode=False
 ):
-    """ Runs a performance test against the pipeline
+    """ Runs a performance test against btb-seq pipeline 
 
         Parameters:
             btb_seq_path (str): Path to btb-seq code is stored
@@ -118,7 +112,30 @@ def pipeline(
         shutil.rmtree(btb_seq_backup_path)
         shutil.rmtree(results_path)
 
+def benchmark(genomes_path, results_path, output_path):
+    """ Benchmark btb-seq by comparing called SNPs (results_path) with true SNPs (genomes_path) """
+    # Validate input
+    utils.assert_path_exists(output_path)
+
+    genomes = genome.from_directory(genomes_path)
+
+    results_path_full = utils.get_full_results_path(results_path)
+    sequenced_samples = sequenced.from_results_dir(results_path_full)
+    processed_samples = processed.from_list(genomes, sequenced_samples)
+
+    stats_path = os.path.join(output_path, 'stats')
+    os.makedirs(stats_path, exist_ok=False)
+
+    # Benchmark
+    stats, site_stats = compare_snps.benchmark(processed_samples)
+
+    # Save
+    stats.to_csv(output_path + '/stats.csv')
+    for name, df in site_stats.items():
+        df.to_csv(stats_path + f'/{name}_stats.csv')
+
 def sequence_and_benchmark(btb_seq_path, genomes_path, reads_path, output_path, light_mode):
+    """ Combines sequencing and benchmarking. See sequence() and benchmark() """
     # Load
     genomes = genome.from_directory(genomes_path)
     read_pairs = reads.from_directory(reads_path)
@@ -128,24 +145,15 @@ def sequence_and_benchmark(btb_seq_path, genomes_path, reads_path, output_path, 
 
     # Initialise
     results_path = os.path.join(output_path, 'sequenced')
-    stats_path = os.path.join(output_path, 'stats')
     btb_seq_backup_path = os.path.join(output_path, 'btb-seq')
-
-    os.makedirs(stats_path, exist_ok=False)
 
     shutil.copytree(btb_seq_path, btb_seq_backup_path, symlinks=True)
     
     # Sequence
-    sequenced_samples = sequence(btb_seq_backup_path, reads_path, results_path)
-    processed_samples = processed.from_list(genomes, sequenced_samples)
-    stats, site_stats = compare_snps.benchmark(processed_samples)
+    sequence(btb_seq_backup_path, reads_path, results_path)
 
-    # Save
-    # TODO: consolidate with pipeline()
-    stats.to_csv(output_path + '/stats.csv')
-
-    for name, df in site_stats.items():
-        df.to_csv(stats_path + f'/{name}_stats.csv')
+    # Benchmark
+    benchmark(genomes_path, results_path, output_path)
 
     # Cleanup
     if light_mode:
@@ -156,6 +164,36 @@ def main():
     parser = argparse.ArgumentParser(prog="Performance test btb-seq code")
     subparsers = parser.add_subparsers(help='sub-command help')
 
+    # Simulation
+    subparser = subparsers.add_parser('simulate', help='Simulate genomes and reads')
+    subparser.add_argument("genomes_path", help="path to directory containing output genomes")
+    subparser.add_argument("reads_path", help="path to directory containing output reads")
+    subparser.add_argument("--quick", "-q", help="Run quick samples", action='store_true')
+    subparser.set_defaults(func=simulate)
+
+    # Sequence 
+    subparser = subparsers.add_parser('sequence', help='Sequence samples')
+    subparser.add_argument("btb_seq_path", help="path to directory containing btb-seq code")
+    subparser.add_argument("reads_path", help="path to directory containing input reads")
+    subparser.add_argument("results_path", help="path to directory containing btb-seq results")
+    subparser.set_defaults(func=sequence)
+
+    # Benchmark
+    subparser = subparsers.add_parser('benchmark', help='Benchmark sequenced samples')
+    subparser.add_argument("genomes_path", help="path to directory containing input genomes")
+    subparser.add_argument("results_path", help="path to directory containing btb-seq results")
+    subparser.add_argument("output_path", help="path to output directory")
+    subparser.set_defaults(func=benchmark)
+
+    # Sequence and benchmark
+    subparser = subparsers.add_parser('sequence_and_benchmark', help='Sequence preprocessed reads and benchmark')
+    subparser.add_argument("btb_seq_path", help="path to directory containing btb-seq code")
+    subparser.add_argument("genomes_path", help="path to directory containing input genomes")
+    subparser.add_argument("reads_path", help="path to directory containing input reads")
+    subparser.add_argument("output_path", help="path to output directory")
+    subparser.add_argument("--light", "-l", action='store_true', dest='light_mode', help="optional argument to run in light mode")
+    subparser.set_defaults(func=sequence_and_benchmark)
+
     # Full SNP Validation pipeline
     subparser = subparsers.add_parser('pipeline', help='Run the full validation pipeline: simulation, sequencing and benchmarking')
     subparser.add_argument("btb_seq_path", help="path to btb-seq code")
@@ -164,30 +202,11 @@ def main():
     subparser.add_argument("--quick", "-q", help="Run quick samples", action='store_true')
     subparser.set_defaults(func=pipeline)
 
-    # Simulation
-    subparser = subparsers.add_parser('simulate', help='Simulate genomes and reads')
-    subparser.add_argument("genomes_path", help="path to directory containing output genomes")
-    subparser.add_argument("reads_path", help="path to directory containing output reads")
-    subparser.add_argument("--quick", "-q", help="Run quick samples", action='store_true')
-    subparser.set_defaults(func=simulate)
-
-    # Sequence
-    subparser = subparsers.add_parser('sequence', help='Sequence preprocessed reads and benchmark')
-    subparser.add_argument("btb_seq_path", help="path to directory containing btb-seq code")
-    subparser.add_argument("genomes_path", help="path to directory containing input genomes")
-    subparser.add_argument("reads_path", help="path to directory containing input reads")
-    subparser.add_argument("output_path", help="path to output directory")
-    subparser.add_argument("--light", "-l", action='store_true', dest='light_mode', help="optional argument to run in light mode")
-    subparser.set_defaults(func=sequence_and_benchmark)
-
-    # TODO: benchmarking. Might be useful to be able to reprocess analysis if it changes
-
     # Parse
     kwargs = vars(parser.parse_args())
-
     if not kwargs:
-        parser.print_help()
-        return
+       parser.print_help()
+       return
 
     if "quick" in kwargs:
         kwargs["samples"] = sample_sets.quick_samples() if kwargs["quick"] else sample_sets.standard_samples()
@@ -196,6 +215,7 @@ def main():
     # Run chosen option
     func = kwargs.pop("func")
     func(**kwargs)
+
 
 if __name__ == '__main__':
     main()
