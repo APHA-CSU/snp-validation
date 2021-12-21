@@ -16,15 +16,12 @@ class Sample:
         raise NotImplementedError("Please implement this method")
 
     def _simulate_genome_base(self, reference_path, simulated_genome_path, params):
-        print("SIMULATING", params)
-        
         cmd = ["simuG.pl",
             "-refseq", reference_path,
             "-prefix", simulated_genome_path + ".simulated"
         ]
         cmd.extend(params)
 
-        print("SIMULATING", cmd)
         run(cmd)
     
     def simulate_reads(
