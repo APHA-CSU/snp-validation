@@ -169,7 +169,7 @@ def benchmark(processed_samples, mask_filepath=config.DEFAULT_MASK_PATH):
     for sample in processed_samples:
         simulated_snp_path = sample.genome.snp_table_path
         pipeline_snp_path = sample.sequenced.snp_table_path
-        pipeline_genome_path = sample.genome.genome_path
+        pipeline_genome_path = sample.sequenced.genome_path
         vcf_path = sample.sequenced.vcf_path
 
         # Performance Stats
