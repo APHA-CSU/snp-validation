@@ -6,9 +6,7 @@ import json
 import pandas as pd
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-import numpy
 from pathlib import Path
-import shutil
 
 import validator
 import config
@@ -128,6 +126,8 @@ def analyse(root_path):
 
 def plot(root_path):
 
+    utils.assert_path_exists(root_path)
+
     dirs = glob.glob(root_path + "/*/stats.csv")
 
     values = pd.DataFrame(index =[range(1, len(dirs)+1)])
@@ -135,7 +135,7 @@ def plot(root_path):
 
     for directory in dirs:
         path = Path(directory)
-        sample_name = path.parts[-2]
+        branch_name = path.parts[-2]
         branches.append(sample_name)
         csv = pd.read_csv(directory)
         values[sample_name] = csv['f_score']
