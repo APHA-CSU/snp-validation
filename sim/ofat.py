@@ -151,8 +151,6 @@ def plot(root_path):
     plt.grid(True)
     plt.show()
 
-
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Run the performance benchmarking tool against a number of git branches")
 
