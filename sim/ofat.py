@@ -4,7 +4,6 @@ import argparse
 import glob
 import json
 import pandas as pd
-import matplotlib as mpl
 import matplotlib.pyplot as plt
 from pathlib import Path
 
@@ -136,18 +135,12 @@ def plot(root_path):
     for directory in dirs:
         path = Path(directory)
         branch_name = path.parts[-2]
-        branches.append(sample_name)
+        branches.append(branch_name)
         csv = pd.read_csv(directory)
-        values[sample_name] = csv['f_score']
+        values[branch_name] = csv['f_score']
 
-    
     plt.boxplot(values, showfliers = True)
-    
-    #Define y axis (optional)
-    y = (0.85, 0.9, 0.95, 1)
-
     plt.xticks(range(0, len(branches)),  branches, rotation=-20)
-    plt.yticks(y)
     plt.grid(True)
     plt.show()
 
