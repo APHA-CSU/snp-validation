@@ -130,7 +130,7 @@ def plot(root_path):
 
     dirs = glob.glob(root_path + "/*/stats.csv")
 
-    values = pd.DataFrame(index =[range(1, (len(dirs)))])
+    values = pd.DataFrame(index =[range(1, len(dirs)+1)])
     branches=['branch:']
 
     for directory in dirs:
@@ -140,12 +140,15 @@ def plot(root_path):
         csv = pd.read_csv(directory)
         values[sample_name] = csv['f_score']
 
-    print(branches)
+    
     plt.boxplot(values, showfliers = True)
-    # y = (0.8, 0.85, 0.9, 0.95, 1)
-    #y = (0.9, 0.92, 0.94, 0.96, 0.98, 1)
+    
+    #Define y axis (optional)
+    y = (0.85, 0.9, 0.95, 1)
+
     plt.xticks(range(0, len(branches)),  branches, rotation=-20)
-    #plt.yticks(y)
+    plt.yticks(y)
+    plt.grid(True)
     plt.show()
 
 
