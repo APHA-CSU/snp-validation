@@ -29,7 +29,6 @@ class Sample:
         simulated_genome_path,
         simulated_reads_path,
         read_length=150,
-        seed=1,
         outer_distance=330,
         random_dna_probability=0.01,
         rate_of_mutations=0,
@@ -71,7 +70,7 @@ class Sample:
             "-y", str(random_dna_probability),
             "-H",
             "-o", "1",
-            "-z", str(seed),
+            "-z", str(self.seed),
             genome_fasta_path,
             output_prefix
         ])
