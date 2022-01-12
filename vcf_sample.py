@@ -44,7 +44,7 @@ class VcfSample(Sample):
             self.predef_snp_path,
             '-o', output_file_path])
 
-    def simulate_genome(self, simulated_genome_path, seed=1):
+    def simulate_genome(self, simulated_genome_path):
         """ Simulate the genome
 
             TODO: rename simulated_genome_path to simulated_genome_prefix
@@ -67,7 +67,7 @@ class VcfSample(Sample):
         self.decompose_complex_snps(tmp_decomposed_vcf_path)
         params = ["-snp_vcf", tmp_decomposed_vcf_path, 
                   "-indel_vcf", tmp_decomposed_vcf_path,
-                  "-seed", str(seed)]
+                  "-seed", str(self.seed)]
         self._simulate_genome_base(self.reference_path, simulated_genome_path, params)
         
         # clean tmp decomposed VCF
