@@ -125,10 +125,19 @@ def classify_sites(simulated_snp_path, pipeline_snp_path):
 
     return tp, fp, fn
 
-def site_stats(simulated_snp_path, pipeline_snp_path, bcf_path):
+def site_stats(simulated_snp_path, pipeline_snp_path, bcf_path, mask_filepath):
     """ A data frame that shows stats at each fp/fn site """
 
+    # Classify sites as TP, FP or FN
     tp, fp, fn = classify_sites(simulated_snp_path, pipeline_snp_path)
+    
+    # Extract mask positions    
+    masked_pos = set(masked_positions(mask_filepath))
+
+    # TODO: DRY with analyse
+    # FPs and FNs in masked regions 
+    fp_in_mask = masked_pos.intersection(fp)
+    fn_in_mask = masked_pos.intersection(fn)
 
     # Summary Bcf
     df = bcf_summary(bcf_path)
@@ -141,6 +150,11 @@ def site_stats(simulated_snp_path, pipeline_snp_path, bcf_path):
     
     # AD0 column
     df['AD1/(AD1+AD0)'] = df['AD1'] / (df['AD1'] + df['AD0'])
+
+    # In mask column
+    df['in_mask'] = 0
+    df.loc[df.POS.isin(list(fp_in_mask)), 'in_mask'] = 1
+    df.loc[df.POS.isin(list(fn_in_mask)), 'in_mask'] = 1
 
     return df
 
@@ -169,7 +183,7 @@ def benchmark(processed_samples, mask_filepath=config.DEFAULT_MASK_PATH):
         stats.append(stat)
 
         # Site Statistics at fp/fn/tp positions
-        site_stat = site_stats(simulated_snp_path, pipeline_snp_path, vcf_path)
+        site_stat = site_stats(simulated_snp_path, pipeline_snp_path, vcf_path, mask_filepath)
 
         sitewise_stats[sample.name] = site_stat
 
