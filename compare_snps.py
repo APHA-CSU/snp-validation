@@ -152,9 +152,9 @@ def site_stats(simulated_snp_path, pipeline_snp_path, bcf_path, mask_filepath):
     df['AD1/(AD1+AD0)'] = df['AD1'] / (df['AD1'] + df['AD0'])
 
     # In mask column
-    df['in_mask'] = 0
-    df.loc[df.POS.isin(list(fp_in_mask)), 'in_mask'] = 1
-    df.loc[df.POS.isin(list(fn_in_mask)), 'in_mask'] = 1
+    df['in_mask'] = False
+    df.loc[df.POS.isin(list(fp_in_mask)), 'in_mask'] = True
+    df.loc[df.POS.isin(list(fn_in_mask)), 'in_mask'] = True
 
     return df
 
