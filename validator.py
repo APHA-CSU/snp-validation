@@ -2,8 +2,6 @@ import os
 import argparse
 import shutil
 
-import pandas as pd
-
 import sample_sets
 import utils
 import compare_snps
@@ -11,8 +9,6 @@ import sequenced
 import processed
 import genome
 import reads
-
-import config
 
 def simulate(
     samples,
@@ -168,7 +164,7 @@ def main():
     subparser = subparsers.add_parser('simulate', help='Simulate genomes and reads')
     subparser.add_argument("genomes_path", help="path to directory containing output genomes")
     subparser.add_argument("reads_path", help="path to directory containing output reads")
-    subparser.add_argument("--quick", "-q", help="Run quick samples", action='store_true')
+    subparser.add_argument("--samples", "-s", default="s", help="sample set to simulate: q/quick,s/standard or a/all")
     subparser.set_defaults(func=simulate)
 
     # Sequence 
@@ -199,7 +195,7 @@ def main():
     subparser.add_argument("btb_seq_path", help="path to btb-seq code")
     subparser.add_argument("output_path", help="path to performance test results")
     subparser.add_argument("--light", "-l", action='store_true', dest='light_mode', help="optional argument to run in light mode")
-    subparser.add_argument("--quick", "-q", help="Run quick samples", action='store_true')
+    subparser.add_argument("--samples", "-s", default="s", help="sample set to simulate: q/quick, s/standard or a/all")
     subparser.set_defaults(func=pipeline)
 
     # Parse
@@ -208,9 +204,13 @@ def main():
        parser.print_help()
        return
 
-    if "quick" in kwargs:
-        kwargs["samples"] = sample_sets.quick_samples() if kwargs["quick"] else sample_sets.standard_samples()
-        del kwargs["quick"]
+    if "samples" in kwargs:
+        if kwargs["samples"] == "quick" or kwargs["samples"] == "q":
+            kwargs["samples"] = sample_sets.quick_samples()
+        elif kwargs["samples"] == "all" or kwargs["samples"] == "a":
+            kwargs["samples"] = sample_sets.all_samples()
+        elif kwargs["samples"] == "standard" or kwargs["samples"] == "s":
+            kwargs["samples"] = sample_sets.standard_samples()
 
     # Run chosen option
     func = kwargs.pop("func")
