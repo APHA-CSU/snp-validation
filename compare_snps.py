@@ -33,14 +33,14 @@ def load_consensus(path):
     for seq_record in SeqIO.parse(path, "fasta"):
         return str(seq_record.seq)
 
-def analyse(simulated_snp_path, pipeline_snp_path, pipeline_genome_path, mask_filepath):
+def analyse(simulated_snp_path, pipeline_snp_path, pipeline_genome_path, mask_filepath=None):
     """ Compare simulated SNPs data from simuG against btb-seq's snpTable.tab
         
         Params:
             simulated_snp_path (str): path to simulated snp table
             pipeline_snp_path (str): path to pipeline snp table
             pipeline_genome_path (str): path to pipeline consensus file
-            mask_filepath (str): path to mask bed file used in pipeline
+            mask_filepath (str): optional path to mask bed file used in pipeline
         
         Returns: 
             (dict) a dictionary of performance stats
@@ -49,8 +49,15 @@ def analyse(simulated_snp_path, pipeline_snp_path, pipeline_genome_path, mask_fi
     # classify sites as TPs, FPs or FNs
     tp, fp, fn = classify_sites(simulated_snp_path, pipeline_snp_path)
 
-    # Extract mask positions    
-    masked_pos = set(masked_positions(mask_filepath))
+    if mask_filepath:
+        # Masked position
+        # Load mask positions    
+        masked_pos = set(masked_positions(mask_filepath))
+
+        # TPs, FPs and FNs in masked regions 
+        tp = tp.difference(masked_pos)
+        fp = fp.difference(masked_pos) 
+        fn = fn.difference(masked_pos)
 
     # load consensus file
     pipeline_genome = load_consensus(pipeline_genome_path)
@@ -59,19 +66,12 @@ def analyse(simulated_snp_path, pipeline_snp_path, pipeline_genome_path, mask_fi
     # +1 to achieve common indexing with snp tables 
     n_pos = set([i+1 for i in range(len(pipeline_genome)) if pipeline_genome[i] == 'N'])
 
-    # TPs, FPs and FNs in masked regions 
-    tp_in_mask = masked_pos.intersection(tp)
-    fp_in_mask = masked_pos.intersection(fp)
-    fn_in_mask = masked_pos.intersection(fn)
-
+    # Errors
     n_tp = len(tp)
     n_fp = len(fp)
     n_fn = len(fn)
     n_n_pos = len(n_pos)
-    n_tp_in_mask = len(tp_in_mask)
-    n_fp_in_mask = len(fp_in_mask)
-    n_fn_in_mask = len(fn_in_mask)
-
+    
     # Compute Performance Stats
     # precision (positive predictive value) of each pipeline as TP/(TP + FP), 
     precision = n_tp / (n_tp + n_fp) if (n_tp + n_fp) else float("inf")
@@ -83,24 +83,21 @@ def analyse(simulated_snp_path, pipeline_snp_path, pipeline_genome_path, mask_fi
     miss_rate = n_fn / (n_tp + n_fn) if (n_tp + n_fn) else float("inf")
 
     # F-score as 2*(precision*recall)/(precision-recall)
-    f_score = 2*(precision*sensitivity)/(precision+sensitivity)
+    f_score = 2*(precision * sensitivity)/(precision + sensitivity)
 
     # total number of errors (FP + FN) per million sequenced bases
     total_errors = n_fp + n_fn
-
+    
     return {
         "TP": n_tp,
         "FP": n_fp,
         "FN": n_fn,
         "misssing_sites": n_n_pos,
-        "TPs_in_mask": n_tp_in_mask,
-        "FPs_in_mask": n_fp_in_mask, 
-        "FNs_in_mask": n_fn_in_mask, 
         "precision": precision,
         "sensitivity": sensitivity,
         "miss_rate": miss_rate,
         "f_score": f_score,
-        "total_errors": total_errors
+        "total_errors": total_errors,
     }
 
 def classify_sites(simulated_snp_path, pipeline_snp_path):
@@ -167,6 +164,7 @@ def benchmark(processed_samples, mask_filepath=config.DEFAULT_MASK_PATH):
     
     # Initialise
     stats = []
+    stats_masked = []
     sitewise_stats = {}
 
     # Analyse
@@ -177,10 +175,17 @@ def benchmark(processed_samples, mask_filepath=config.DEFAULT_MASK_PATH):
         vcf_path = sample.sequenced.vcf_path
 
         # Performance Stats
-        stat = analyse(simulated_snp_path, pipeline_snp_path, pipeline_genome_path, mask_filepath)
+        stat = analyse(simulated_snp_path, pipeline_snp_path, pipeline_genome_path)
         stat["name"] = sample.name
         
         stats.append(stat)
+
+        # Masked Performance Stats
+        stat = analyse(simulated_snp_path, pipeline_snp_path, pipeline_genome_path, mask_filepath)
+        stat["name"] = sample.name
+        
+        stats_masked.append(stat)
+
 
         # Site Statistics at fp/fn/tp positions
         site_stat = site_stats(simulated_snp_path, pipeline_snp_path, vcf_path, mask_filepath)
@@ -189,5 +194,6 @@ def benchmark(processed_samples, mask_filepath=config.DEFAULT_MASK_PATH):
 
     # Combine
     stats_table = pd.DataFrame(stats)
+    stats_table_masked = pd.DataFrame(stats_masked)
 
-    return stats_table, sitewise_stats
+    return stats_table, stats_table_masked, sitewise_stats
