@@ -123,10 +123,11 @@ def benchmark(genomes_path, results_path, output_path):
     os.makedirs(stats_path, exist_ok=False)
 
     # Benchmark
-    stats, site_stats = compare_snps.benchmark(processed_samples)
+    stats, stats_masked, site_stats = compare_snps.benchmark(processed_samples)
 
     # Save
     stats.to_csv(output_path + '/stats.csv')
+    stats_masked.to_csv(output_path + '/stats_masked.csv')
     for name, df in site_stats.items():
         df.to_csv(stats_path + f'/{name}_stats.csv')
 
