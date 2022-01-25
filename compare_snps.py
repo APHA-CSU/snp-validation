@@ -92,7 +92,7 @@ def analyse(simulated_snp_path, pipeline_snp_path, pipeline_genome_path, mask_fi
         "TP": n_tp,
         "FP": n_fp,
         "FN": n_fn,
-        "misssing_sites": n_n_pos,
+        "missing_sites": n_n_pos,
         "precision": precision,
         "sensitivity": sensitivity,
         "miss_rate": miss_rate,
