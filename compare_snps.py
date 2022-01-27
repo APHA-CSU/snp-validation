@@ -57,7 +57,6 @@ def analyse(simulated_snp_path, pipeline_snp_path, pipeline_genome_path, mask_fi
         # TPs, FPs and FNs in masked regions 
         tp = tp.difference(masked_pos)
         fp = fp.difference(masked_pos) 
-        fn = fn.difference(masked_pos)
 
     # load consensus file
     pipeline_genome = load_consensus(pipeline_genome_path)
