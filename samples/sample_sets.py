@@ -1,8 +1,8 @@
 import os
 import glob
 
-from vcf_sample import VcfSample
-from random_sample import RandomSample
+from samples.simulations.vcf_sample import VcfSample
+from samples.simulations.random_sample import RandomSample
 
 def vcf_samples(datasets, snippy_dir='/mnt/fsx-027/snippy/'):
     """ Returns a list of VcfSample objects built from data sets contained

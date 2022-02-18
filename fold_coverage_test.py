@@ -5,7 +5,7 @@ matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 import pandas as pd
 
-from sample import RandomSample, VcfSample
+from samples.simulations.sample import RandomSample, VcfSample
 import validator
 
 def run_fold_coverage_test():

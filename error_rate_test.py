@@ -1,6 +1,6 @@
 # Load a 
 
-from sample import RandomSample, VcfSample
+from samples.simulations.sample import RandomSample, VcfSample
 import validator
 
 snp_vcf = '/home/aaronfishman/mnt/fsx-027/snippy/AF-21-07727-19.vcf'

@@ -2,13 +2,13 @@ import os
 import argparse
 import shutil
 
-import sample_sets
+import samples.sample_sets as sample_sets
 import utils
 import compare_snps
 import sequenced
 import processed
-import genome
-import reads
+import samples.genome as genome
+import samples.reads as reads
 
 def simulate(
     samples,
@@ -93,11 +93,11 @@ def pipeline(
     sequenced_samples = sequence(btb_seq_backup_path, reads_path, results_path)
     processed_samples = processed.from_list(genomes, sequenced_samples)
 
-    stats, site_stats = compare_snps.benchmark(processed_samples)
+    stats, stats_masked, site_stats = compare_snps.benchmark(processed_samples)
 
     # Save
     stats.to_csv(output_path + '/stats.csv')
-
+    stats_masked.to_csv(output_path + '/stats_masked.csv')
     for name, df in site_stats.items():
         df.to_csv(stats_path + f'/{name}_stats.csv')
 

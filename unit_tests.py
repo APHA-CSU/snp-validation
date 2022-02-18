@@ -1,8 +1,8 @@
 import unittest
 from subprocess import CompletedProcess
 from unittest.mock import Mock, mock_open, patch
-from sample import Sample
-import genome
+from samples.simulations.sample import Sample
+import samples.genome as genome
 
 import validator
 
