@@ -1,6 +1,5 @@
 import unittest
-from subprocess import CompletedProcess
-from unittest.mock import Mock, mock_open, patch
+from unittest.mock import Mock
 from samples.simulations.sample import Sample
 import samples.genome as genome
 
@@ -18,9 +17,9 @@ class ValidatorTests(unittest.TestCase):
         validator.os.makedirs = Mock()
         validator.os.path.exists = Mock(return_value=False)
         validator.utils.run = Mock()
-        validator.glob.glob = Mock(return_value=[''])
+        validator.utils.glob.glob = Mock(return_value=[''])
 
-        validator.compare_snps.benchmark = Mock(return_value=[Mock(),{'mock': Mock()}])
+        validator.compare_snps.benchmark = Mock(return_value=[Mock(), Mock(), {'mock': Mock()}])
 
         # Mock Sample
         validator.sequenced.from_results_dir = Mock(return_value=[Mock()])
