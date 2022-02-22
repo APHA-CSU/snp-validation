@@ -3,6 +3,7 @@ import json
 import argparse
 import utils
 import os
+import sys
 
 import config
 import validator
@@ -11,30 +12,21 @@ def download_test_case(case, download_path):
     """ Downloads reads from AWS """
 
     with open(config.DEFAULT_JSON_PATH) as f:
-        x =json.load(f)
+        test_cases =json.load(f)
 
-    try:
-        y = x[case]
-    except KeyError:
-        print(f"no case named {case}")
+    if not case in test_cases:
+        raise Exception(f"no case named {case}")
         
-    for sample in y.keys():
+    for sample in test_cases[case]:
 
-        sample = y[sample]
         r1_uri = sample["r1_uri"]
         r2_uri = sample["r2_uri"]
 
-        if os.path.exists(download_path + os.path.basename(r1_uri)):
-            print("read already downloaded, skipping")
-        else:
-            cmd = f"aws s3 cp --dryrun {r1_uri} {download_path}"
-            utils.run(cmd, shell=True)
-
-        if os.path.exists(download_path + os.path.basename(r2_uri)):
-            print("read already downloaded, skipping")
-        else:
-            cmd = f"aws s3 cp --dryrun {r2_uri} {download_path}"
-            utils.run(cmd, shell=True)
+        cmd = f"aws s3 sync {r1_uri} {download_path}"
+        utils.run(cmd, shell=True)
+       
+        cmd = f"aws s3 sync {r2_uri} {download_path}"
+        utils.run(cmd, shell=True)
 
 
 def btb_seq(btb_seq_path, download_path, output_path):
@@ -57,9 +49,7 @@ def snps(output_path):
     megafasta = "\n".join(fasta_list)
 
     
-    if os.path.exists(output_path + 'snps'):
-        pass
-    else:
+    if not os.path.exists(output_path + 'snps'):
         os.mkdir(output_path + 'snps')
         
     snpsout = output_path + 'snps/'
@@ -75,7 +65,7 @@ def snps(output_path):
     utils.run(cmd, shell=True)
 
     # run snp-dists
-    cmd = f'/home/cameronnicholls/snp-dists/snp-dists {output_path}snpsites.fas > {output_path}snps.tab'
+    cmd = f'snp-dists {output_path}snpsites.fas > {output_path}snps.tab'
     utils.run(cmd, shell=True)
 
 if __name__ == '__main__':
@@ -86,7 +76,7 @@ if __name__ == '__main__':
     parser.add_argument("output_path")
     parser.add_argument("btb_seq_path")
     args = parser.parse_args()
-    
+
     download_test_case(args.case, args.download_path)
-    btb_seq(args.btb_seq_path, args.download_path, args.output_path)
+    #btb_seq(args.btb_seq_path, args.download_path, args.output_path)
     snps(args.output_path)

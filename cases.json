@@ -1,21 +1,21 @@
 {
-   "scotland":{
-        "1":{
-            "name":"AF-61-02270-19", 
-            "r1_uri":"s3://s3-csu-001/SB4020-TB/10208/AF-61-02270-19_S44_R1_001.fastq.gz",
-            "r2_uri":"s3://s3-csu-001/SB4020-TB/10208/AF-61-02270-19_S44_R2_001.fastq.gz"
-        },
-
-        "2":{
-            "name":"AF-21-06304-21",
-            "r1_uri":"s3://s3-csu-001/TestData/TestData_Jan20/AF-21-06304-19_S76_R1_001.fastq.gz",
-            "r2_uri":"s3://s3-csu-001/TestData/TestData_Jan20/AF-21-06304-19_S76_R2_001.fastq.gz"
-        },
-
-        "3":{
-            "name":"AF-21-06305-21",
-            "r1_uri":"s3://s3-csu-001/SB4020-TB/10195/AF-21-06305-19_S77_R1_001.fastq.gz",
-            "r2_uri":"s3://s3-csu-001/SB4020-TB/10195/AF-21-06305-19_S77_R2_001.fastq.gz"
-        }
-    }
-}
+    "scotland":[
+         {
+             "name":"AF-61-02270-19", 
+             "r1_uri":"s3://s3-csu-001/SB4020-TB/10208/AF-61-02270-19_S44_R1_001.fastq.gz",
+             "r2_uri":"s3://s3-csu-001/SB4020-TB/10208/AF-61-02270-19_S44_R2_001.fastq.gz"
+         },
+ 
+         {
+             "name":"AF-21-06304-21",
+             "r1_uri":"s3://s3-csu-001/TestData/TestData_Jan20/AF-21-06304-19_S76_R1_001.fastq.gz",
+             "r2_uri":"s3://s3-csu-001/TestData/TestData_Jan20/AF-21-06304-19_S76_R2_001.fastq.gz"
+         },
+ 
+         {
+             "name":"AF-21-06305-21",
+             "r1_uri":"s3://s3-csu-001/SB4020-TB/10195/AF-21-06305-19_S77_R1_001.fastq.gz",
+             "r2_uri":"s3://s3-csu-001/SB4020-TB/10195/AF-21-06305-19_S77_R2_001.fastq.gz"
+         }
+    ]
+ }
