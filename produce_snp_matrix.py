@@ -3,7 +3,6 @@ import json
 import argparse
 import utils
 import os
-import sys
 
 import config
 import validator
@@ -39,23 +38,21 @@ def snps(output_path):
     """run snp-sites on consensus files, then runs snp-dists on the results"""
 
     # glob filenames
-    megafasta = ""
+    combined_fastas = ""
     consensus_path = output_path + "/btbseq/Results*/consensus/"
     paths = glob(consensus_path + "*_consensus.fas")
     fasta_list = []
-    for path in paths:
-        with open(path) as file: fasta = file.read()
-        fasta_list.append(fasta)
-    megafasta = "\n".join(fasta_list)
 
-    
     if not os.path.exists(output_path + 'snps'):
         os.mkdir(output_path + 'snps')
-        
-    snpsout = output_path + 'snps/'
-    with open(f'{snpsout}combined.fas', 'w') as file: 
-        file.write(megafasta)
 
+    snpsout = output_path + 'snps/'
+    with open(f'{snpsout}combined.fas', 'w') as snp_file: 
+
+        for path in paths:
+
+            with open(path) as fasta_file: fasta = fasta_file.read()
+            snp_file.write(fasta + '\n')
     
     # run snp sites 
     cmd = f'snp-sites {snpsout}combined.fas -o {output_path}snpsites.fas'
