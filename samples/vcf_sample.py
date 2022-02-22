@@ -2,10 +2,10 @@ import math
 import os
 import errno
 
-from utils import run
+from utils.utils import run
 
-from sample import Sample
-from genome import SimulatedGenome
+from samples.sample import Sample
+from entities.genome import SimulatedGenome
 import config
 
 class VcfSample(Sample):
@@ -54,7 +54,7 @@ class VcfSample(Sample):
                 seed (int): Seed value for simulation
 
             Returns:
-                None
+                A SimulatedGenome object
         """
 
         # TODO: put the files into a temp directory

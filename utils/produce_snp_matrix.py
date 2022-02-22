@@ -1,7 +1,8 @@
 from glob import glob
 import subprocess
 import argparse
-import utils
+
+import utils.utils as utils
 import os
 
 def snps(input_path, output_path):
