@@ -2,10 +2,10 @@ import math
 import os
 import errno
 
-from utils import run
+from utils.utils import run
 
-from samples.simulations.sample import Sample
-from samples.genome import SimulatedGenome
+from samples.sample import Sample
+from entities.genome import SimulatedGenome
 import config
 
 class VcfSample(Sample):

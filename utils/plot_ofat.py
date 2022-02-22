@@ -1,4 +1,3 @@
-import utils
 import argparse
 import glob
 import sys
@@ -7,6 +6,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import pandas as pd
 
+import utils.utils as utils
 
 def plot(root_path):
     utils.assert_path_exists(root_path)

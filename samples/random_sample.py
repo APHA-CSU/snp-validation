@@ -1,7 +1,7 @@
 import math
 
-from samples.simulations.sample import Sample
-from samples.genome import SimulatedGenome
+from samples.sample import Sample
+from entities.genome import SimulatedGenome
 import config
 
 class RandomSample(Sample):

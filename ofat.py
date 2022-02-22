@@ -6,7 +6,7 @@ import json
 import pandas as pd
 
 import validator
-import utils
+import utils.utils as utils
 
 """
     Run the performance benchmarking tool against a multiple git branches

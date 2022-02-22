@@ -3,12 +3,12 @@ import argparse
 import shutil
 
 import samples.sample_sets as sample_sets
-import utils
+import utils.utils as utils
 import compare_snps
-import sequenced
-import processed
-import samples.genome as genome
-import samples.reads as reads
+import entities.sequenced as sequenced
+import entities.processed as processed
+import entities.genome as genome
+import entities.reads as reads
 
 def simulate(
     samples,

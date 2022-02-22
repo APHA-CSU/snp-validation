@@ -1,7 +1,7 @@
 import pandas as pd
 from Bio import SeqIO
 
-from utils import bcf_summary
+from utils.utils import bcf_summary
 import config
 
 
