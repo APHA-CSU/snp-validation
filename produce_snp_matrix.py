@@ -4,43 +4,48 @@ import argparse
 import utils
 import os
 
+import config
+import validator
+
 def download_test_case(case, download_path):
-    with open('./test.json') as f:
+    """ Downloads reads from AWS """
+
+    with open(config.DEFAULT_JSON_PATH) as f:
         x =json.load(f)
 
-        try:
-            y = x[case]
-        except:
-            print(f"no case named {case}")
+    try:
+        y = x[case]
+    except KeyError:
+        print(f"no case named {case}")
         
-        num_samples = len(y)
+    for sample in y.keys():
 
-        while num_samples > 0:
-            sample = y[str(num_samples)]
-            r1_uri = sample["r1_uri"]
-            r2_uri = sample["r2_uri"]
+        sample = y[sample]
+        r1_uri = sample["r1_uri"]
+        r2_uri = sample["r2_uri"]
 
-            if os.path.exists(download_path + os.path.basename(r1_uri)):
-                print("read already downloaded, skipping")
-            else:
-                cmd = f"aws s3 cp --dryrun {r1_uri} {download_path}"
-                utils.run(cmd, shell=True)
+        if os.path.exists(download_path + os.path.basename(r1_uri)):
+            print("read already downloaded, skipping")
+        else:
+            cmd = f"aws s3 cp --dryrun {r1_uri} {download_path}"
+            utils.run(cmd, shell=True)
 
-            if os.path.exists(download_path + os.path.basename(r2_uri)):
-                print("read already downloaded, skipping")
-            else:
-                cmd = f"aws s3 cp --dryrun {r2_uri} {download_path}"
-                utils.run(cmd, shell=True)
-            num_samples = num_samples - 1
+        if os.path.exists(download_path + os.path.basename(r2_uri)):
+            print("read already downloaded, skipping")
+        else:
+            cmd = f"aws s3 cp --dryrun {r2_uri} {download_path}"
+            utils.run(cmd, shell=True)
 
 
-def btb_seq(download_path, output_path):
+def btb_seq(btb_seq_path, download_path, output_path):
+    """ runs btb-seq on reads downloaded in download_test_case"""
+
     btb_out = output_path + "/btbseq"
-    cmd = f" /home/cameronnicholls/Repos/btb-seq/btb-seq {download_path} {btb_out}"
-    utils.run(cmd, shell=True, cwd = "/home/cameronnicholls/Repos/btb-seq/")
-
+    validator.sequence(btb_seq_path, download_path, btb_out)
 
 def snps(output_path):
+    """run snp-sites on consensus files, then runs snp-dists on the results"""
+
     # glob filenames
     megafasta = ""
     consensus_path = output_path + "/btbseq/Results*/consensus/"
@@ -76,11 +81,12 @@ def snps(output_path):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="download sample fastqs from aws from input of sample refs")
     
-    parser.add_argument("case", default="./")
+    parser.add_argument("case")
     parser.add_argument("download_path")
-    parser.add_argument("output_path", default = "./")
+    parser.add_argument("output_path")
+    parser.add_argument("btb_seq_path")
     args = parser.parse_args()
     
     download_test_case(args.case, args.download_path)
-    btb_seq(args.download_path, args.output_path)
+    btb_seq(args.btb_seq_path, args.download_path, args.output_path)
     snps(args.output_path)
