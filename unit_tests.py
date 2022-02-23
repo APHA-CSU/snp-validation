@@ -1,12 +1,12 @@
 import unittest
-from subprocess import CompletedProcess
-from unittest.mock import Mock, mock_open, patch
-from sample import Sample
-import genome
+from unittest.mock import Mock
 
 import validator
-
-import utils
+from samples.sample import Sample
+import entities.sequenced as sequenced
+import entities.processed as processed
+import entities.genome as genome
+import utils.utils as utils
 
 class ValidatorTests(unittest.TestCase):
     def test_validator(self):
@@ -17,14 +17,14 @@ class ValidatorTests(unittest.TestCase):
         validator.shutil.copytree = Mock()
         validator.os.makedirs = Mock()
         validator.os.path.exists = Mock(return_value=False)
-        validator.utils.run = Mock()
-        validator.glob.glob = Mock(return_value=[''])
+        utils.utils.run = Mock()
+        utils.utils.glob.glob = Mock(return_value=[''])
 
-        validator.compare_snps.benchmark = Mock(return_value=[Mock(),{'mock': Mock()}])
+        validator.compare_snps.benchmark = Mock(return_value=[Mock(), Mock(), {'mock': Mock()}])
 
         # Mock Sample
-        validator.sequenced.from_results_dir = Mock(return_value=[Mock()])
-        validator.processed.from_list = Mock(return_value=[Mock()])
+        sequenced.from_results_dir = Mock(return_value=[Mock()])
+        processed.from_list = Mock(return_value=[Mock()])
         
         mock_sample = Sample()
 

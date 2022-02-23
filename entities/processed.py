@@ -1,4 +1,4 @@
-import utils
+import utils.utils as utils
 
 class ProcessedSample:
     """ simulated genomes combined with and btb-seq sequence data 
