@@ -1,14 +1,7 @@
 from glob import glob
 import json
 import argparse
-<<<<<<< HEAD:produce_snp_matrix.py
-import utils
-=======
-
 import utils.utils as utils
-import os
->>>>>>> 70fcfba6475b5c3fba32ae96b70c7f46e67274b2:utils/produce_snp_matrix.py
-
 
 import config
 import validator
