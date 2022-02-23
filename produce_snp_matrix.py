@@ -2,7 +2,7 @@ from glob import glob
 import json
 import argparse
 import utils
-import os
+
 
 import config
 import validator
@@ -38,16 +38,11 @@ def snps(output_path):
     """run snp-sites on consensus files, then runs snp-dists on the results"""
 
     # glob filenames
-    combined_fastas = ""
     consensus_path = output_path + "/btbseq/Results*/consensus/"
     paths = glob(consensus_path + "*_consensus.fas")
-    fasta_list = []
 
-    if not os.path.exists(output_path + 'snps'):
-        os.mkdir(output_path + 'snps')
-
-    snpsout = output_path + 'snps/'
-    with open(f'{snpsout}combined.fas', 'w') as snp_file: 
+    snps_out = output_path
+    with open(f'{snps_out}combined.fas', 'w') as snp_file: 
 
         for path in paths:
 
@@ -55,10 +50,11 @@ def snps(output_path):
             snp_file.write(fasta + '\n')
     
     # run snp sites 
-    cmd = f'snp-sites {snpsout}combined.fas -o {output_path}snpsites.fas'
+    cmd = f'snp-sites {snps_out}combined.fas -o {output_path}snpsites.fas'
     utils.run(cmd, shell=True)
+
     # produce vcf of snps- for investigating sites
-    cmd = f'snp-sites {snpsout}combined.fas -v -o {output_path}snpsites.vcf'
+    cmd = f'snp-sites {snps_out}combined.fas -v -o {output_path}snpsites.vcf'
     utils.run(cmd, shell=True)
 
     # run snp-dists
@@ -75,5 +71,5 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     download_test_case(args.case, args.download_path)
-    #btb_seq(args.btb_seq_path, args.download_path, args.output_path)
+    btb_seq(args.btb_seq_path, args.download_path, args.output_path)
     snps(args.output_path)
