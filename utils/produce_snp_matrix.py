@@ -1,10 +1,12 @@
 from glob import glob
 import json
 import argparse
-import utils.utils as utils
+import sys
 
+sys.path.append('.')
 import config
 import validator
+import utils
 
 def download_test_case(case, download_path):
     """ Downloads reads from AWS """
@@ -70,5 +72,5 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     download_test_case(args.case, args.download_path)
-    btb_seq(args.btb_seq_path, args.download_path, args.output_path)
+    #btb_seq(args.btb_seq_path, args.download_path, args.output_path)
     snps(args.output_path)
