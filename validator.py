@@ -4,7 +4,7 @@ import shutil
 
 import samples.sample_sets as sample_sets
 import utils.utils as utils
-import compare_snps
+import utils.compare_snps as compare_snps
 import entities.sequenced as sequenced
 import entities.processed as processed
 import entities.genome as genome
