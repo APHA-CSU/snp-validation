@@ -21,8 +21,8 @@
     "pennal-mar21":[
          {
              "name":"AF-21-00344-19", 
-             "r1_uri":,
-             "r2_uri":
+             "r1_uri":"s3://s3-csu-001/",
+             "r2_uri":"s3://s3-csu-001/"
          },
  
          {
@@ -33,8 +33,8 @@
  
          {
              "name":"AF-12-01530-18",
-             "r1_uri":,
-             "r2_uri":
+             "r1_uri":"s3://s3-csu-001/",
+             "r2_uri":"s3://s3-csu-001/"
          },
          {
              "name":"AF-12-01601-19",
@@ -45,18 +45,18 @@
          },
          {
              "name":"AF-12-01617-17",
-             "r1_uri":,
-             "r2_uri":
+             "r1_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-12-01617-17_S209_R1_001.fastq.gz",
+             "r2_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-12-01617-17_S209_R2_001.fastq.gz"
          },
          {
              "name":"AF-12-02021-18",
-             "r1_uri":,
-             "r2_uri":
+             "r1_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-12-02021-18_S89_R1_001.fastq.gz",
+             "r2_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-12-02021-18_S89_R2_001.fastq.gz"
          },
          {
              "name":"AF-12-02389-18",
-             "r1_uri":,
-             "r2_uri":
+             "r1_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-12-02389-18_S42_R1_001.fastq.gz",
+             "r2_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-12-02389-18_S42_R2_001.fastq.gz"
          },
          {
              "name":"AF-16-01494-13",
@@ -70,42 +70,102 @@
          },
          {
              "name":"AF-61-00379-18",
-             "r1_uri":,
-             "r2_uri":
+             "r1_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-61-00379-18_S8_R1_001.fastq.gz",
+             "r2_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-61-00379-18_S8_R2_001.fastq.gz"
          },
          {
              "name":"AF-61-00581-18",
-             "r1_uri":,
-             "r2_uri":
+             "r1_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-61-00581-18_S64_R1_001.fastq.gz",
+             "r2_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-61-00581-18_S64_R2_001.fastq.gz"
          },
          {
              "name":"AF-61-01142-19",
-             "r1_uri":,
-             "r2_uri":
+             "r1_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-61-01142-19_S115_R1_001.fastq.gz",
+             "r2_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-61-01142-19_S115_R2_001.fastq.gz"
          },
          {
              "name":"AF-61-02298-19",
-             "r1_uri":,
-             "r2_uri":
+             "r1_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-61-02298-19_S26_R1_001.fastq.gz",
+             "r2_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-61-02298-19_S26_R1_001.fastq.gz"
          }
     ],
     "alpacas_oxford":[
          {
              "name":"AF-61-00821-19", 
-             "r1_uri":
-             "r2_uri":
+             "r1_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-61-00821-19_S16_R1_001.fastq.gz",
+             "r2_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-61-00821-19_S16_R2_001.fastq.gz"
          },
  
          {
              "name":"AF-61-00679-19",
-             "r1_uri":
-             "r2_uri":
+             "r1_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-61-00679-19_S48_R1_001.fastq.gz",
+             "r2_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-61-00679-19_S48_R2_001.fastq.gz"
          },
  
          {
              "name":"AF-21-07870-18",
-             "r1_uri":
-             "r2_uri":
+             "r1_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-21-07870-18_S67_R1_001.fastq.gz",
+             "r2_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-21-07870-18_S67_R2_001.fastq.gz"
          }
+    ],
+    "Henley":[
+        {
+            "name":"AF-61-01088-16",
+            "r1_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-61-01088-16_S3_R1_001.fastq.gz",
+            "r2_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-61-01088-16_S3_R2_001.fastq.gz"
+        },
+
+        {
+            "name":"AF-61-04601-16",
+            "r1_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-61-04601-16_S4_R1_001.fastq.gz",
+            "r2_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-61-04601-16_S4_R2_001.fastq.gz"
+        },
+
+        {
+            "name":"AF-21-07570-17",
+            "r1_uri":"s3://s3-csu-001/SB4030-TB/10262/AF-21-07570-17_S79_R1_001.fastq.gz",
+            "r2_uri":"s3://s3-csu-001/SB4030-TB/10262/AF-21-07570-17_S79_R2_001.fastq.gz"
+        },
+
+        {
+            "name":"AF-21-07692-17",
+            "r1_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-21-07692-17_S5_R1_001.fastq.gz",
+            "r2_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-21-07692-17_S5_R2_001.fastq.gz"
+        },
+
+        {
+            "name":"AF-12-01903-16",
+            "r1_uri":"s3://s3-csu-001/SB4030-TB/10262/AF-12-01903-16_S75_R1_001.fastq.gz",
+            "r2_uri":"s3://s3-csu-001/SB4030-TB/10262/AF-12-01903-16_S75_R2_001.fastq.gz"
+        },
+
+        {
+            "name":"AF-21-50028-16",
+            "r1_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-21-50028-16_S7_R1_001.fastq.gz",
+            "r2_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-21-50028-16_S7_R2_001.fastq.gz"
+        },
+
+        {
+            "name":"AF-21-51293-16",
+            "r1_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-21-51293-16_S8_R1_001.fastq.gz",
+            "r2_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-21-51293-16_S8_R2_001.fastq.gz"
+        },
+        {
+            "name":"AF-61-00871-18",
+            "r1_uri":"s3://s3-csu-001/SB4030-TB/10262/AF-61-00871-18_S83_R1_001.fastq.gz",
+            "r2_uri":"s3://s3-csu-001/SB4030-TB/10262/AF-61-00871-18_S83_R2_001.fastq.gz"
+        },
+
+        {
+            "name":"AF-61-01084-18",
+            "r1_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-61-01084-18_S65_R1_001.fastq.gz",
+            "r2_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-61-01084-18_S65_R2_001.fastq.gz"
+        },
+
+        {
+            "name":"AF-21-06022-18",
+            "r1_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-21-06022-18_S128_R1_001.fastq.gz",
+            "r2_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-21-06022-18_S128_R2_001.fastq.gz"
+        }
     ]
  }
