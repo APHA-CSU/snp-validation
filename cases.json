@@ -17,5 +17,194 @@
              "r1_uri":"s3://s3-csu-001/SB4020-TB/10195/AF-21-06305-19_S77_R1_001.fastq.gz",
              "r2_uri":"s3://s3-csu-001/SB4020-TB/10195/AF-21-06305-19_S77_R2_001.fastq.gz"
          }
+    ],
+    "pennal-mar21":[
+         {
+             "name":"AF-21-00344-19", 
+             "r1_uri":"s3://s3-csu-001/",
+             "r2_uri":"s3://s3-csu-001/"
+         },
+ 
+         {
+             "name":"AF-21-01503-19",
+             "r1_uri":"s3://s3-csu-001/SB4020-TB/10225/AF-12-01503-19_S10_R1_001.fastq.gz",
+             "r2_uri":"s3://s3-csu-001/SB4020-TB/10225/AF-12-01503-19_S10_R2_001.fastq.gz"
+         },
+ 
+         {
+             "name":"AF-12-01530-18",
+             "r1_uri":"s3://s3-csu-001/",
+             "r2_uri":"s3://s3-csu-001/"
+         },
+         {
+             "name":"AF-12-01601-19",
+             "r1_uri":"s3://s3-csu-001/SB4020-TB/20011/AF-12-01601-19-L_S68_R1_001.fastq.gz", 
+             "r2_uri":"s3://s3-csu-001/SB4020-TB/20011/AF-12-01601-19-L_S68_R2_001.fastq.gz",
+	     "__r1_uri": "s3://s3-csu-001/SB4020-TB/10230/AF-12-01601-19_S999_R1_001.fastq.gz",
+	     "__r2_uri": "s3://s3-csu-001/SB4020-TB/10230/AF-12-01601-19_S999_R2_001.fastq.gz"
+         },
+         {
+             "name":"AF-12-01617-17",
+             "r1_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-12-01617-17_S209_R1_001.fastq.gz",
+             "r2_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-12-01617-17_S209_R2_001.fastq.gz"
+         },
+         {
+             "name":"AF-12-02021-18",
+             "r1_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-12-02021-18_S89_R1_001.fastq.gz",
+             "r2_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-12-02021-18_S89_R2_001.fastq.gz"
+         },
+         {
+             "name":"AF-12-02389-18",
+             "r1_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-12-02389-18_S42_R1_001.fastq.gz",
+             "r2_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-12-02389-18_S42_R2_001.fastq.gz"
+         },
+         {
+             "name":"AF-16-01494-13",
+             "r1_uri":"s3://s3-csu-001/SB4030-TB/10305/AF-16-01494-13_S67_R1_001.fastq.gz",
+             "r2_uri":"s3://s3-csu-001/SB4030-TB/10305/AF-16-01494-13_S67_R2_001.fastq.gz"
+         },
+         {
+             "name":"AF-21-01344-15",
+             "r1_uri":"s3://csu-001/SB4030-TB/10305/AF-21-01344-15_S66_R1_001.fastq.gz",
+             "r2_uri":"s3://csu-001/SB4030-TB/10305/AF-21-01344-15_S66_R2_001.fastq.gz"
+         },
+         {
+             "name":"AF-61-00379-18",
+             "r1_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-61-00379-18_S8_R1_001.fastq.gz",
+             "r2_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-61-00379-18_S8_R2_001.fastq.gz"
+         },
+         {
+             "name":"AF-61-00581-18",
+             "r1_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-61-00581-18_S64_R1_001.fastq.gz",
+             "r2_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-61-00581-18_S64_R2_001.fastq.gz"
+         },
+         {
+             "name":"AF-61-01142-19",
+             "r1_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-61-01142-19_S115_R1_001.fastq.gz",
+             "r2_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-61-01142-19_S115_R2_001.fastq.gz"
+         },
+         {
+             "name":"AF-61-02298-19",
+             "r1_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-61-02298-19_S26_R1_001.fastq.gz",
+             "r2_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-61-02298-19_S26_R1_001.fastq.gz"
+         }
+    ],
+    "alpacas_oxford":[
+         {
+             "name":"AF-61-00821-19", 
+             "r1_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-61-00821-19_S16_R1_001.fastq.gz",
+             "r2_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-61-00821-19_S16_R2_001.fastq.gz"
+         },
+ 
+         {
+             "name":"AF-61-00679-19",
+             "r1_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-61-00679-19_S48_R1_001.fastq.gz",
+             "r2_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-61-00679-19_S48_R2_001.fastq.gz"
+         },
+ 
+         {
+             "name":"AF-21-07870-18",
+             "r1_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-21-07870-18_S67_R1_001.fastq.gz",
+             "r2_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-21-07870-18_S67_R2_001.fastq.gz"
+         }
+    ],
+    "Henley":[
+        {
+            "name":"AF-61-01088-16",
+            "r1_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-61-01088-16_S3_R1_001.fastq.gz",
+            "r2_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-61-01088-16_S3_R2_001.fastq.gz"
+        },
+
+        {
+            "name":"AF-61-04601-16",
+            "r1_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-61-04601-16_S4_R1_001.fastq.gz",
+            "r2_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-61-04601-16_S4_R2_001.fastq.gz"
+        },
+
+        {
+            "name":"AF-21-07570-17",
+            "r1_uri":"s3://s3-csu-001/SB4030-TB/10262/AF-21-07570-17_S79_R1_001.fastq.gz",
+            "r2_uri":"s3://s3-csu-001/SB4030-TB/10262/AF-21-07570-17_S79_R2_001.fastq.gz"
+        },
+
+        {
+            "name":"AF-21-07692-17",
+            "r1_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-21-07692-17_S5_R1_001.fastq.gz",
+            "r2_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-21-07692-17_S5_R2_001.fastq.gz"
+        },
+
+        {
+            "name":"AF-12-01903-16",
+            "r1_uri":"s3://s3-csu-001/SB4030-TB/10262/AF-12-01903-16_S75_R1_001.fastq.gz",
+            "r2_uri":"s3://s3-csu-001/SB4030-TB/10262/AF-12-01903-16_S75_R2_001.fastq.gz"
+        },
+
+        {
+            "name":"AF-21-50028-16",
+            "r1_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-21-50028-16_S7_R1_001.fastq.gz",
+            "r2_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-21-50028-16_S7_R2_001.fastq.gz"
+        },
+
+        {
+            "name":"AF-21-51293-16",
+            "r1_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-21-51293-16_S8_R1_001.fastq.gz",
+            "r2_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-21-51293-16_S8_R2_001.fastq.gz"
+        },
+        {
+            "name":"AF-61-00871-18",
+            "r1_uri":"s3://s3-csu-001/SB4030-TB/10262/AF-61-00871-18_S83_R1_001.fastq.gz",
+            "r2_uri":"s3://s3-csu-001/SB4030-TB/10262/AF-61-00871-18_S83_R2_001.fastq.gz"
+        },
+
+        {
+            "name":"AF-61-01084-18",
+            "r1_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-61-01084-18_S65_R1_001.fastq.gz",
+            "r2_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-61-01084-18_S65_R2_001.fastq.gz"
+        },
+
+        {
+            "name":"AF-21-06022-18",
+            "r1_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-21-06022-18_S128_R1_001.fastq.gz",
+            "r2_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-21-06022-18_S128_R2_001.fastq.gz"
+        }
+    ],
+    "ov6":[
+        {
+            "name":"AF-61-03296-17",
+            "r1_uri":"s3://s3-csu-001/",
+            "r2_uri":"s3://s3-csu-001/"
+        },
+        {
+            "name":"AF-61-00507-19",
+            "r1_uri":"s3://s3-csu-001/",
+            "r2_uri":"s3://s3-csu-001/"
+        },
+        {
+            "name":"AF-61-04230-19",
+            "r1_uri":"s3://s3-csu-001/SB4020-TB/10235/AF-61-04230-19_S9_R1_001.fastq.gz",
+            "r2_uri":"s3://s3-csu-001/SB4020-TB/10235/AF-61-04230-19_S9_R2_001.fastq.gz"
+        }
+    ],
+    "ov7":[
+        {
+            "name":"AF-61-00367-18",
+            "r1_uri":"s3://s3-csu-001/",
+            "r2_uri":"s3://s3-csu-001/"
+        },
+        {
+            "name":"AF-12-01664-18",
+            "r1_uri":"s3://s3-csu-001/",
+            "r2_uri":"s3://s3-csu-001/"
+        },
+        {
+            "name":"AF-61-00230-19",
+            "r1_uri":"s3://s3-csu-001/",
+            "r2_uri":"s3://s3-csu-001/"
+        },
+        {
+            "name":"AF-12-00351-19",
+            "r1_uri":"s3://s3-csu-001/",
+            "r2_uri":"s3://s3-csu-001/"
+        }
     ]
  }
