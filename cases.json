@@ -171,13 +171,13 @@
     "ov6":[
         {
             "name":"AF-61-03296-17",
-            "r1_uri":"s3://s3-csu-001/",
-            "r2_uri":"s3://s3-csu-001/"
+            "r1_uri":"s3-csu-001/SB4020-TB/Apr22Data/AF-61-03296-17_S28_R1_001.fastq.gz",
+            "r2_uri":"s3-csu-001/SB4020-TB/Apr22Data/AF-61-03296-17_S28_R2_001.fastq.gz"
         },
         {
             "name":"AF-61-00507-19",
-            "r1_uri":"s3://s3-csu-001/",
-            "r2_uri":"s3://s3-csu-001/"
+            "r1_uri":"s3-csu-001/SB4020-TB/Apr22Data/AF-61-00507-19_S43_R1_001.fastq.gz",
+            "r2_uri":"s3-csu-001/SB4020-TB/Apr22Data/AF-61-00507-19_S43_R2_001.fastq.gz"
         },
         {
             "name":"AF-61-04230-19",
@@ -188,23 +188,23 @@
     "ov7":[
         {
             "name":"AF-61-00367-18",
-            "r1_uri":"s3://s3-csu-001/",
-            "r2_uri":"s3://s3-csu-001/"
+            "r1_uri":"s3-csu-001/SB4020-TB/Apr22Data/AF-61-00367-18_S8_R1_001.fastq.gz",
+            "r2_uri":"s3-csu-001/SB4020-TB/Apr22Data/AF-61-00367-18_S8_R2_001.fastq.gz"
         },
         {
             "name":"AF-12-01664-18",
-            "r1_uri":"s3://s3-csu-001/",
-            "r2_uri":"s3://s3-csu-001/"
+            "r1_uri":"s3-csu-001/SB4020-TB/Apr22Data/AF-12-01664-18_S83_R1_001.fastq.gz",
+            "r2_uri":"s3-csu-001/SB4020-TB/Apr22Data/AF-12-01664-18_S83_R2_001.fastq.gz"
         },
         {
             "name":"AF-61-00230-19",
-            "r1_uri":"s3://s3-csu-001/",
-            "r2_uri":"s3://s3-csu-001/"
+            "r1_uri":"s3-csu-001/SB4020-TB/Apr22Data/AF-61-00230-19_S74_R1_001.fastq.gz",
+            "r2_uri":"s3-csu-001/SB4020-TB/Apr22Data/AF-61-00230-19_S74_R2_001.fastq.gz"
         },
         {
             "name":"AF-12-00351-19",
-            "r1_uri":"s3://s3-csu-001/",
-            "r2_uri":"s3://s3-csu-001/"
+            "r1_uri":"s3-csu-001/SB4020-TB/Apr22Data/AF-12-00351-19_S66_R1_001.fastq.gz",
+            "r2_uri":"s3-csu-001/SB4020-TB/Apr22Data/AF-12-00351-19_S66_R2_001.fastq.gz"
         }
     ]
  }
