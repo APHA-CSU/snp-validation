@@ -50,7 +50,7 @@ def snps(output_path):
             snp_file.write(fasta + '\n')
     
     # run snp sites 
-    cmd = f'snp-sites {snps_out}combined.fas -o {output_path}snpsites.fas'
+    cmd = f'snp-sites {snps_out}combined.fas -c -o {output_path}snpsites.fas'
     utils.run(cmd, shell=True)
 
     # produce vcf of snps- for investigating sites
