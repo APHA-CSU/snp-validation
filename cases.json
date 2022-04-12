@@ -21,8 +21,8 @@
     "pennal-mar21":[
          {
              "name":"AF-21-00344-19", 
-             "r1_uri":"s3://s3-csu-001/",
-             "r2_uri":"s3://s3-csu-001/"
+             "r1_uri":"s3://s3-csu-001/SB4020-TB/10222/AF-21-00344-19_S25_R1_001.fastq.gz",
+             "r2_uri":"s3://s3-csu-001/SB4020-TB/10222/AF-21-00344-19_S25_R2_001.fastq.gz"
          },
  
          {
@@ -33,15 +33,13 @@
  
          {
              "name":"AF-12-01530-18",
-             "r1_uri":"s3://s3-csu-001/",
-             "r2_uri":"s3://s3-csu-001/"
+             "r1_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-12-01530-18_S69_R1_001.fastq.gz",
+             "r2_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-12-01530-18_S69_R2_001.fastq.gz"
          },
          {
              "name":"AF-12-01601-19",
              "r1_uri":"s3://s3-csu-001/SB4020-TB/20011/AF-12-01601-19-L_S68_R1_001.fastq.gz", 
-             "r2_uri":"s3://s3-csu-001/SB4020-TB/20011/AF-12-01601-19-L_S68_R2_001.fastq.gz",
-	     "__r1_uri": "s3://s3-csu-001/SB4020-TB/10230/AF-12-01601-19_S999_R1_001.fastq.gz",
-	     "__r2_uri": "s3://s3-csu-001/SB4020-TB/10230/AF-12-01601-19_S999_R2_001.fastq.gz"
+             "r2_uri":"s3://s3-csu-001/SB4020-TB/20011/AF-12-01601-19-L_S68_R2_001.fastq.gz"
          },
          {
              "name":"AF-12-01617-17",
@@ -65,8 +63,8 @@
          },
          {
              "name":"AF-21-01344-15",
-             "r1_uri":"s3://csu-001/SB4030-TB/10305/AF-21-01344-15_S66_R1_001.fastq.gz",
-             "r2_uri":"s3://csu-001/SB4030-TB/10305/AF-21-01344-15_S66_R2_001.fastq.gz"
+             "r1_uri":"s3://s3-csu-001/SB4030-TB/10305/AF-21-01344-15_S66_R1_001.fastq.gz",
+             "r2_uri":"s3://s3-csu-001/SB4030-TB/10305/AF-21-01344-15_S66_R2_001.fastq.gz"
          },
          {
              "name":"AF-61-00379-18",
@@ -86,7 +84,7 @@
          {
              "name":"AF-61-02298-19",
              "r1_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-61-02298-19_S26_R1_001.fastq.gz",
-             "r2_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-61-02298-19_S26_R1_001.fastq.gz"
+             "r2_uri":"s3://s3-csu-001/SB4020-TB/Mar22Data/AF-61-02298-19_S26_R2_001.fastq.gz"
          }
     ],
     "alpacas_oxford":[
@@ -171,13 +169,13 @@
     "ov6":[
         {
             "name":"AF-61-03296-17",
-            "r1_uri":"s3://s3-csu-001/",
-            "r2_uri":"s3://s3-csu-001/"
+            "r1_uri":"s3://s3-csu-001/SB4020-TB/Apr22Data/AF-61-03296-17_S28_R1_001.fastq.gz",
+            "r2_uri":"s3://s3-csu-001/SB4020-TB/Apr22Data/AF-61-03296-17_S28_R2_001.fastq.gz"
         },
         {
             "name":"AF-61-00507-19",
-            "r1_uri":"s3://s3-csu-001/",
-            "r2_uri":"s3://s3-csu-001/"
+            "r1_uri":"s3://s3-csu-001/SB4020-TB/Apr22Data/AF-61-00507-19_S43_R1_001.fastq.gz",
+            "r2_uri":"s3://s3-csu-001/SB4020-TB/Apr22Data/AF-61-00507-19_S43_R2_001.fastq.gz"
         },
         {
             "name":"AF-61-04230-19",
@@ -188,23 +186,87 @@
     "ov7":[
         {
             "name":"AF-61-00367-18",
-            "r1_uri":"s3://s3-csu-001/",
-            "r2_uri":"s3://s3-csu-001/"
+            "r1_uri":"s3://s3-csu-001/SB4020-TB/Apr22Data/AF-61-00367-18_S8_R1_001.fastq.gz",
+            "r2_uri":"s3://s3-csu-001/SB4020-TB/Apr22Data/AF-61-00367-18_S8_R2_001.fastq.gz"
         },
         {
             "name":"AF-12-01664-18",
-            "r1_uri":"s3://s3-csu-001/",
-            "r2_uri":"s3://s3-csu-001/"
+            "r1_uri":"s3://s3-csu-001/SB4020-TB/Apr22Data/AF-12-01664-18_S83_R1_001.fastq.gz",
+            "r2_uri":"s3://s3-csu-001/SB4020-TB/Apr22Data/AF-12-01664-18_S83_R2_001.fastq.gz"
         },
         {
             "name":"AF-61-00230-19",
-            "r1_uri":"s3://s3-csu-001/",
-            "r2_uri":"s3://s3-csu-001/"
+            "r1_uri":"s3://s3-csu-001/SB4020-TB/Apr22Data/AF-61-00230-19_S74_R1_001.fastq.gz",
+            "r2_uri":"s3://s3-csu-001/SB4020-TB/Apr22Data/AF-61-00230-19_S74_R2_001.fastq.gz"
         },
         {
             "name":"AF-12-00351-19",
-            "r1_uri":"s3://s3-csu-001/",
-            "r2_uri":"s3://s3-csu-001/"
+            "r1_uri":"s3://s3-csu-001/SB4020-TB/Apr22Data/AF-12-00351-19_S66_R1_001.fastq.gz",
+            "r2_uri":"s3://s3-csu-001/SB4020-TB/Apr22Data/AF-12-00351-19_S66_R2_001.fastq.gz"
+        }
+    ],
+    "wrexham":[
+        {
+            "name":"AF-21-00424-20",
+            "r1_uri":"s3://s3-csu-001/SB4020-TB/10260/AF-21-00424-20_S80_R1_001.fastq.gz",
+            "r2_uri":"s3://s3-csu-001/SB4020-TB/10260/AF-21-00424-20_S80_R2_001.fastq.gz"
+        },
+        {
+            "name":"AF-61-01124-20",
+            "r1_uri":"s3://s3-csu-001/SB4020-TB/10260/AF-61-01124-20_S4_R1_001.fastq.gz",
+            "r2_uri":"s3://s3-csu-001/SB4020-TB/10260/AF-61-01124-20_S4_R2_001.fastq.gz"
+        },
+        {
+            "name":"AF-61-01123-20",
+            "r1_uri":"s3://s3-csu-001/SB4020-TB/20024/AF-61-01123-20_S31_R1_001.fastq.gz",
+            "r2_uri":"s3://s3-csu-001/SB4020-TB/20024/AF-61-01123-20_S31_R2_001.fastq.gz"
+        },
+        {
+            "name":"AF-21-00425-20",
+            "r1_uri":"s3://s3-csu-001/SB4020-TB/10260/AF-21-00425-20_S81_R1_001.fastq.gz",
+            "r2_uri":"s3://s3-csu-001/SB4020-TB/10260/AF-21-00425-20_S81_R2_001.fastq.gz"
+        },
+        {
+            "name":"AF-21-00426-20",
+            "r1_uri":"s3://s3-csu-001/SB4020-TB/10260/AF-21-00426-20_S82_R1_001.fastq.gz",
+            "r2_uri":"s3://s3-csu-001/SB4020-TB/10260/AF-21-00426-20_S82_R2_001.fastq.gz"
+        }
+    ],
+    "cumbria":[
+        {
+            "name":"AF-12-00143-18",
+            "r1_uri":"s3://s3-csu-001/SB4020-TB/Cumbria/AF-12-00143-18_S261_R1_001.fastq.gz",
+            "r2_uri":"s3://s3-csu-001/SB4020-TB/Cumbria/AF-12-00143-18_S261_R2_001.fastq.gz"
+        },
+        {
+            "name":"AF-12-02164-18",
+            "r1_uri":"s3://s3-csu-001/SB4020-TB/Cumbria/AF-12-02164-18_S261_R1_001.fastq.gz",
+            "r2_uri":"s3://s3-csu-001/SB4020-TB/Cumbria/AF-12-02164-18_S261_R2_001.fastq.gz"
+        },
+        {
+            "name":"AF-21-07638-17",
+            "r1_uri":"s3://s3-csu-001/SB4020-TB/Cumbria/AF-21-07638-17_S287_R1_001.fastq.gz",
+            "r2_uri":"s3://s3-csu-001/SB4020-TB/Cumbria/AF-21-07638-17_S287_R2_001.fastq.gz"
+        },
+        {
+            "name":"AF-21-07639-17",
+            "r1_uri":"s3://s3-csu-001/SB4020-TB/Cumbria/AF-21-07639-17_S279_R1_001.fastq.gz",
+            "r2_uri":"s3://s3-csu-001/SB4020-TB/Cumbria/AF-21-07639-17_S279_R2_001.fastq.gz"
+        },
+        {
+            "name":"AF-21-07748-17",
+            "r1_uri":"s3://s3-csu-001/SB4020-TB/Cumbria/AF-21-07748-17_S5_R1_001.fastq.gz",
+            "r2_uri":"s3://s3-csu-001/SB4020-TB/Cumbria/AF-21-07748-17_S5_R2_001.fastq.gz"
+        },
+        {
+            "name":"AF-21-07749-17",
+            "r1_uri":"s3://s3-csu-001/SB4020-TB/Cumbria/AF-21-07749-17_S55_R1_001.fastq.gz",
+            "r2_uri":"s3://s3-csu-001/SB4020-TB/Cumbria/AF-21-07749-17_S55_R2_001.fastq.gz"
+        },
+        {
+            "name":"AF-12-02153-18",
+            "r1_uri":"s3://s3-csu-001/TestData/TestData_Jan20/AF-12-02153-18_S257_R1_001.fastq.gz",
+            "r2_uri":"s3://s3-csu-001/TestData/TestData_Jan20/AF-12-02153-18_S257_R2_001.fastq.gz"
         }
     ]
  }
