@@ -22,7 +22,7 @@
          {
              "name":"AF-21-00344-19", 
              "r1_uri":"s3://s3-csu-001/SB4020-TB/10222/AF-21-00344-19_S25_R1_001.fastq.gz",
-             "r2_uri":"s3://s3-csu-001/SB4020-TB/10222/AF-21-00344-19_S25_R1_001.fastq.gz"
+             "r2_uri":"s3://s3-csu-001/SB4020-TB/10222/AF-21-00344-19_S25_R2_001.fastq.gz"
          },
  
          {
@@ -64,7 +64,7 @@
          {
              "name":"AF-21-01344-15",
              "r1_uri":"s3://s3-csu-001/SB4030-TB/10305/AF-21-01344-15_S66_R1_001.fastq.gz",
-             "r2_uri":"s3://s3-csu-001/SB4030-TB/10305/AF-21-01344-15_S66_R1_001.fastq.gz"
+             "r2_uri":"s3://s3-csu-001/SB4030-TB/10305/AF-21-01344-15_S66_R2_001.fastq.gz"
          },
          {
              "name":"AF-61-00379-18",
@@ -259,7 +259,7 @@
             "r2_uri":"s3://s3-csu-001/SB4020-TB/Cumbria/AF-21-07748-17_S5_R2_001.fastq.gz"
         },
         {
-            "name":"AF-12-00143-18",
+            "name":"AF-21-07749-17",
             "r1_uri":"s3://s3-csu-001/SB4020-TB/Cumbria/AF-21-07749-17_S55_R1_001.fastq.gz",
             "r2_uri":"s3://s3-csu-001/SB4020-TB/Cumbria/AF-21-07749-17_S55_R2_001.fastq.gz"
         },
