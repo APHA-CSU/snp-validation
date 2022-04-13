@@ -21,10 +21,10 @@ def download_test_case(case, download_path):
         r1_uri = sample["r1_uri"]
         r2_uri = sample["r2_uri"]
 
-        cmd = f"aws s3 sync {r1_uri} {download_path}"
+        cmd = f"aws s3 cp {r1_uri} {download_path}"
         utils.run(cmd, shell=True)
        
-        cmd = f"aws s3 sync {r2_uri} {download_path}"
+        cmd = f"aws s3 cp {r2_uri} {download_path}"
         utils.run(cmd, shell=True)
 
 
@@ -71,5 +71,5 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     download_test_case(args.case, args.download_path)
-    #btb_seq(args.btb_seq_path, args.download_path, args.output_path)
+    btb_seq(args.btb_seq_path, args.download_path, args.output_path)
     snps(args.output_path)
