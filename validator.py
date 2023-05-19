@@ -202,8 +202,8 @@ def main():
     # Parse
     kwargs = vars(parser.parse_args())
     if not kwargs:
-       parser.print_help()
-       return
+        parser.print_help()
+        return
 
     if "samples" in kwargs:
         if kwargs["samples"] == "quick" or kwargs["samples"] == "q":
